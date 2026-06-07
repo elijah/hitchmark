@@ -105,4 +105,70 @@ mod tests {
         let serialized = parsed.to_string();
         assert_eq!(serialized, original);
     }
+
+    #[test]
+    fn test_roundtrip_path_with_spaces() {
+        // Paths with spaces must survive encode → decode
+        let path = "/Users/alice/My Documents/project notes.md";
+        let uri = HookUri {
+            uri_type: UriType::File(std::path::PathBuf::from(path)),
+            fragment: None,
+        };
+        let serialized = uri.to_string();
+        let parsed = HookUri::parse(&serialized).unwrap();
+        match parsed.uri_type {
+            UriType::File(p) => assert_eq!(p.to_string_lossy(), path),
+            _ => panic!("Expected File URI"),
+        }
+    }
+
+    #[test]
+    fn test_roundtrip_unicode_path() {
+        let path = "/Users/ألعاب/文档/résumé.md";
+        let uri = HookUri {
+            uri_type: UriType::File(std::path::PathBuf::from(path)),
+            fragment: None,
+        };
+        let serialized = uri.to_string();
+        let parsed = HookUri::parse(&serialized).unwrap();
+        match parsed.uri_type {
+            UriType::File(p) => assert_eq!(p.to_string_lossy(), path),
+            _ => panic!("Expected File URI"),
+        }
+    }
+
+    #[test]
+    fn test_missing_scheme_is_error() {
+        assert!(HookUri::parse("file:///foo/bar").is_err());
+        assert!(HookUri::parse("https://example.com").is_err());
+        assert!(HookUri::parse("").is_err());
+    }
+
+    #[test]
+    fn test_unknown_authority_is_error() {
+        assert!(HookUri::parse("hook://unknown/abc").is_err());
+    }
+
+    #[test]
+    fn test_invalid_base64_is_error() {
+        // "!!" is not valid base64url
+        assert!(HookUri::parse("hook://file/!!invalid!!").is_err());
+    }
+
+    #[test]
+    fn test_fragment_without_path() {
+        let uri = "hook://file/L2Zvby9iYXIudHh0";
+        let parsed = HookUri::parse(uri).unwrap();
+        assert!(parsed.fragment.is_none());
+    }
+
+    #[test]
+    fn test_x_callback_url() {
+        let uri = "hook://x-callback-url/create-link";
+        let parsed = HookUri::parse(uri).unwrap();
+        match parsed.uri_type {
+            UriType::XCallbackUrl(action) => assert_eq!(action, "create-link"),
+            _ => panic!("Expected XCallbackUrl"),
+        }
+    }
 }

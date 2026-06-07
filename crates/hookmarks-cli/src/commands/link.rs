@@ -23,13 +23,21 @@ pub fn execute(args: LinkArgs, store_path: &PathBuf) -> anyhow::Result<()> {
     let uri_a = expand_uri(&args.uri_a)?;
     let uri_b = expand_uri(&args.uri_b)?;
 
-    store.create_link(&uri_a, &uri_b, args.note.as_deref())?;
-
-    println!("✓ Linked:");
-    println!("  {uri_a}");
-    println!("  {uri_b}");
-    if let Some(note) = args.note {
-        println!("  Note: {note}");
+    match store.create_link(&uri_a, &uri_b, args.note.as_deref()) {
+        Ok(()) => {
+            println!("✓ Linked:");
+            println!("  {uri_a}");
+            println!("  {uri_b}");
+            if let Some(note) = args.note {
+                println!("  Note: {note}");
+            }
+        }
+        Err(hookmarks_core::Error::LinkAlreadyExists { .. }) => {
+            eprintln!("ℹ️  These resources are already linked.");
+            eprintln!("   {uri_a}");
+            eprintln!("   {uri_b}");
+        }
+        Err(e) => return Err(e.into()),
     }
 
     Ok(())
