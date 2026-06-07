@@ -19,7 +19,7 @@ use std::path::Path;
 const SCHEMA_VERSION: u32 = 1;
 
 /// A bidirectional link between two resources
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Link {
     /// Source URI
     pub source: String,
