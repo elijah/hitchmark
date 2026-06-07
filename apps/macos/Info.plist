@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>Hookmarks</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.elw.hookmarks</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>Hookmarks</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>0.1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>13.0</string>
+    <key>NSMainStoryboardFile</key>
+    <string></string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    
+    <!-- URL scheme for hook:// protocol -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>Hookmark Link</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>hook</string>
+            </array>
+        </dict>
+    </array>
+    
+    <!-- Appearance -->
+    <key>NSAppearance</key>
+    <string>NSAppearanceNameAqua</string>
+    <key>NSRequiresIPhoneOS</key>
+    <false/>
+    <key>NSSupportsAutomaticGraphicsSwitching</key>
+    <true/>
+    
+    <!-- Permissions & Features -->
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Hookmarks needs to interact with Finder and other applications to create and manage links.</string>
+    <key>NSAccessibilityUsageDescription</key>
+    <string>Hookmarks uses accessibility features to enable global hotkey functionality.</string>
+    <key>NSDocumentsFolderUsageDescription</key>
+    <string>Hookmarks needs access to your files to create addressable links.</string>
+    
+    <!-- Development -->
+    <key>UTExportedTypeDeclarations</key>
+    <array/>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.productivity</string>
+</dict>
+</plist>

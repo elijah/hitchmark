@@ -1,0 +1,7 @@
+.build/
+.swiftpm/
+Hookmarks.xcodeproj/
+*.xcodeproj/
+*.xcworkspace/
+.DS_Store
+*.swiftdeps
