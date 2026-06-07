@@ -1,0 +1,21 @@
+[Unit]
+Description=Hookmarks daemon — stable paragraph links via hook:// URI
+Documentation=https://github.com/elw/not-hookmarks
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/hookmarks-daemon
+Restart=on-failure
+RestartSec=5s
+Environment=RUST_LOG=info
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectHome=read-only
+ProtectSystem=strict
+ReadWritePaths=%h/.local/share/hookmarks
+
+[Install]
+WantedBy=default.target
