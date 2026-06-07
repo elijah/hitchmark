@@ -1,0 +1,138 @@
+/* Hookmarks Obsidian Plugin Styles */
+
+/* Purple number annotations in the editor */
+.hookmarks-purple-number {
+  color: var(--hookmarks-purple-color, #888);
+  font-size: 0.7em;
+  font-family: var(--font-monospace);
+  vertical-align: super;
+  user-select: none;
+  margin-left: 0.4em;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+.hookmarks-purple-number:hover {
+  opacity: 1;
+  color: var(--color-accent);
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .hookmarks-purple-number {
+    transition: none;
+  }
+}
+
+/* ----- Link Panel ----- */
+
+.hookmarks-panel-empty,
+.hookmarks-panel-no-links {
+  padding: var(--size-4-4);
+  color: var(--text-muted);
+  font-size: var(--font-small);
+  text-align: center;
+}
+
+.hookmarks-panel-loading {
+  padding: var(--size-4-4);
+  color: var(--text-muted);
+  font-size: var(--font-small);
+}
+
+.hookmarks-panel-error {
+  padding: var(--size-4-4);
+  color: var(--text-error);
+  font-size: var(--font-small);
+}
+
+.hookmarks-panel-error-detail {
+  font-size: var(--font-smaller);
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.hookmarks-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--size-4-2) var(--size-4-4);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.hookmarks-panel-count {
+  font-size: var(--font-small);
+  color: var(--text-muted);
+}
+
+.hookmarks-panel-refresh {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 1rem;
+  padding: 2px 6px;
+  border-radius: var(--radius-s);
+}
+
+.hookmarks-panel-refresh:hover {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+.hookmarks-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--size-4-2) 0;
+}
+
+.hookmarks-panel-item {
+  padding: var(--size-4-2) var(--size-4-4);
+  border-radius: var(--radius-s);
+  cursor: pointer;
+}
+
+.hookmarks-panel-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.hookmarks-panel-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hookmarks-panel-item-uri {
+  font-size: var(--font-small);
+  color: var(--text-accent);
+  word-break: break-all;
+}
+
+.hookmarks-panel-item-uri:hover {
+  text-decoration: underline;
+}
+
+.hookmarks-panel-item-note {
+  font-size: var(--font-smaller);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ----- Settings ----- */
+
+.hookmarks-settings-info {
+  margin-top: var(--size-4-4);
+  padding: var(--size-4-4);
+  background: var(--background-secondary);
+  border-radius: var(--radius-m);
+  font-size: var(--font-small);
+}
+
+.hookmarks-settings-info p {
+  margin: 0 0 var(--size-4-2);
+}
+
+.hookmarks-settings-info a {
+  color: var(--text-accent);
+}
