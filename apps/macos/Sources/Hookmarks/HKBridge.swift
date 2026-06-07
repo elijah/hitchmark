@@ -2,8 +2,8 @@
 //  HKBridge.swift
 //  Hookmarks
 //
-//  Bridge to call the `hk` CLI tool via subprocess.
-//  This allows the macOS app to leverage the core Rust library.
+//  Bridge to the `hk` CLI tool — subprocess for local ops,
+//  HTTP for link queries when `hk serve` is running.
 //
 
 import Foundation
@@ -27,30 +27,54 @@ enum HKBridgeError: LocalizedError {
 
 struct HKBridge {
     
+    // MARK: - Public API
+    
     /// Run `hk file <path>` to convert a file path to a hook:// URI
     static func fileToURI(_ path: String, completion: @escaping (Result<String, HKBridgeError>) -> Void) {
-        runCommand("file", [path]) { result in
-            switch result {
-            case .success(let output):
-                let uri = output.trimmingCharacters(in: .whitespacesAndNewlines)
-                completion(.success(uri))
-            case .failure(let error):
-                completion(.failure(error))
+        // Try HTTP server first if configured
+        if let serverUrl = storedServerUrl {
+            let encodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? path
+            httpGet("\(serverUrl)/uri?path=\(encodedPath)") { result in
+                switch result {
+                case .success(let data):
+                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let uri = json["uri"] as? String {
+                        completion(.success(uri))
+                        return
+                    }
+                    fallthrough
+                case .failure:
+                    runCommand("file", [path], completion: completion)
+                }
             }
+        } else {
+            runCommand("file", [path], completion: completion)
         }
     }
     
-    /// Run `hk open <uri>` to resolve and open a hook:// URI
+    /// Run `hk open <uri>` to resolve and open a hook:// URI (always subprocess — needs OS)
     static func open(uri: String, completion: @escaping (Result<String, HKBridgeError>) -> Void) {
-        runCommand("open", [uri]) { result in
-            completion(result)
-        }
+        runCommand("open", [uri], completion: completion)
     }
     
-    /// Run `hk list <uri>` to query links for a resource
+    /// Run `hk list <uri> --json` to query links for a resource
     static func list(uri: String, completion: @escaping (Result<String, HKBridgeError>) -> Void) {
-        runCommand("list", [uri]) { result in
-            completion(result)
+        if let serverUrl = storedServerUrl {
+            let encodedUri = uri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? uri
+            httpGet("\(serverUrl)/links?uri=\(encodedUri)") { result in
+                switch result {
+                case .success(let data):
+                    if let str = String(data: data, encoding: .utf8) {
+                        completion(.success(str))
+                        return
+                    }
+                    fallthrough
+                case .failure:
+                    runCommand("list", [uri, "--json"], completion: completion)
+                }
+            }
+        } else {
+            runCommand("list", [uri, "--json"], completion: completion)
         }
     }
     
@@ -61,24 +85,46 @@ struct HKBridge {
         note: String? = nil,
         completion: @escaping (Result<String, HKBridgeError>) -> Void
     ) {
-        var args = [uriA, uriB]
-        if let note = note {
-            args.append("--note")
-            args.append(note)
-        }
-        runCommand("link", args) { result in
-            completion(result)
+        if let serverUrl = storedServerUrl {
+            var body: [String: Any] = ["uri_a": uriA, "uri_b": uriB]
+            if let note = note { body["note"] = note }
+            httpPost("\(serverUrl)/links", body: body) { result in
+                switch result {
+                case .success:
+                    completion(.success(""))
+                case .failure:
+                    var args = [uriA, uriB]
+                    if let note = note { args += ["--note", note] }
+                    runCommand("link", args, completion: completion)
+                }
+            }
+        } else {
+            var args = [uriA, uriB]
+            if let note = note { args += ["--note", note] }
+            runCommand("link", args, completion: completion)
         }
     }
     
-    /// Run `hk purple <file> --format json` to annotate with purple numbers
+    /// Run `hk purple <file> --format json`
     static func purple(filePath: String, completion: @escaping (Result<String, HKBridgeError>) -> Void) {
-        runCommand("purple", [filePath, "--format", "json"]) { result in
-            completion(result)
-        }
+        runCommand("purple", [filePath, "--format", "json"], completion: completion)
     }
     
-    // MARK: - Private
+    // MARK: - Settings helpers
+    
+    /// The stored `cliPath` from UserDefaults, or nil if empty
+    static var storedCliPath: String? {
+        let v = UserDefaults.standard.string(forKey: "cliPath") ?? ""
+        return v.isEmpty ? nil : v
+    }
+    
+    /// The stored `serverUrl` from UserDefaults, or nil if empty
+    static var storedServerUrl: String? {
+        let v = UserDefaults.standard.string(forKey: "serverUrl") ?? ""
+        return v.isEmpty ? nil : v
+    }
+    
+    // MARK: - Subprocess
     
     private static func runCommand(
         _ subcommand: String,
@@ -86,9 +132,7 @@ struct HKBridge {
         completion: @escaping (Result<String, HKBridgeError>) -> Void
     ) {
         DispatchQueue.global(qos: .userInitiated).async {
-            let hkPath = locateHK()
-            
-            guard let hkPath = hkPath else {
+            guard let hkPath = locateHK() else {
                 completion(.failure(.notFound))
                 return
             }
@@ -122,21 +166,68 @@ struct HKBridge {
         }
     }
     
-    /// Find `hk` in common locations: /usr/local/bin, ~/.cargo/bin, brew
-    private static func locateHK() -> String? {
+    /// Find `hk` — checks user pref first, then common install locations.
+    static func locateHK() -> String? {
+        // 1. User-configured path takes priority
+        if let custom = storedCliPath,
+           FileManager.default.fileExists(atPath: custom) {
+            return custom
+        }
+        
+        // 2. Common install locations
         let searchPaths = [
             "/usr/local/bin/hk",
             "\(NSHomeDirectory())/.cargo/bin/hk",
             "/opt/homebrew/bin/hk",
+            "/usr/bin/hk",
             "/usr/local/opt/hookmarks/bin/hk"
         ]
-        
-        for path in searchPaths {
-            if FileManager.default.fileExists(atPath: path) {
-                return path
-            }
+        return searchPaths.first { FileManager.default.fileExists(atPath: $0) }
+    }
+    
+    // MARK: - HTTP helpers
+    
+    private static func httpGet(
+        _ urlString: String,
+        completion: @escaping (Result<Data, HKBridgeError>) -> Void
+    ) {
+        guard let url = URL(string: urlString) else {
+            completion(.failure(.invalidOutput))
+            return
         }
-        
-        return nil
+        var request = URLRequest(url: url, timeoutInterval: 3)
+        request.httpMethod = "GET"
+        URLSession.shared.dataTask(with: request) { data, response, _ in
+            if let data = data,
+               (response as? HTTPURLResponse)?.statusCode == 200 {
+                completion(.success(data))
+            } else {
+                completion(.failure(.failed("HTTP request failed")))
+            }
+        }.resume()
+    }
+    
+    private static func httpPost(
+        _ urlString: String,
+        body: [String: Any],
+        completion: @escaping (Result<Data, HKBridgeError>) -> Void
+    ) {
+        guard let url = URL(string: urlString),
+              let bodyData = try? JSONSerialization.data(withJSONObject: body) else {
+            completion(.failure(.invalidOutput))
+            return
+        }
+        var request = URLRequest(url: url, timeoutInterval: 3)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = bodyData
+        URLSession.shared.dataTask(with: request) { data, response, _ in
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            if let data = data, status == 200 || status == 201 {
+                completion(.success(data))
+            } else {
+                completion(.failure(.failed("HTTP \(status)")))
+            }
+        }.resume()
     }
 }
