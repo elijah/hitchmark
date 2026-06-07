@@ -1,0 +1,20 @@
+[package]
+name = "hookmarks-daemon"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "hookmarks-daemon"
+path = "src/main.rs"
+
+[dependencies]
+hookmarks-core = { path = "../hookmarks-core" }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+zbus = { version = "4", features = ["async-io"] }
+tokio = { version = "1", features = ["full"] }
+notify = "6"
+xdg = "2"

@@ -1,0 +1,27 @@
+[package]
+name = "hookmarks-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+rusqlite = { version = "0.32", features = ["bundled", "chrono"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+base64 = "0.22"
+uuid = { version = "1", features = ["v4", "serde"] }
+thiserror = "1"
+url = "2"
+chrono = { version = "0.4", features = ["serde"] }
+regex = "1"
+bs58 = "0.5"
+
+[dev-dependencies]
+tempfile = "3"
+
+[lib]
+name = "hookmarks_core"
+path = "src/lib.rs"

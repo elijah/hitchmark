@@ -1,0 +1,23 @@
+[workspace]
+members = [
+    "crates/hookmarks-core",
+    "crates/hookmarks-cli",
+    "crates/hookmarks-daemon",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Hookmarks Contributors"]
+repository = "https://github.com/yourusername/not-hookmarks"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = "warn"
+pedantic = "warn"
+correctness = "deny"

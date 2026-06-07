@@ -1,0 +1,18 @@
+[package]
+name = "hookmarks-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "hk"
+path = "src/main.rs"
+
+[dependencies]
+hookmarks-core = { path = "../hookmarks-core" }
+clap = { version = "4", features = ["derive"] }
+opener = "0.7"
+dirs = "5"
+anyhow = "1"
