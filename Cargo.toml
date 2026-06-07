@@ -12,6 +12,7 @@ edition = "2021"
 license = "MIT"
 authors = ["Hookmarks Contributors"]
 repository = "https://github.com/yourusername/not-hookmarks"
+rust-version = "1.75"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

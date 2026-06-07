@@ -2,7 +2,8 @@
 //!
 //! Usage:
 //!   hk link <uri-a> <uri-b> [--note "..."]     Create a bidirectional link
-//!   hk list <uri>                               List all links for a resource
+//!   hk list <uri> [--json]                      List all links for a resource
+//!   hk delete <uri-a> <uri-b> [-y]             Remove a link
 //!   hk open <hook-uri>                          Open a hook:// URI
 //!   hk file <path>                              Print the hook:// URI for a file
 //!   hk purple <file> [--format markdown|json]   Annotate file with purple numbers
@@ -23,6 +24,8 @@ mod path;
     hk file ~/docs/note.md\n  \
     hk link ~/docs/note.md ~/docs/reference.md --note \"See this section\"\n  \
     hk list ~/docs/note.md\n  \
+    hk list ~/docs/note.md --json\n  \
+    hk delete ~/docs/note.md ~/docs/reference.md\n  \
     hk open \"hook://file/L3Zhci9sb2cvZG9jcy9ub3RlLm1k\""
 )]
 struct Cli {
@@ -49,6 +52,23 @@ enum Commands {
     List {
         /// URI to query (or file path)
         uri: String,
+
+        /// Output as JSON (machine-readable)
+        #[arg(long)]
+        json: bool,
+    },
+
+    /// Remove a bidirectional link
+    Delete {
+        /// First URI (or file path)
+        uri_a: String,
+
+        /// Second URI (or file path)
+        uri_b: String,
+
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
     },
 
     /// Resolve and open a hook:// URI
@@ -87,9 +107,14 @@ fn main() -> anyhow::Result<()> {
             commands::link::execute(args, &config.store_path)?;
         }
 
-        Commands::List { uri } => {
-            let args = commands::list::ListArgs { uri };
+        Commands::List { uri, json } => {
+            let args = commands::list::ListArgs { uri, json };
             commands::list::execute(args, &config.store_path)?;
+        }
+
+        Commands::Delete { uri_a, uri_b, yes } => {
+            let args = commands::delete::DeleteArgs { uri_a, uri_b, yes };
+            commands::delete::execute(args, &config.store_path)?;
         }
 
         Commands::Open { uri } => {

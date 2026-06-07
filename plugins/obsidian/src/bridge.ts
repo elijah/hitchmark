@@ -93,19 +93,17 @@ export class HKBridge {
 
   /** List all links for a resource URI */
   async listLinks(uri: string): Promise<HKResponse<LinkRecord[]>> {
-    const result = await this.run("list", [uri]);
+    const result = await this.run("list", [uri, "--json"]);
     if (!result.ok) return result;
 
-    // Parse tab-separated output: source\ttarget\tnote\tcreated_at
-    const records: LinkRecord[] = result.value
-      .split("\n")
-      .filter((line) => line.trim().length > 0)
-      .map((line) => {
-        const [source, target, note, created_at] = line.split("\t");
-        return { source, target, note, created_at };
-      });
+    if (!result.value) return { ok: true, value: [] };
 
-    return { ok: true, value: records };
+    try {
+      const records: LinkRecord[] = JSON.parse(result.value);
+      return { ok: true, value: records };
+    } catch {
+      return { ok: false, error: "Failed to parse hk list output as JSON" };
+    }
   }
 
   /** Create a bidirectional link between two URIs */

@@ -24,6 +24,24 @@ pub enum Error {
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
 
+    /// Link already exists between the two URIs
+    #[error("Link already exists between {uri_a} and {uri_b}")]
+    LinkAlreadyExists {
+        /// First URI in the existing link
+        uri_a: String,
+        /// Second URI in the existing link
+        uri_b: String,
+    },
+
+    /// Database schema version mismatch — database was created by a newer version
+    #[error("Database schema version {found} is newer than supported version {supported}. Please upgrade hookmarks.")]
+    SchemaTooNew {
+        /// Schema version found in the database
+        found: u32,
+        /// Maximum schema version this build supports
+        supported: u32,
+    },
+
     /// Other errors
     #[error("{0}")]
     Other(String),
