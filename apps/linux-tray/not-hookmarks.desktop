@@ -1,0 +1,17 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Hookmarks
+Comment=Stable, addressable links to documents and paragraphs
+Exec=hookmarks-daemon
+Icon=hookmarks
+Terminal=false
+Categories=Utility;Office;
+Keywords=links;bookmarks;documents;paragraphs;purple-numbers;
+
+# Register as handler for hook:// URIs
+MimeType=x-scheme-handler/hook;
+
+# Desktop integration
+NoDisplay=true
+StartupNotify=false
