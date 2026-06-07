@@ -7,6 +7,7 @@
 //!   hk open <hook-uri>                          Open a hook:// URI
 //!   hk file <path>                              Print the hook:// URI for a file
 //!   hk purple <file> [--format markdown|json]   Annotate file with purple numbers
+//!   hk serve [--port 2701] [--host 127.0.0.1]  Start local HTTP API server
 
 use clap::{Parser, Subcommand};
 
@@ -92,6 +93,17 @@ enum Commands {
         #[arg(long, default_value = "markdown")]
         format: String,
     },
+
+    /// Start a local HTTP API server (default: http://127.0.0.1:2701)
+    Serve {
+        /// Port to listen on
+        #[arg(long, default_value_t = 2701)]
+        port: u16,
+
+        /// Host/IP to bind
+        #[arg(long, default_value = "127.0.0.1")]
+        host: String,
+    },
 }
 
 fn main() -> anyhow::Result<()> {
@@ -130,6 +142,11 @@ fn main() -> anyhow::Result<()> {
         Commands::Purple { path, format } => {
             let args = commands::purple::PurpleArgs { path, format };
             commands::purple::execute(args)?;
+        }
+
+        Commands::Serve { port, host } => {
+            let args = commands::serve::ServeArgs { port, host };
+            commands::serve::execute(args, &config.store_path)?;
         }
     }
 
