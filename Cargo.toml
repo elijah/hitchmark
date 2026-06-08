@@ -12,7 +12,7 @@ edition = "2021"
 license = "MIT"
 authors = ["Hitchmark Contributors"]
 repository = "https://github.com/elijah/hitchmark"
-rust-version = "1.75"
+rust-version = "1.85"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

@@ -31,7 +31,7 @@ brew tap yourusername/hookmarks
 brew install hookmarks
 ```
 
-### From source (requires Rust 1.75+)
+### From source (requires Rust 1.85+)
 
 ```bash
 cargo install --path crates/hitchmark-cli --locked

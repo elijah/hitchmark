@@ -13,8 +13,9 @@ jobs:
     name: Test Suite
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         rust: [stable]
     steps:
       - uses: actions/checkout@v4
@@ -23,11 +24,11 @@ jobs:
       - run: cargo test --all-features
 
   msrv:
-    name: MSRV (1.75)
+    name: MSRV (1.85)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.75
+      - uses: dtolnay/rust-toolchain@1.85
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --all-features
 
@@ -120,7 +121,7 @@ jobs:
         run: npm run build
 
   safari-test:
-    name: Safari Extension Tests
+    name: Safari/Chrome Extension Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -135,4 +136,5 @@ jobs:
         run: npm test
       - working-directory: plugins/safari
         run: npm run build
+
 

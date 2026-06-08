@@ -95,8 +95,8 @@ Project-wide rename from Hookmarks → Hitchmark, global hotkey, auto-start, and
 
 #### Infrastructure
 - `deny.toml` — license allow-list, CVE deny, wildcard dep ban
-- CI expanded: MSRV (1.75), `cargo deny`, `cargo audit`, Node.js tests
-- MSRV pinned: `rust-version = "1.75"` in workspace `Cargo.toml`
+- CI expanded: MSRV (1.85), `cargo deny`, `cargo audit`, Node.js tests
+- MSRV pinned: `rust-version = "1.85"` in workspace `Cargo.toml`
 
 #### Tests
 - 24 Swift unit tests (HKBridge path resolution, prefs key contracts, error display)
@@ -166,7 +166,7 @@ First complete release covering all 7 blueprint steps plus a stability hardening
 - `specs/purple-numbers.md` — normative purple numbers spec v0.1 (locked)
 
 #### Infrastructure
-- Cargo workspace with 3 crates, MSRV `rust-version = "1.75"`
+- Cargo workspace with 3 crates, MSRV `rust-version = "1.85"`
 - `deny.toml` — license allow-list (MIT/Apache), vulnerability deny, wildcard ban
 - CI: build, test, fmt, clippy, MSRV check, `cargo deny`, `cargo audit`, Node.js plugin tests
 
