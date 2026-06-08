@@ -10,6 +10,7 @@ pub mod uri;
 
 pub use error::{Error, Result};
 pub use purple::{PurpleId, PurpleNumberGenerator};
+pub use purple::split_paragraphs;
 pub use store::LinkStore;
 pub use uri::{HookUri, UriType};
 

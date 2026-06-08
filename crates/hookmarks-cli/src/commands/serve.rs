@@ -158,6 +158,38 @@ async fn file_to_uri(Query(q): Query<PathQuery>) -> impl IntoResponse {
     }
 }
 
+async fn purple_for_file(Query(q): Query<PathQuery>) -> impl IntoResponse {
+    use hookmarks_core::{split_paragraphs, PurpleNumberGenerator};
+    use std::fs;
+
+    let content = match fs::read_to_string(&q.path) {
+        Ok(c) => c,
+        Err(e) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(serde_json::json!({ "error": format!("Cannot read file: {e}") })),
+            )
+                .into_response();
+        }
+    };
+
+    let mut gen = PurpleNumberGenerator::new();
+    let paragraphs = split_paragraphs(&content);
+    let result: Vec<serde_json::Value> = paragraphs
+        .iter()
+        .filter_map(|text| {
+            gen.generate(text).ok().map(|id| {
+                serde_json::json!({
+                    "id": id.as_str(),
+                    "text": text,
+                })
+            })
+        })
+        .collect();
+
+    (StatusCode::OK, Json(serde_json::Value::Array(result))).into_response()
+}
+
 // ── CORS ─────────────────────────────────────────────────────────────────────
 
 fn cors_layer() -> CorsLayer {
@@ -190,6 +222,7 @@ pub fn execute(args: ServeArgs, store_path: &PathBuf) -> anyhow::Result<()> {
         .route("/health", get(health))
         .route("/links", get(list_links).post(create_link).delete(delete_link))
         .route("/uri", get(file_to_uri))
+        .route("/purple", get(purple_for_file))
         .layer(cors_layer())
         .with_state(shared);
 
