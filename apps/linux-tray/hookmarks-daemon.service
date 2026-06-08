@@ -1,5 +1,5 @@
 [Unit]
-Description=Hookmarks daemon — stable paragraph links via hook:// URI
+Description=Hitchmark daemon — stable paragraph links via hook:// URI
 Documentation=https://github.com/elw/hitchmark
 After=graphical-session.target
 PartOf=graphical-session.target
@@ -15,7 +15,7 @@ Environment=RUST_LOG=info
 NoNewPrivileges=yes
 ProtectHome=read-only
 ProtectSystem=strict
-ReadWritePaths=%h/.local/share/hookmarks
+ReadWritePaths=%h/.local/share/hitchmark
 
 [Install]
 WantedBy=default.target

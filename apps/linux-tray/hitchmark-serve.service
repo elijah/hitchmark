@@ -1,0 +1,15 @@
+[Unit]
+Description=Hitchmark HTTP bridge (hk serve)
+Documentation=https://github.com/elw/hitchmark
+After=network.target
+
+[Service]
+ExecStart=%h/.cargo/bin/hk serve
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hitchmark-serve
+
+[Install]
+WantedBy=default.target

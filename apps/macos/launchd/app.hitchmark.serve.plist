@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>app.hitchmark.serve</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/hk</string>
+    <string>serve</string>
+  </array>
+
+  <!-- Start on login -->
+  <key>RunAtLoad</key>
+  <true/>
+
+  <!-- Restart if it crashes -->
+  <key>KeepAlive</key>
+  <true/>
+
+  <!-- Throttle rapid restart loops -->
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+
+  <key>StandardOutPath</key>
+  <string>/tmp/hitchmark-serve.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/tmp/hitchmark-serve.err</string>
+</dict>
+</plist>
