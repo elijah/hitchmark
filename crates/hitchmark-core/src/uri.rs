@@ -171,4 +171,70 @@ mod tests {
             _ => panic!("Expected XCallbackUrl"),
         }
     }
+
+    #[test]
+    fn test_roundtrip_windows_path() {
+        // Windows absolute paths use drive letters and backslashes.
+        // PathBuf stores them as-is; the URI round-trip must preserve the exact string.
+        let path = r"C:\Users\alice\Documents\notes.md";
+        let uri = HookUri {
+            uri_type: UriType::File(std::path::PathBuf::from(path)),
+            fragment: None,
+        };
+        let serialized = uri.to_string();
+        assert!(serialized.starts_with("hook://file/"));
+        let parsed = HookUri::parse(&serialized).unwrap();
+        match parsed.uri_type {
+            UriType::File(p) => assert_eq!(p.to_string_lossy(), path),
+            _ => panic!("Expected File URI"),
+        }
+    }
+
+    #[test]
+    fn test_roundtrip_windows_unc_path() {
+        // UNC paths (network shares) are common on Windows.
+        let path = r"\\server\share\project\file.md";
+        let uri = HookUri {
+            uri_type: UriType::File(std::path::PathBuf::from(path)),
+            fragment: None,
+        };
+        let serialized = uri.to_string();
+        let parsed = HookUri::parse(&serialized).unwrap();
+        match parsed.uri_type {
+            UriType::File(p) => assert_eq!(p.to_string_lossy(), path),
+            _ => panic!("Expected File URI"),
+        }
+    }
+
+    #[test]
+    fn test_roundtrip_windows_path_with_spaces() {
+        let path = r"C:\Users\alice\My Documents\résumé 2024.md";
+        let uri = HookUri {
+            uri_type: UriType::File(std::path::PathBuf::from(path)),
+            fragment: None,
+        };
+        let serialized = uri.to_string();
+        let parsed = HookUri::parse(&serialized).unwrap();
+        match parsed.uri_type {
+            UriType::File(p) => assert_eq!(p.to_string_lossy(), path),
+            _ => panic!("Expected File URI"),
+        }
+    }
+
+    #[test]
+    fn test_roundtrip_windows_path_with_fragment() {
+        let path = r"C:\notes\meeting.md";
+        let uri = HookUri {
+            uri_type: UriType::File(std::path::PathBuf::from(path)),
+            fragment: Some("para-abc123".to_string()),
+        };
+        let serialized = uri.to_string();
+        assert!(serialized.contains("#para-abc123"));
+        let parsed = HookUri::parse(&serialized).unwrap();
+        assert_eq!(parsed.fragment, Some("para-abc123".to_string()));
+        match parsed.uri_type {
+            UriType::File(p) => assert_eq!(p.to_string_lossy(), path),
+            _ => panic!("Expected File URI"),
+        }
+    }
 }
