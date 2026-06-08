@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc --noEmit && node esbuild.config.mjs",
+    "build:prod": "node esbuild.config.mjs --production",
     "dev": "node esbuild.config.mjs --watch",
     "lint": "tsc --noEmit",
     "test": "jest"
