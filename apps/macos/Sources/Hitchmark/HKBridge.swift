@@ -1,6 +1,6 @@
 //
 //  HKBridge.swift
-//  Hookmarks
+//  Hitchmark
 //
 //  Bridge to the `hk` CLI tool — subprocess for local ops,
 //  HTTP for link queries when `hk serve` is running.
@@ -16,7 +16,7 @@ enum HKBridgeError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notFound:
-            return "hk command not found. Install Hookmarks CLI with: brew install hookmarks"
+            return "hk command not found. Install Hitchmark CLI with: brew install hitchmark"
         case .failed(let reason):
             return "hk failed: \(reason)"
         case .invalidOutput:
@@ -180,7 +180,7 @@ struct HKBridge {
             "\(NSHomeDirectory())/.cargo/bin/hk",
             "/opt/homebrew/bin/hk",
             "/usr/bin/hk",
-            "/usr/local/opt/hookmarks/bin/hk"
+            "/usr/local/opt/hitchmark/bin/hk"
         ]
         return searchPaths.first { FileManager.default.fileExists(atPath: $0) }
     }

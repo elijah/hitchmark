@@ -1,6 +1,6 @@
 //
 //  FinderBridge.swift
-//  Hookmarks
+//  Hitchmark
 //
 //  Bridge to interact with Finder using AppleScript.
 //

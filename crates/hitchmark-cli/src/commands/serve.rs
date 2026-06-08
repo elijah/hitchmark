@@ -1,6 +1,6 @@
 //! `hk serve` — lightweight HTTP API server.
 //!
-//! Exposes the hookmarks link store over a local REST API so that
+//! Exposes the hitchmark link store over a local REST API so that
 //! browser extensions, editors, and the Obsidian plugin can query
 //! and mutate links without spawning a subprocess per request.
 //!
@@ -226,7 +226,7 @@ pub fn execute(args: ServeArgs, store_path: &PathBuf) -> anyhow::Result<()> {
         .layer(cors_layer())
         .with_state(shared);
 
-    println!("🔗 Hookmarks server listening on http://{addr}");
+    println!("🔗 Hitchmark server listening on http://{addr}");
     println!("   Press Ctrl-C to stop.");
 
     tokio::runtime::Runtime::new()?.block_on(async {

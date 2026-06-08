@@ -36,16 +36,16 @@
         </dict>
     </array>
     
-    <!-- macOS System Services (right-click → Services → Hookmarks/…) -->
+    <!-- macOS System Services (right-click → Services → Hitchmark/…) -->
     <key>NSServices</key>
     <array>
 
         <!-- Service 1: Copy hook:// URI for selected files in Finder -->
         <dict>
             <key>NSMenuItem</key>
-            <dict><key>default</key><string>Hookmarks/Copy hook:// URI</string></dict>
+            <dict><key>default</key><string>Hitchmark/Copy hook:// URI</string></dict>
             <key>NSMessage</key>
-            <string>hookmarksCopyURI</string>
+            <string>hitchmarkCopyURI</string>
             <key>NSSendTypes</key>
             <array><string>NSFilenamesPboardType</string></array>
             <key>NSKeyEquivalent</key>
@@ -55,9 +55,9 @@
         <!-- Service 2: Link two selected files in Finder -->
         <dict>
             <key>NSMenuItem</key>
-            <dict><key>default</key><string>Hookmarks/Link Selected Files</string></dict>
+            <dict><key>default</key><string>Hitchmark/Link Selected Files</string></dict>
             <key>NSMessage</key>
-            <string>hookmarksLinkFiles</string>
+            <string>hitchmarkLinkFiles</string>
             <key>NSSendTypes</key>
             <array><string>NSFilenamesPboardType</string></array>
         </dict>
@@ -65,9 +65,9 @@
         <!-- Service 3: Show all links for a selected file -->
         <dict>
             <key>NSMenuItem</key>
-            <dict><key>default</key><string>Hookmarks/Show Links</string></dict>
+            <dict><key>default</key><string>Hitchmark/Show Links</string></dict>
             <key>NSMessage</key>
-            <string>hookmarksShowLinks</string>
+            <string>hitchmarkShowLinks</string>
             <key>NSSendTypes</key>
             <array><string>NSFilenamesPboardType</string></array>
         </dict>
@@ -75,9 +75,9 @@
         <!-- Service 4: Open hook:// URI from selected text (any app) -->
         <dict>
             <key>NSMenuItem</key>
-            <dict><key>default</key><string>Hookmarks/Open hook:// URI</string></dict>
+            <dict><key>default</key><string>Hitchmark/Open hook:// URI</string></dict>
             <key>NSMessage</key>
-            <string>hookmarksOpenURI</string>
+            <string>hitchmarkOpenURI</string>
             <key>NSSendTypes</key>
             <array><string>NSStringPboardType</string></array>
         </dict>
@@ -85,9 +85,9 @@
         <!-- Service 5: Replace selected file path text with its hook:// URI -->
         <dict>
             <key>NSMenuItem</key>
-            <dict><key>default</key><string>Hookmarks/Convert Path to hook:// URI</string></dict>
+            <dict><key>default</key><string>Hitchmark/Convert Path to hook:// URI</string></dict>
             <key>NSMessage</key>
-            <string>hookmarksConvertPath</string>
+            <string>hitchmarkConvertPath</string>
             <key>NSSendTypes</key>
             <array><string>NSStringPboardType</string></array>
             <key>NSReturnTypes</key>

@@ -29,12 +29,12 @@ mod linux {
         }
 
         fn default_store_path() -> PathBuf {
-            xdg::BaseDirectories::with_prefix("hookmarks")
+            xdg::BaseDirectories::with_prefix("hitchmark")
                 .unwrap_or_else(|_| xdg::BaseDirectories::new().unwrap())
                 .get_data_file("store.db")
                 .unwrap_or_else(|| {
                     let mut p = dirs_path();
-                    p.push("hookmarks");
+                    p.push("hitchmark");
                     p.push("store.db");
                     p
                 })
@@ -162,6 +162,6 @@ async fn main() -> anyhow::Result<()> {
 #[cfg(not(target_os = "linux"))]
 fn main() {
     eprintln!("hitchmark-daemon is only supported on Linux.");
-    eprintln!("On macOS, use the Hookmarks.app menu bar application.");
+    eprintln!("On macOS, use the Hitchmark.app menu bar application.");
     std::process::exit(1);
 }

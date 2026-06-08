@@ -1,8 +1,8 @@
 //
 //  HitchmarkApp.swift
-//  Hookmarks
+//  Hitchmark
 //
-//  Main entry point for the Hookmarks macOS application.
+//  Main entry point for the Hitchmark macOS application.
 //
 
 import SwiftUI

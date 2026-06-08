@@ -1,4 +1,4 @@
-//! Hookmarks CLI — command-line tool for stable, addressable document links.
+//! Hitchmark CLI — command-line tool for stable, addressable document links.
 //!
 //! Usage:
 //!   hk link <uri-a> <uri-b> [--note "..."]     Create a bidirectional link
@@ -20,7 +20,7 @@ mod path;
 #[derive(Parser)]
 #[command(name = "hk")]
 #[command(version)]
-#[command(about = "Hookmarks CLI: stable links to documents and paragraphs")]
+#[command(about = "Hitchmark CLI: stable links to documents and paragraphs")]
 #[command(
     long_about = "hk creates and manages hook:// URIs — stable, addressable links \
     to files, web pages, and intra-document locations.\n\nExamples:\n  \
