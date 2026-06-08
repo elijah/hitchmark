@@ -23,7 +23,7 @@ After tagging a release on GitHub:
 
 1. Update the `url` sha256 in `Formula/hookmarks.rb`:
    ```bash
-   curl -L https://github.com/yourusername/not-hookmarks/archive/refs/tags/vX.Y.Z.tar.gz | shasum -a 256
+   curl -L https://github.com/yourusername/hitchmark/archive/refs/tags/vX.Y.Z.tar.gz | shasum -a 256
    ```
 
 2. Build the bottle on each platform:
@@ -36,7 +36,7 @@ After tagging a release on GitHub:
 
 ## Formula notes
 
-- Builds only `hookmarks-cli` (`hk` binary) — not the macOS app or Linux daemon
+- Builds only `hitchmark-cli` (`hk` binary) — not the macOS app or Linux daemon
 - Uses `--locked` to ensure reproducible builds from `Cargo.lock`
 - Installs shell completions for bash, zsh, and fish automatically
 - Requires Rust (installed automatically by Homebrew as a build dependency)

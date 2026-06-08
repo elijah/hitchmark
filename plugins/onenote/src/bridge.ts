@@ -1,5 +1,5 @@
 /**
- * Hookmarks OneNote Add-in — Office JS bridge.
+ * Hitchmark OneNote Add-in — Office JS bridge.
  *
  * OneNote add-ins run in a browser sandbox and CANNOT spawn subprocesses.
  * All operations go through the `hk serve` HTTP API.
@@ -152,6 +152,6 @@ export class HKAddInBridge {
 function serverNotRunningMessage(): string {
   return (
     "hk serve is not running. Start it from your terminal: hk serve\n" +
-    "The Hookmarks OneNote add-in requires the local HTTP server."
+    "The Hitchmark OneNote add-in requires the local HTTP server."
   );
 }

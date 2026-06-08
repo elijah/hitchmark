@@ -8,13 +8,13 @@
 ### Files changed
 | File | Purpose |
 |------|---------|
-| `crates/hookmarks-daemon/src/main.rs` | Full daemon implementation (was stub) |
-| `crates/hookmarks-daemon/Cargo.toml` | Added `anyhow`, `tokio::process` |
-| `apps/linux-tray/not-hookmarks.desktop` | `.desktop` file, registers `x-scheme-handler/hook` |
-| `apps/linux-tray/hookmarks-daemon.service` | systemd user service with security hardening |
+| `crates/hitchmark-daemon/src/main.rs` | Full daemon implementation (was stub) |
+| `crates/hitchmark-daemon/Cargo.toml` | Added `anyhow`, `tokio::process` |
+| `apps/linux-tray/hitchmark.desktop` | `.desktop` file, registers `x-scheme-handler/hook` |
+| `apps/linux-tray/hitchmark-daemon.service` | systemd user service with security hardening |
 | `scripts/install-linux.sh` | Install/uninstall script |
 
-### DBus interface `org.not_hookmarks.Daemon1`
+### DBus interface `org.hitchmark.Daemon1`
 
 | Method | Args | Returns | Description |
 |--------|------|---------|-------------|

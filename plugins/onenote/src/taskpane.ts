@@ -1,5 +1,5 @@
 /**
- * Hookmarks OneNote Add-in — task pane entry point.
+ * Hitchmark OneNote Add-in — task pane entry point.
  *
  * Renders a simple UI in the Office task pane panel:
  *   - Shows current page's hook:// URI

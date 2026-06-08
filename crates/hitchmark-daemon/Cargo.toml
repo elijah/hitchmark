@@ -1,0 +1,21 @@
+[package]
+name = "hitchmark-daemon"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "hitchmark-daemon"
+path = "src/main.rs"
+
+[dependencies]
+hitchmark-core = { path = "../hitchmark-core" }
+anyhow = "1"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+zbus = { version = "4", features = ["async-io"] }
+tokio = { version = "1", features = ["full", "macros", "process"] }
+notify = "6"
+xdg = "2"

@@ -14,8 +14,8 @@ Thank you for considering a contribution to Hookmarks!
 
 ```bash
 # Clone
-git clone https://github.com/elw/not-hookmarks
-cd not-hookmarks
+git clone https://github.com/elw/hitchmark
+cd hitchmark
 
 # Install Rust (https://rustup.rs)
 rustup toolchain install stable
@@ -31,11 +31,11 @@ cd apps/macos && swift build
 ## Project structure
 
 ```
-not-hookmarks/
+hitchmark/
 ├── crates/
-│   ├── hookmarks-core/     # Core library (all shared logic)
-│   ├── hookmarks-cli/      # hk binary
-│   └── hookmarks-daemon/   # Linux DBus daemon
+│   ├── hitchmark-core/     # Core library (all shared logic)
+│   ├── hitchmark-cli/      # hk binary
+│   └── hitchmark-daemon/   # Linux DBus daemon
 ├── apps/
 │   ├── macos/              # SwiftUI menu bar app
 │   └── linux-tray/         # .desktop, systemd unit

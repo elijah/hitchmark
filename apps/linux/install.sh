@@ -293,7 +293,7 @@ echo "  your DE settings to open hook:// URIs from clipboard anywhere."
 echo ""
 if ! command -v hk &>/dev/null; then
     warn "hk not found in PATH. Install Hookmarks CLI:"
-    echo "    cargo install hookmarks-cli"
+    echo "    cargo install hitchmark-cli"
     echo "    # or: brew install hookmarks"
 fi
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

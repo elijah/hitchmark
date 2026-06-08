@@ -2,22 +2,22 @@
 import PackageDescription
 
 let package = Package(
-    name: "Hookmarks",
+    name: "Hitchmark",
     platforms: [
         .macOS(.v13)
     ],
     dependencies: [],
     targets: [
         .executableTarget(
-            name: "Hookmarks",
+            name: "Hitchmark",
             dependencies: [],
             swiftSettings: [
                 .unsafeFlags(["-suppress-warnings"], .when(configuration: .debug))
             ]
         ),
         .testTarget(
-            name: "HookmarksTests",
-            dependencies: ["Hookmarks"]
+            name: "HitchmarkTests",
+            dependencies: ["Hitchmark"]
         )
     ]
 )

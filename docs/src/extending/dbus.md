@@ -1,15 +1,15 @@
 # DBus Interface
 
-On Linux, `hookmarks-daemon` exposes a session bus service.
+On Linux, `hitchmark-daemon` exposes a session bus service.
 
 ## Service details
 
 | Property | Value |
 |----------|-------|
 | Bus | Session bus |
-| Service name | `org.not_hookmarks.Daemon` |
-| Object path | `/org/not_hookmarks/Daemon` |
-| Interface | `org.not_hookmarks.Daemon1` |
+| Service name | `org.hitchmark.Daemon` |
+| Object path | `/org/hitchmark/Daemon` |
+| Interface | `org.hitchmark.Daemon1` |
 
 ## Methods
 
@@ -19,9 +19,9 @@ Resolve a `hook://` URI and open the target with `xdg-open`.
 
 ```bash
 gdbus call --session \
-  --dest org.not_hookmarks.Daemon \
-  --object-path /org/not_hookmarks/Daemon \
-  --method org.not_hookmarks.Daemon1.OpenUri \
+  --dest org.hitchmark.Daemon \
+  --object-path /org/hitchmark/Daemon \
+  --method org.hitchmark.Daemon1.OpenUri \
   'hook://file/L1VzZXJzL2Vsd...'
 ```
 
@@ -37,9 +37,9 @@ Create a bidirectional link. Pass an empty string for `note` if not needed.
 
 ```bash
 gdbus call --session \
-  --dest org.not_hookmarks.Daemon \
-  --object-path /org/not_hookmarks/Daemon \
-  --method org.not_hookmarks.Daemon1.CreateLink \
+  --dest org.hitchmark.Daemon \
+  --object-path /org/hitchmark/Daemon \
+  --method org.hitchmark.Daemon1.CreateLink \
   'hook://file/L1Zvby9...' 'hook://file/L3Jhc...' 'See section 4'
 ```
 
@@ -53,9 +53,9 @@ Each element: `source\ttarget\tnote`
 
 ```bash
 gdbus call --session \
-  --dest org.not_hookmarks.Daemon \
-  --object-path /org/not_hookmarks/Daemon \
-  --method org.not_hookmarks.Daemon1.ListLinks \
+  --dest org.hitchmark.Daemon \
+  --object-path /org/hitchmark/Daemon \
+  --method org.hitchmark.Daemon1.ListLinks \
   'hook://file/L1Zvby9...'
 ```
 
@@ -65,9 +65,9 @@ Convert an absolute file path to a `hook://` URI.
 
 ```bash
 gdbus call --session \
-  --dest org.not_hookmarks.Daemon \
-  --object-path /org/not_hookmarks/Daemon \
-  --method org.not_hookmarks.Daemon1.FileToUri \
+  --dest org.hitchmark.Daemon \
+  --object-path /org/hitchmark/Daemon \
+  --method org.hitchmark.Daemon1.FileToUri \
   '/home/you/docs/project.md'
 # → ('hook://file/L2hvbWUveW91L2RvY3MvcHJvamVjdC5tZA==',)
 ```
@@ -76,8 +76,8 @@ gdbus call --session \
 
 ```bash
 gdbus introspect --session \
-  --dest org.not_hookmarks.Daemon \
-  --object-path /org/not_hookmarks/Daemon
+  --dest org.hitchmark.Daemon \
+  --object-path /org/hitchmark/Daemon
 ```
 
 ## Python example
@@ -87,10 +87,10 @@ import dbus
 
 session = dbus.SessionBus()
 proxy = session.get_object(
-    "org.not_hookmarks.Daemon",
-    "/org/not_hookmarks/Daemon"
+    "org.hitchmark.Daemon",
+    "/org/hitchmark/Daemon"
 )
-iface = dbus.Interface(proxy, "org.not_hookmarks.Daemon1")
+iface = dbus.Interface(proxy, "org.hitchmark.Daemon1")
 
 # Get URI for a file
 uri = iface.FileToUri("/home/you/docs/project.md")
@@ -109,13 +109,13 @@ for link in links:
 
 ```bash
 # Via systemd
-systemctl --user is-active hookmarks-daemon
+systemctl --user is-active hitchmark-daemon
 
 # Via DBus
 gdbus call --session \
   --dest org.freedesktop.DBus \
   --object-path /org/freedesktop/DBus \
   --method org.freedesktop.DBus.NameHasOwner \
-  'org.not_hookmarks.Daemon'
+  'org.hitchmark.Daemon'
 # → (true,) if running
 ```

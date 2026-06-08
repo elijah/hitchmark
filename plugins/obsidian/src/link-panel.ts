@@ -9,19 +9,19 @@ import {
   Menu,
   Notice,
 } from "obsidian";
-import type HookmarksPlugin from "./main";
+import type HitchmarkPlugin from "./main";
 import type { LinkRecord } from "./types";
 
-export const LINK_PANEL_VIEW_TYPE = "hookmarks-link-panel";
+export const LINK_PANEL_VIEW_TYPE = "hitchmark-link-panel";
 
 export class LinkPanelView extends ItemView {
-  private plugin: HookmarksPlugin;
+  private plugin: HitchmarkPlugin;
   private currentFile: TFile | null = null;
   private links: LinkRecord[] = [];
   private isLoading = false;
   private error: string | null = null;
 
-  constructor(leaf: WorkspaceLeaf, plugin: HookmarksPlugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: HitchmarkPlugin) {
     super(leaf);
     this.plugin = plugin;
   }
@@ -31,7 +31,7 @@ export class LinkPanelView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "Hookmarks Links";
+    return "Hitchmark Links";
   }
 
   getIcon(): string {
@@ -106,7 +106,7 @@ export class LinkPanelView extends ItemView {
     const container = this.getContainer();
     container.empty();
     container.createEl("div", {
-      cls: "hookmarks-panel-empty",
+      cls: "hitchmark-panel-empty",
       text: "Open a file to see its links.",
     });
   }
@@ -114,16 +114,16 @@ export class LinkPanelView extends ItemView {
   private renderLoading(): void {
     const container = this.getContainer();
     container.empty();
-    const wrap = container.createEl("div", { cls: "hookmarks-panel-loading" });
+    const wrap = container.createEl("div", { cls: "hitchmark-panel-loading" });
     wrap.createEl("span", { text: "Loading links…" });
   }
 
   private renderError(msg: string): void {
     const container = this.getContainer();
     container.empty();
-    const err = container.createEl("div", { cls: "hookmarks-panel-error" });
+    const err = container.createEl("div", { cls: "hitchmark-panel-error" });
     err.createEl("p", { text: "⚠️ Could not load links" });
-    err.createEl("p", { text: msg, cls: "hookmarks-panel-error-detail" });
+    err.createEl("p", { text: msg, cls: "hitchmark-panel-error-detail" });
     const btn = err.createEl("button", { text: "Retry" });
     btn.addEventListener("click", () => this.refresh());
   }
@@ -133,13 +133,13 @@ export class LinkPanelView extends ItemView {
     container.empty();
 
     // Header
-    const header = container.createEl("div", { cls: "hookmarks-panel-header" });
+    const header = container.createEl("div", { cls: "hitchmark-panel-header" });
     header.createEl("span", {
       text: `${this.links.length} link${this.links.length !== 1 ? "s" : ""}`,
-      cls: "hookmarks-panel-count",
+      cls: "hitchmark-panel-count",
     });
     const refreshBtn = header.createEl("button", {
-      cls: "hookmarks-panel-refresh",
+      cls: "hitchmark-panel-refresh",
       attr: { "aria-label": "Refresh links" },
     });
     refreshBtn.textContent = "↺";
@@ -147,14 +147,14 @@ export class LinkPanelView extends ItemView {
 
     if (this.links.length === 0) {
       container.createEl("div", {
-        cls: "hookmarks-panel-no-links",
+        cls: "hitchmark-panel-no-links",
         text: "No links yet for this file.",
       });
       return;
     }
 
     // Link list
-    const list = container.createEl("ul", { cls: "hookmarks-panel-list" });
+    const list = container.createEl("ul", { cls: "hitchmark-panel-list" });
     for (const link of this.links) {
       this.renderLinkItem(list, link, currentUri);
     }
@@ -165,7 +165,7 @@ export class LinkPanelView extends ItemView {
     link: LinkRecord,
     currentUri: string
   ): void {
-    const li = list.createEl("li", { cls: "hookmarks-panel-item" });
+    const li = list.createEl("li", { cls: "hitchmark-panel-item" });
 
     // Determine the "other" URI (not the current file)
     const otherUri =
@@ -174,10 +174,10 @@ export class LinkPanelView extends ItemView {
     // Display label: use file path portion of hook:// URI
     const label = this.uriToLabel(otherUri);
 
-    const itemContent = li.createEl("div", { cls: "hookmarks-panel-item-content" });
+    const itemContent = li.createEl("div", { cls: "hitchmark-panel-item-content" });
 
     const uriEl = itemContent.createEl("span", {
-      cls: "hookmarks-panel-item-uri",
+      cls: "hitchmark-panel-item-uri",
       text: label,
       attr: { title: otherUri },
     });
@@ -189,7 +189,7 @@ export class LinkPanelView extends ItemView {
 
     if (link.note) {
       itemContent.createEl("span", {
-        cls: "hookmarks-panel-item-note",
+        cls: "hitchmark-panel-item-note",
         text: link.note,
       });
     }

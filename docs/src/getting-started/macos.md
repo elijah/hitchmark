@@ -10,9 +10,9 @@
 
 ```bash
 # From source
-git clone https://github.com/elw/not-hookmarks
-cd not-hookmarks
-cargo build --release -p hookmarks-cli
+git clone https://github.com/elw/hitchmark
+cd hitchmark
+cargo build --release -p hitchmark-cli
 cp target/release/hk /usr/local/bin/hk
 ```
 

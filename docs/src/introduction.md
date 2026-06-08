@@ -53,7 +53,7 @@ Query either end to discover the other.
        └──────────────────┼────────────────┘
                           │ subprocess / DBus
                    ┌──────┴───────┐
-                   │ hookmarks-core│
+                   │ hitchmark-core│
                    │  (Rust lib)  │
                    └──────┬───────┘
                           │

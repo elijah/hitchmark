@@ -27,13 +27,13 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - `specs/uri-scheme.md` — `hook://` URI scheme v0.1
 - `specs/purple-numbers.md` — purple number algorithm v0.1
 
-**Step 2: hookmarks-core**
+**Step 2: hitchmark-core**
 - `HookUri` parser and serializer
 - `PurpleNumberGenerator` (SHA-256 → base58, collision detection)
 - `LinkStore` — SQLite-backed bidirectional link storage
 - 8 unit tests, zero unsafe code
 
-**Step 3: hookmarks-cli (hk)**
+**Step 3: hitchmark-cli (hk)**
 - `hk link` — create bidirectional links
 - `hk list` — query links for a resource
 - `hk open` — resolve and open hook:// URIs
@@ -53,8 +53,8 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - Info.plist with hook:// URL scheme registration
 
 **Step 5: Linux daemon**
-- DBus session service: org.not_hookmarks.Daemon
-- Interface org.not_hookmarks.Daemon1: OpenUri, CreateLink, ListLinks, FileToUri
+- DBus session service: org.hitchmark.Daemon
+- Interface org.hitchmark.Daemon1: OpenUri, CreateLink, ListLinks, FileToUri
 - .desktop file with x-scheme-handler/hook
 - systemd user service with security hardening
 - install-linux.sh with --uninstall support
@@ -74,7 +74,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 ## Algorithm compatibility
 
 The purple number algorithm is implemented identically in:
-- **Rust** (`hookmarks-core`) — `PurpleNumberGenerator::generate()`
+- **Rust** (`hitchmark-core`) — `PurpleNumberGenerator::generate()`
 - **TypeScript** (`plugins/obsidian`) — `generatePurpleId()`
 
 Test vector: `"Hello world"` → `7nxxnx` (both implementations)

@@ -68,8 +68,8 @@ apps/macos/
 ### Step 1: Build the Rust CLI (if not already done)
 
 ```bash
-cd /Users/elw/not-hookmarks
-cargo build --release -p hookmarks-cli
+cd /Users/elw/hitchmark
+cargo build --release -p hitchmark-cli
 ```
 
 The binary will be at `target/release/hk`. Install it:
@@ -183,7 +183,7 @@ The menu bar icon is a `.link.circle.fill` SF Symbol (blue). Clicking opens a me
 ## Troubleshooting
 
 ### "hk command not found"
-- Ensure `hk` is built: `cargo build --release -p hookmarks-cli`
+- Ensure `hk` is built: `cargo build --release -p hitchmark-cli`
 - Install to `/usr/local/bin/hk`
 - Update CLI path in Preferences → CLI
 
@@ -199,7 +199,7 @@ The menu bar icon is a `.link.circle.fill` SF Symbol (blue). Clicking opens a me
 ### Subprocess hangs
 - Check that `hk` is responsive: `hk list hook://example.com`
 - Restart the macOS app
-- File an issue at https://github.com/elw/not-hookmarks/issues
+- File an issue at https://github.com/elw/hitchmark/issues
 
 ## Future Work
 

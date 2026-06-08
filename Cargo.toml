@@ -1,17 +1,17 @@
 [workspace]
 members = [
-    "crates/hookmarks-core",
-    "crates/hookmarks-cli",
-    "crates/hookmarks-daemon",
+    "crates/hitchmark-core",
+    "crates/hitchmark-cli",
+    "crates/hitchmark-daemon",
 ]
 resolver = "2"
 
 [workspace.package]
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license = "MIT"
-authors = ["Hookmarks Contributors"]
-repository = "https://github.com/yourusername/not-hookmarks"
+authors = ["Hitchmark Contributors"]
+repository = "https://github.com/yourusername/hitchmark"
 rust-version = "1.75"
 
 [workspace.lints.rust]

@@ -117,7 +117,7 @@ paragraph text → TextEncoder → SHA-256 (@noble/hashes) → base58 (BigInt) �
 
 ## To Test in Obsidian
 
-1. Build `hk` CLI: `cargo build --release -p hookmarks-cli && cp target/release/hk /usr/local/bin/hk`
+1. Build `hk` CLI: `cargo build --release -p hitchmark-cli && cp target/release/hk /usr/local/bin/hk`
 2. Build plugin: `cd plugins/obsidian && npm install && npm run build`
 3. Copy `plugins/obsidian/` to `<vault>/.obsidian/plugins/hookmarks/`
 4. Enable in Obsidian Settings → Community Plugins

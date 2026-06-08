@@ -45,7 +45,7 @@ class PurpleNumberWidget extends WidgetType {
 
   toDOM(): HTMLElement {
     const el = document.createElement("span");
-    el.className = "hookmarks-purple-number";
+    el.className = "hitchmark-purple-number";
     el.textContent = `§${this.id}`;
     el.setAttribute("aria-label", `Purple number ${this.id} — click to copy hook URI`);
     el.setAttribute("role", "button");

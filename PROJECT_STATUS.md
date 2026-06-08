@@ -42,7 +42,7 @@ XDG-compliant config (`~/.config/hookmarks/`), panic-free error handling.
 Menu bar app (`apps/macos/`) — MenuBarExtra with 3-tab UI (Link / List / Finder), HTTP transport with subprocess fallback, preferences window (CLI path, server URL, hotkey, launch-at-login via SMAppService), `hook://` URL scheme handler, AppleScript Finder/Safari bridges. Builds clean with Swift Package Manager (macOS 13+, zero external deps). **24 Swift unit tests passing.**
 
 ### Step 5 — Linux Daemon
-`hookmarks-daemon` crate — zbus/DBus session service with 4 methods (`OpenUri`, `CreateLink`, `ListLinks`, `FileToUri`), systemd user service + security hardening, `install-linux.sh`, `#[cfg(target_os = "linux")]` gated.
+`hitchmark-daemon` crate — zbus/DBus session service with 4 methods (`OpenUri`, `CreateLink`, `ListLinks`, `FileToUri`), systemd user service + security hardening, `install-linux.sh`, `#[cfg(target_os = "linux")]` gated.
 
 ### Step 6 — Obsidian Plugin
 TypeScript plugin (`plugins/obsidian/`) — HTTP-first bridge with subprocess fallback, CM6 ViewPlugin for live purple number decorations. Purple ID `"Hello world"` → `7nxxnx` verified identical in Rust and TypeScript. **12 Jest tests passing.**
@@ -69,11 +69,11 @@ mdBook site (`docs/src/`) — 12 pages across 5 sections (Getting Started, URI S
 ## Repository Structure
 
 ```
-not-hookmarks/
+hitchmark/
 ├── crates/
-│   ├── hookmarks-core/      # Core library (URI, purple, store) — 22 tests
-│   ├── hookmarks-cli/       # `hk` binary (8 commands)
-│   └── hookmarks-daemon/    # Linux DBus daemon
+│   ├── hitchmark-core/      # Core library (URI, purple, store) — 22 tests
+│   ├── hitchmark-cli/       # `hk` binary (8 commands)
+│   └── hitchmark-daemon/    # Linux DBus daemon
 ├── apps/
 │   └── macos/               # SwiftUI menu bar app — 24 tests
 ├── plugins/

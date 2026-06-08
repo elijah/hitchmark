@@ -34,7 +34,7 @@
 
 ### Linux Daemon
 
-- The daemon exposes a DBus interface at `org.not_hookmarks.Daemon`
+- The daemon exposes a DBus interface at `org.hitchmark.Daemon`
 - Any process running under your user can call DBus methods
 - The daemon respects file permissions enforced by the kernel
 

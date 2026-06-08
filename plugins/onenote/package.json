@@ -1,6 +1,6 @@
 {
-  "name": "hookmarks-onenote",
-  "displayName": "Hookmarks for OneNote",
+  "name": "hitchmark-onenote",
+  "displayName": "Hitchmark for OneNote",
   "version": "0.1.0",
   "description": "Stable hook:// links and purple numbers for OneNote pages",
   "license": "MIT",

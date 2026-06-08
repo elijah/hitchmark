@@ -3,12 +3,12 @@
  */
 
 import { App, Notice, PluginSettingTab, Setting } from "obsidian";
-import type HookmarksPlugin from "./main";
+import type HitchmarkPlugin from "./main";
 
-export class HookmarksSettingsTab extends PluginSettingTab {
-  plugin: HookmarksPlugin;
+export class HitchmarkSettingsTab extends PluginSettingTab {
+  plugin: HitchmarkPlugin;
 
-  constructor(app: App, plugin: HookmarksPlugin) {
+  constructor(app: App, plugin: HitchmarkPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
@@ -16,7 +16,7 @@ export class HookmarksSettingsTab extends PluginSettingTab {
   display(): void {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "Hookmarks" });
+    containerEl.createEl("h2", { text: "Hitchmark" });
 
     // ----- Purple Numbers -----
     containerEl.createEl("h3", { text: "Purple Numbers" });
@@ -100,7 +100,7 @@ export class HookmarksSettingsTab extends PluginSettingTab {
             new Notice("✅ hk is reachable");
           } else {
             new Notice(
-              "❌ hk not found. Install it with: cargo install hookmarks-cli"
+              "❌ hk not found. Install it with: cargo install hitchmark-cli"
             );
           }
         })
@@ -127,13 +127,13 @@ export class HookmarksSettingsTab extends PluginSettingTab {
 
     // ----- Info -----
     containerEl.createEl("h3", { text: "About" });
-    const info = containerEl.createEl("div", { cls: "hookmarks-settings-info" });
+    const info = containerEl.createEl("div", { cls: "hitchmark-settings-info" });
     info.createEl("p", {
-      text: "Hookmarks: stable, addressable links to documents and paragraphs.",
+      text: "Hitchmark: stable, addressable links to documents and paragraphs.",
     });
     const link = info.createEl("a", {
-      text: "GitHub: not-hookmarks",
-      href: "https://github.com/elw/not-hookmarks",
+      text: "GitHub: hitchmark",
+      href: "https://github.com/elw/hitchmark",
     });
     link.setAttribute("target", "_blank");
   }

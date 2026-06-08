@@ -22,7 +22,7 @@ position. This means:
 ## Algorithm
 
 The algorithm is defined in [`specs/purple-numbers.md`](../../../specs/purple-numbers.md)
-and implemented identically in Rust (`hookmarks-core`) and TypeScript
+and implemented identically in Rust (`hitchmark-core`) and TypeScript
 (`plugins/obsidian`).
 
 ```
@@ -54,7 +54,7 @@ purple_id = encoded[:6]
 
 Verified cross-language:
 ```
-Rust (hookmarks-core):  "Hello world" → 7nxxnx ✅
+Rust (hitchmark-core):  "Hello world" → 7nxxnx ✅
 TypeScript (plugin):    "Hello world" → 7nxxnx ✅
 ```
 

@@ -4,7 +4,7 @@
  */
 
 // Listen for keyboard shortcut (Shift+Cmd+H on mac, triggered via popup)
-document.addEventListener("hookmarks:copy-uri", () => {
+document.addEventListener("hitchmark:copy-uri", () => {
   chrome.runtime.sendMessage(
     { type: "buildUri", payload: { url: window.location.href } },
     (res: { uri: string }) => {

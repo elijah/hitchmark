@@ -6,20 +6,20 @@
 #   ./scripts/install-linux.sh --uninstall  # Remove Hookmarks
 #
 # This script:
-#   1. Installs the hookmarks-daemon binary to ~/.local/bin/
+#   1. Installs the hitchmark-daemon binary to ~/.local/bin/
 #   2. Registers the hook:// URI scheme via xdg-mime
 #   3. Installs the systemd user service and enables it
 #   4. Verifies the installation
 
 set -euo pipefail
 
-BINARY_NAME="hookmarks-daemon"
+BINARY_NAME="hitchmark-daemon"
 BINARY_SRC="./target/release/${BINARY_NAME}"
 INSTALL_DIR="${HOME}/.local/bin"
-DESKTOP_FILE="./apps/linux-tray/not-hookmarks.desktop"
+DESKTOP_FILE="./apps/linux-tray/hitchmark.desktop"
 DESKTOP_DIR="${HOME}/.local/share/applications"
 SYSTEMD_DIR="${HOME}/.config/systemd/user"
-SERVICE_FILE="./apps/linux-tray/hookmarks-daemon.service"
+SERVICE_FILE="./apps/linux-tray/hitchmark-daemon.service"
 DATA_DIR="${HOME}/.local/share/hookmarks"
 
 RED='\033[0;31m'
@@ -35,13 +35,13 @@ error() { echo -e "${RED}[hookmarks]${NC} ❌ $*" >&2; }
 if [[ "${1:-}" == "--uninstall" ]]; then
     info "Uninstalling Hookmarks..."
 
-    systemctl --user stop hookmarks-daemon 2>/dev/null || true
-    systemctl --user disable hookmarks-daemon 2>/dev/null || true
-    rm -f "${SYSTEMD_DIR}/hookmarks-daemon.service"
+    systemctl --user stop hitchmark-daemon 2>/dev/null || true
+    systemctl --user disable hitchmark-daemon 2>/dev/null || true
+    rm -f "${SYSTEMD_DIR}/hitchmark-daemon.service"
     systemctl --user daemon-reload 2>/dev/null || true
 
     xdg-mime default "" x-scheme-handler/hook 2>/dev/null || true
-    rm -f "${DESKTOP_DIR}/not-hookmarks.desktop"
+    rm -f "${DESKTOP_DIR}/hitchmark.desktop"
     update-desktop-database "${DESKTOP_DIR}" 2>/dev/null || true
 
     rm -f "${INSTALL_DIR}/${BINARY_NAME}"
@@ -57,7 +57,7 @@ if [[ ! -f "${BINARY_SRC}" ]]; then
     error "Binary not found at ${BINARY_SRC}"
     echo ""
     echo "Build the release binary first:"
-    echo "  cargo build --release -p hookmarks-daemon"
+    echo "  cargo build --release -p hitchmark-daemon"
     exit 1
 fi
 
@@ -87,14 +87,14 @@ fi
 # ----- Install desktop file and register URI scheme -----
 info "Installing .desktop file and registering hook:// URI scheme..."
 mkdir -p "${DESKTOP_DIR}"
-install -m 644 "${DESKTOP_FILE}" "${DESKTOP_DIR}/not-hookmarks.desktop"
+install -m 644 "${DESKTOP_FILE}" "${DESKTOP_DIR}/hitchmark.desktop"
 update-desktop-database "${DESKTOP_DIR}" 2>/dev/null || true
-xdg-mime default not-hookmarks.desktop x-scheme-handler/hook
+xdg-mime default hitchmark.desktop x-scheme-handler/hook
 ok "hook:// URI scheme registered"
 
 # Verify registration
 HANDLER=$(xdg-mime query default x-scheme-handler/hook 2>/dev/null || echo "")
-if [[ "${HANDLER}" == "not-hookmarks.desktop" ]]; then
+if [[ "${HANDLER}" == "hitchmark.desktop" ]]; then
     ok "URI scheme verified: hook:// → ${HANDLER}"
 else
     error "URI scheme registration may have failed (got: ${HANDLER})"
@@ -106,20 +106,20 @@ if command -v systemctl &>/dev/null; then
     mkdir -p "${SYSTEMD_DIR}"
 
     # Substitute %h with actual home directory in service file
-    sed "s|%h|${HOME}|g" "${SERVICE_FILE}" > "${SYSTEMD_DIR}/hookmarks-daemon.service"
+    sed "s|%h|${HOME}|g" "${SERVICE_FILE}" > "${SYSTEMD_DIR}/hitchmark-daemon.service"
 
     systemctl --user daemon-reload
-    systemctl --user enable hookmarks-daemon
-    systemctl --user start hookmarks-daemon
+    systemctl --user enable hitchmark-daemon
+    systemctl --user start hitchmark-daemon
 
     # Give it a moment to start
     sleep 1
 
-    if systemctl --user is-active --quiet hookmarks-daemon; then
+    if systemctl --user is-active --quiet hitchmark-daemon; then
         ok "Daemon running (systemd user service active)"
     else
         error "Daemon failed to start. Check logs:"
-        echo "  journalctl --user -u hookmarks-daemon -n 20"
+        echo "  journalctl --user -u hitchmark-daemon -n 20"
     fi
 else
     info "systemctl not available — skipping service installation"
@@ -140,9 +140,9 @@ echo "    xdg-open hook://file/$(echo -n /home/you/document.md | base64 -w0)"
 echo ""
 echo "  DBus interface (once daemon is running):"
 echo "    gdbus call --session \\"
-echo "      --dest org.not_hookmarks.Daemon \\"
-echo "      --object-path /org/not_hookmarks/Daemon \\"
-echo "      --method org.not_hookmarks.Daemon1.FileToUri \\"
+echo "      --dest org.hitchmark.Daemon \\"
+echo "      --object-path /org/hitchmark/Daemon \\"
+echo "      --method org.hitchmark.Daemon1.FileToUri \\"
 echo "      '/home/you/document.md'"
 echo ""
 echo "  Uninstall:"

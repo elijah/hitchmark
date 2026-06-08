@@ -10,7 +10,7 @@ I don't have firecrawl/exa MCP tools configured, so I'll draw on existing knowle
 
 ---
 
-## not-hookmarks — Project Blueprint
+## hitchmark — Project Blueprint
 
 ### What we're building
 
@@ -29,14 +29,14 @@ I don't have firecrawl/exa MCP tools configured, so I'll draw on existing knowle
 ### Monorepo Layout (target)
 
 ```
-not-hookmarks/
+hitchmark/
 ├── specs/
 │   ├── uri-scheme.md          # normative spec for hook:// URIs
 │   └── purple-numbers.md      # normative spec for paragraph addressing
 ├── crates/
-│   ├── hookmarks-core/        # URI, storage, purple-number engine
-│   ├── hookmarks-cli/         # CLI binary (wraps core)
-│   └── hookmarks-daemon/      # Linux system daemon
+│   ├── hitchmark-core/        # URI, storage, purple-number engine
+│   ├── hitchmark-cli/         # CLI binary (wraps core)
+│   └── hitchmark-daemon/      # Linux system daemon
 ├── apps/
 │   ├── macos/                 # Swift package / Xcode project
 │   └── linux-tray/            # Rust (iced or tauri) system tray
@@ -54,7 +54,7 @@ not-hookmarks/
 #### **Step 0 — Repository Governance & Monorepo Scaffold**
 *Serial prerequisite. All other steps depend on this.*
 
-**Context brief:** Empty git repo at `~/not-hookmarks`. No code yet.
+**Context brief:** Empty git repo at `~/hitchmark`. No code yet.
 
 Tasks:
 - Choose license (MIT recommended for ecosystem friendliness)
@@ -97,7 +97,7 @@ Exit criteria: Both specs reviewed by at least one other person; merged to `main
 
 ---
 
-#### **Step 2 — `hookmarks-core` Rust Crate**
+#### **Step 2 — `hitchmark-core` Rust Crate**
 *Depends on Step 1. This is the heart of everything.*
 
 **Context brief:** Cross-platform Rust library. No I/O dependencies beyond `rusqlite`. Must compile on macOS and Linux. Other components link against this.
@@ -116,13 +116,13 @@ Exit criteria: `cargo test` passes; `cargo clippy -- -D warnings` clean.
 
 ---
 
-#### **Step 3 — `hookmarks-cli` Binary**
+#### **Step 3 — `hitchmark-cli` Binary**
 *Depends on Step 2. Can be developed alongside Step 4.*
 
 **Context brief:** Single `hk` binary. Links documents, queries the graph, opens hook:// URIs. Works headlessly in scripts.
 
 Tasks:
-- `Cargo.toml`: deps = `clap` (derive), `hookmarks-core`, `opener` (cross-platform open), `dirs`
+- `Cargo.toml`: deps = `clap` (derive), `hitchmark-core`, `opener` (cross-platform open), `dirs`
 - Subcommands:
   - `hk link <uri-a> <uri-b> [--note "..."]` — create bidirectional link
   - `hk unlink <uri-a> <uri-b>`
@@ -147,7 +147,7 @@ Tasks:
 - New Xcode project at `apps/macos/` (Swift Package + app target)
 - `Info.plist`: register `hook` URL scheme (`CFBundleURLSchemes`)
 - `AppDelegate`: handle `application(_:open:)` → dispatch to Rust core via FFI or subprocess
-- Rust FFI bridge: expose `hookmarks-core` as a C-compatible dylib (`cbindgen` headers); OR call `hk` subprocess (simpler, ship later)
+- Rust FFI bridge: expose `hitchmark-core` as a C-compatible dylib (`cbindgen` headers); OR call `hk` subprocess (simpler, ship later)
 - Menu-bar UI (SwiftUI `MenuBarExtra`):
   - "Copy hook:// link for current document" — uses accessibility/AppleScript to get frontmost app's current file
   - "Links to this document" — shows linked items, click to open
@@ -161,21 +161,21 @@ Exit criteria: App launches; `hook://` URI pasted into Safari opens and resolves
 
 ---
 
-#### **Step 5 — Linux Daemon (`hookmarks-daemon`)**
+#### **Step 5 — Linux Daemon (`hitchmark-daemon`)**
 *Depends on Step 2. Independent of Steps 3, 4.*
 
 **Context brief:** Rust background service. Handles `hook://` URIs via xdg-open. Provides DBus interface for desktop shell integration.
 
 Tasks:
-- `Cargo.toml`: deps = `hookmarks-core`, `zbus` (async DBus), `tokio`, `notify` (file watching), `xdg`
-- DBus service name: `org.not_hookmarks.Daemon`
+- `Cargo.toml`: deps = `hitchmark-core`, `zbus` (async DBus), `tokio`, `notify` (file watching), `xdg`
+- DBus service name: `org.hitchmark.Daemon`
 - DBus interface: `OpenURI(uri: String)`, `CreateLink(a: String, b: String)`, `ListLinks(uri: String) -> Vec<String>`
 - Register `hook` URI scheme via `.desktop` file:
   ```
-  apps/linux-tray/not-hookmarks.desktop
+  apps/linux-tray/hitchmark.desktop
   MimeType=x-scheme-handler/hook;
   ```
-- `scripts/install-linux.sh`: runs `xdg-mime default not-hookmarks.desktop x-scheme-handler/hook`
+- `scripts/install-linux.sh`: runs `xdg-mime default hitchmark.desktop x-scheme-handler/hook`
 - Optional: system tray via `ksni` or `tauri-plugin-system-tray` (feature-flagged, not required for v0.1)
 - Systemd user service unit file
 
@@ -259,7 +259,7 @@ Step 0 (scaffold)
 | Purple ID collisions within a document | Salt with doc path; detect at write time and extend to 8 chars |
 | macOS notarization friction | Document steps early; use GitHub Actions with secrets for signing |
 | Obsidian plugin review timeline (2–8 weeks) | Publish as BRAT-installable from day one |
-| hook:// conflicts with real Hookmarks app | Add `x-not-hookmarks://` alias; document coexistence |
+| hook:// conflicts with real Hookmarks app | Add `x-hitchmark://` alias; document coexistence |
 | FFI complexity macOS↔Rust | Ship subprocess bridge first; FFI is a v0.2 feature |
 
 ---

@@ -1,5 +1,5 @@
 /**
- * HookmarksBridge — Safari Web Extension
+ * HitchmarkBridge — Safari Web Extension
  *
  * Communicates with `hk serve` running on localhost:2701.
  * All operations are HTTP-only (no subprocess access from browser extensions).
@@ -129,7 +129,7 @@ export class HKSafariBridge {
 
   serverNotRunningMessage(): string {
     return (
-      `Hookmarks server is not running.\n\n` +
+      `Hitchmark server is not running.\n\n` +
       `Start it with:  hk serve\n\n` +
       `The server must be running on ${this.serverUrl} for the Safari extension to work.`
     );

@@ -1,5 +1,5 @@
 /**
- * Hookmarks OneNote Add-in — ribbon command functions.
+ * Hitchmark OneNote Add-in — ribbon command functions.
  * These run as "function commands" (no task pane, immediate execution).
  */
 
@@ -19,7 +19,7 @@ export async function copyCurrentPageUri(event: Office.AddinCommands.Event): Pro
       await navigator.clipboard.writeText(uri);
     });
   } catch (e) {
-    console.error("Hookmarks copyCurrentPageUri failed:", e);
+    console.error("Hitchmark copyCurrentPageUri failed:", e);
   } finally {
     event.completed();
   }
