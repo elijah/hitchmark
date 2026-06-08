@@ -1,10 +1,8 @@
-class Hookmarks < Formula
+class Hitchmark < Formula
   desc "Stable, addressable links to documents and paragraphs via hook:// URIs"
   homepage "https://github.com/elijah/hitchmark"
-  url "https://github.com/elijah/hitchmark/archive/refs/tags/v0.1.0.tar.gz"
-  # Update sha256 after publishing the GitHub release:
-  #   curl -L <url> | shasum -a 256
-  sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+  url "https://github.com/elijah/hitchmark/archive/refs/tags/v0.2.1.tar.gz"
+  sha256 "51e2de6868273774fd67b3b376e70aeacb7bab6a3588b4ae310c1ba9d6af7c27"
   license "MIT"
   head "https://github.com/elijah/hitchmark.git", branch: "master"
 
@@ -32,13 +30,14 @@ class Hookmarks < Formula
 
   def caveats
     <<~EOS
-      hookmarks stores links in: ~/.config/hookmarks/store.db
+      hitchmark stores links in: ~/.hitchmark/store.db
+      Config lives in: ~/.config/hitchmark/
 
       To start the local HTTP API server (for Obsidian plugin / editor integrations):
         hk serve
 
       To install the macOS menu bar app, build from source:
-        cd #{HOMEBREW_PREFIX}/Cellar/hookmarks/#{version}
+        cd #{HOMEBREW_PREFIX}/Cellar/hitchmark/#{version}
         swift build -c release --package-path apps/macos
     EOS
   end
