@@ -1,0 +1,8 @@
+[Nemo Action]
+Name=Hookmarks: Copy hook:// URI
+Comment=Copy a stable hook:// URI for this file to the clipboard
+Exec=hookmarks-copy-uri %F
+Icon-Name=edit-copy
+Selection=Any
+Extensions=any;
+EscapeSpaces=true

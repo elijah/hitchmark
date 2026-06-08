@@ -1,0 +1,32 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=all/all;
+Actions=CopyURI;LinkFiles;ShowLinks;Separator;OpenURI
+X-KDE-Submenu=Hookmarks
+X-KDE-Priority=TopLevel
+Icon=emblem-symbolic-link
+Version=1.0
+
+[Desktop Action CopyURI]
+Name=Copy hook:// URI
+Icon=edit-copy
+Exec=hookmarks-copy-uri %f
+
+[Desktop Action LinkFiles]
+Name=Link Selected Files
+Icon=emblem-symbolic-link
+Exec=hookmarks-link-files %F
+
+[Desktop Action ShowLinks]
+Name=Show Links
+Icon=edit-find
+Exec=hookmarks-show-links %f
+
+[Desktop Action Separator]
+Name=separator
+
+[Desktop Action OpenURI]
+Name=Open hook:// URI from Clipboard
+Icon=go-jump
+Exec=hookmarks-open-uri

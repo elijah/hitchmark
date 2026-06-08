@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Nautilus script: Show links for selected file.
+# Installed to: ~/.local/share/nautilus/scripts/Hookmarks - Show Links
+# Right-click → Scripts → Hookmarks - Show Links
+
+set -euo pipefail
+SCRIPTS_DIR="${HK_SCRIPTS_DIR:-$HOME/.local/share/hookmarks/scripts}"
+
+FILE=$(echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" | head -1)
+[[ -z "$FILE" ]] && FILE="${1:-}"
+[[ -z "$FILE" ]] && exit 0
+
+exec "${SCRIPTS_DIR}/hk-show-links.sh" "$FILE"

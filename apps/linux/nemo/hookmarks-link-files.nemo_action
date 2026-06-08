@@ -1,0 +1,10 @@
+[Nemo Action]
+Name=Hookmarks: Link Two Files
+Comment=Create a bidirectional Hookmarks link between two selected files
+Exec=hookmarks-link-files %F
+Icon-Name=emblem-symbolic-link
+Selection=Multiple
+MinFileCount=2
+MaxFileCount=2
+Extensions=any;
+EscapeSpaces=true
