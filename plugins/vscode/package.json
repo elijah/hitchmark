@@ -1,0 +1,118 @@
+{
+  "name": "hookmarks",
+  "displayName": "Hookmarks",
+  "description": "Stable, addressable hook:// links to files and paragraphs",
+  "version": "0.1.0",
+  "publisher": "hookmarks",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/not-hookmarks"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "keywords": ["hookmarks", "hook", "links", "purple numbers", "addressable"],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "hookmarks.copyUri",
+        "title": "Hookmarks: Copy hook:// URI for Current File"
+      },
+      {
+        "command": "hookmarks.copyUriWithParagraph",
+        "title": "Hookmarks: Copy hook:// URI with Paragraph ID"
+      },
+      {
+        "command": "hookmarks.listLinks",
+        "title": "Hookmarks: Show Links for Current File"
+      },
+      {
+        "command": "hookmarks.openUri",
+        "title": "Hookmarks: Open hook:// URI from Clipboard"
+      },
+      {
+        "command": "hookmarks.showPurpleNumbers",
+        "title": "Hookmarks: Show Purple Numbers for Current File"
+      },
+      {
+        "command": "hookmarks.startServer",
+        "title": "Hookmarks: Start hk serve"
+      }
+    ],
+    "configuration": {
+      "title": "Hookmarks",
+      "properties": {
+        "hookmarks.cliPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the hk binary. Leave blank to auto-detect."
+        },
+        "hookmarks.serverUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:2701",
+          "description": "URL of the hk serve HTTP server. Leave blank to use subprocess."
+        },
+        "hookmarks.autoDetectServer": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically use the HTTP server if it is running."
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "hookmarks.copyUri",
+          "group": "hookmarks@1",
+          "when": "editorFocus"
+        },
+        {
+          "command": "hookmarks.copyUriWithParagraph",
+          "group": "hookmarks@2",
+          "when": "editorFocus && editorHasSelection"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "hookmarks.copyUri",
+          "group": "hookmarks@1"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "hookmarks.copyUri",
+        "key": "ctrl+alt+h",
+        "mac": "ctrl+alt+h",
+        "when": "editorFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.3.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": ["**/src/**/*.test.ts"]
+  }
+}

@@ -7,6 +7,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased] — v0.2.0
+
+### Added
+
+#### CLI
+- `hk serve` — local axum HTTP API server (GET /health, /links, /uri, /purple; POST /links; DELETE /links)
+- `hk delete <a> <b> [-y]` — remove a bidirectional link
+- `hk list --json` — machine-readable JSON output
+- `hk completions <shell>` — generate bash/zsh/fish/elvish/powershell completions
+
+#### macOS App
+- All preferences now persisted via `@AppStorage` (UserDefaults)
+- Launch at login via `SMAppService` (macOS 13+)
+- Icon style picker wired (was hardcoded)
+- Hotkey display reads from stored value
+- CLI tab: auto-detect path shown, server URL field with live probe button
+- HTTP transport in `HKBridge` — uses `hk serve` when available, falls back to subprocess
+
+#### Obsidian Plugin
+- Bridge updated to use `hk list --json` (was fragile tab-parsing)
+- HTTP transport added — uses `hk serve` when `serverUrl` is set
+
+#### VS Code Extension (`plugins/vscode/`) — new
+- 6 commands: Copy URI, Copy URI with paragraph ID, List Links, Open URI, Show Purple Numbers, Start Server
+- Context menus on editor and Explorer
+- `Ctrl+Alt+H` keybinding for copy URI
+- HTTP-first bridge with subprocess fallback
+- 7 Jest tests
+
+#### OneNote Add-in (`plugins/onenote/`) — new
+- Office Add-in (TypeScript, Office JS API)
+- Platforms: OneNote Online (macOS + Windows), OneNote for Windows desktop
+- Task pane UI: current page URI, link list, create/delete links
+- Ribbon button: one-click copy of page hook:// URI
+- `HKAddInBridge.buildPageUri()` — URL-safe base64 encoding of OneNote page URLs
+- Requires `hk serve` (browser sandbox cannot spawn subprocesses)
+- 10 Jest tests
+
+#### Infrastructure
+- `Formula/hookmarks.rb` — Homebrew formula (builds `hk` from source, installs completions)
+- `deny.toml` — license allow-list, CVE deny, wildcard dep ban
+- CI expanded: MSRV (1.75), `cargo deny`, `cargo audit`, Node.js tests
+- MSRV pinned: `rust-version = "1.75"` in workspace `Cargo.toml`
+
+#### Tests
+- 24 Swift unit tests (HKBridge path resolution, prefs key contracts, error display)
+- 7 VS Code bridge tests
+- 10 OneNote bridge tests
+
+### Fixed
+- SQLite WAL mode, 5s busy_timeout, `foreign_keys ON`
+- Graceful `LinkAlreadyExists` error (no raw DB error surfaced to users)
+- Schema version table with migration guard
+- All `expect()` panics in `config.rs` replaced with `anyhow::Result`
+- `HKBridge.locateHK()` now checks user `cliPath` pref before auto-detecting
+
+---
+
 ## [0.1.0] — 2026-06-07
 
 First complete release covering all 7 blueprint steps plus a stability hardening pass.
