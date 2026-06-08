@@ -2,7 +2,7 @@
 
 use thiserror::Error;
 
-/// Hookmarks result type.
+/// Hitchmark result type.
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Error types.
@@ -34,7 +34,7 @@ pub enum Error {
     },
 
     /// Database schema version mismatch — database was created by a newer version
-    #[error("Database schema version {found} is newer than supported version {supported}. Please upgrade hookmarks.")]
+    #[error("Database schema version {found} is newer than supported version {supported}. Please upgrade hitchmark.")]
     SchemaTooNew {
         /// Schema version found in the database
         found: u32,

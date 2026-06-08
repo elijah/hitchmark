@@ -92,7 +92,7 @@ impl LinkStore {
                 let _ = v;
             }
             Some(v) => {
-                // Database was written by a newer version of hookmarks
+                // Database was written by a newer version of hitchmark
                 return Err(Error::SchemaTooNew {
                     found: v,
                     supported: SCHEMA_VERSION,

@@ -1,6 +1,6 @@
 //
 //  MenuBarView.swift
-//  Hookmarks
+//  Hitchmark
 //
 //  Main menu bar interface for quick access to hookmark features.
 //

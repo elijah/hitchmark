@@ -1,13 +1,13 @@
 //
 //  ServicesHandler.swift
-//  Hookmarks
+//  Hitchmark
 //
 //  Handles the 5 macOS System Services registered in Info.plist.
 //  Registered as NSApp.servicesProvider in AppDelegate.
 //
 //  Services appear in:
-//    • Right-click → Services → Hookmarks/…  (Finder, text editors, etc.)
-//    • Application menu → Services → Hookmarks/…
+//    • Right-click → Services → Hitchmark/…  (Finder, text editors, etc.)
+//    • Application menu → Services → Hitchmark/…
 //
 
 import Cocoa
@@ -18,7 +18,7 @@ import Cocoa
 
     /// Receives file selection from Finder (or any app that sends file URLs).
     /// Converts the first selected file to a hook:// URI and copies it to the clipboard.
-    @objc func hookmarksCopyURI(
+    @objc func hitchmarkCopyURI(
         _ pboard: NSPasteboard,
         userData: String?,
         error: AutoreleasingUnsafeMutablePointer<NSString?>?
@@ -46,7 +46,7 @@ import Cocoa
 
     /// Receives 2+ files from Finder.
     /// Converts both to hook:// URIs and creates a bidirectional link between them.
-    @objc func hookmarksLinkFiles(
+    @objc func hitchmarkLinkFiles(
         _ pboard: NSPasteboard,
         userData: String?,
         error: AutoreleasingUnsafeMutablePointer<NSString?>?
@@ -56,7 +56,7 @@ import Cocoa
             DispatchQueue.main.async {
                 self.showError(
                     "Link Files",
-                    "Select exactly two files in Finder to create a Hookmarks link between them."
+                    "Select exactly two files in Finder to create a Hitchmark link between them."
                 )
             }
             return
@@ -99,7 +99,7 @@ import Cocoa
 
     /// Receives a file from Finder.
     /// Displays an alert listing all documents linked to that file.
-    @objc func hookmarksShowLinks(
+    @objc func hitchmarkShowLinks(
         _ pboard: NSPasteboard,
         userData: String?,
         error: AutoreleasingUnsafeMutablePointer<NSString?>?
@@ -133,7 +133,7 @@ import Cocoa
 
     /// Receives selected text from any app (text editor, browser, etc.).
     /// Extracts the first hook:// URI found and opens the linked document.
-    @objc func hookmarksOpenURI(
+    @objc func hitchmarkOpenURI(
         _ pboard: NSPasteboard,
         userData: String?,
         error: AutoreleasingUnsafeMutablePointer<NSString?>?
@@ -169,7 +169,7 @@ import Cocoa
     ///
     /// Example: select "/Users/alice/notes/ideas.md" in any editor,
     /// invoke this service, and the selection becomes "hook://file/..."
-    @objc func hookmarksConvertPath(
+    @objc func hitchmarkConvertPath(
         _ pboard: NSPasteboard,
         userData: String?,
         error: AutoreleasingUnsafeMutablePointer<NSString?>?

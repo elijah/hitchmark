@@ -1,6 +1,6 @@
 //
 //  PreferencesView.swift
-//  Hookmarks
+//  Hitchmark
 //
 //  Settings/preferences window. All values persist via @AppStorage (UserDefaults).
 //
@@ -47,7 +47,7 @@ struct GeneralTab: View {
             GroupBox(label: Text("Behavior")) {
                 VStack(alignment: .leading, spacing: 12) {
                     Toggle("Automatically open links from hook:// URIs", isOn: $autoOpenLinks)
-                    Toggle("Launch Hookmarks at login", isOn: $launchAtLogin)
+                    Toggle("Launch Hitchmark at login", isOn: $launchAtLogin)
                         .onChange(of: launchAtLogin) { newValue in
                             setLaunchAtLogin(newValue)
                         }

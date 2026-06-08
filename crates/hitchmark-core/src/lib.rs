@@ -1,4 +1,4 @@
-//! Hookmarks core library: URI parsing, storage, and purple-number generation.
+//! Hitchmark core library: URI parsing, storage, and purple-number generation.
 
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
