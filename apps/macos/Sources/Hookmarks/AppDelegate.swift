@@ -9,10 +9,14 @@ import Cocoa
 import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-    
+
+    private let servicesHandler = ServicesHandler()
+
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Initialize logging or other startup logic
         NSLog("Hookmarks launched")
+        // Register system services and refresh the Services menu cache
+        NSApp.servicesProvider = servicesHandler
+        NSUpdateDynamicServices()
     }
     
     // Handle hook:// URIs opened from Safari, Finder, or command line
