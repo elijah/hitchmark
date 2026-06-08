@@ -208,6 +208,59 @@ import Cocoa
         pboard.setString(uri, forType: .string)
     }
 
+    // MARK: - Hotkey action: copy URI for front app's document
+
+    /// Called when the global hotkey fires. Tries to determine what the frontmost
+    /// application has open (via its `NSRecentDocumentList` or AppleScript) and
+    /// copies the hook:// URI to the clipboard.
+    func copyURIForFrontApp() {
+        // Strategy: use NSWorkspace to find the front app, then ask it for its
+        // document path via AppleScript. Falls back to a user-facing prompt.
+        let workspace = NSWorkspace.shared
+        guard let frontApp = workspace.frontmostApplication,
+              let appName = frontApp.localizedName else {
+            showError("Hitchmark Hotkey", "No active application detected.")
+            return
+        }
+
+        let script = """
+        tell application "\(appName)"
+            try
+                get the POSIX path of (path to front document)
+            on error
+                ""
+            end try
+        end tell
+        """
+
+        var error: NSDictionary?
+        let scriptObj = NSAppleScript(source: script)
+        let result = scriptObj?.executeAndReturnError(&error)
+        let path = result?.stringValue ?? ""
+
+        guard !path.isEmpty else {
+            showError(
+                "Hitchmark Hotkey",
+                "\(appName) didn't report an open document path.\n\n" +
+                "Try using Finder Services → Hitchmark → Copy URI instead."
+            )
+            return
+        }
+
+        HKBridge.fileToURI(path) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let uri):
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(uri, forType: .string)
+                    NSSound(named: NSSound.Name("Tink"))?.play()
+                case .failure(let err):
+                    self.showError("Hitchmark Hotkey", err.localizedDescription)
+                }
+            }
+        }
+    }
+
     // MARK: - Private helpers
 
     private func fileURLs(from pboard: NSPasteboard) -> [URL]? {
