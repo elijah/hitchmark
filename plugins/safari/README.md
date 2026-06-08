@@ -32,7 +32,7 @@ plugins/safari/
 ├── package.json
 └── tsconfig.json
 
-apps/Hookmarks/          # Xcode wrapper for Safari (generated, macOS only)
+apps/Hitchmark/          # Xcode wrapper for Safari (generated, macOS only)
 ```
 
 ## Development
@@ -99,7 +99,7 @@ Upload to [Microsoft Partner Center](https://partner.microsoft.com/dashboard/mic
 ### Build the Xcode wrapper
 
 ```sh
-open apps/Hookmarks/Hookmarks.xcodeproj
+open apps/Hitchmark/Hitchmark.xcodeproj
 ```
 
 Press **⌘R** to build and run the host app.
