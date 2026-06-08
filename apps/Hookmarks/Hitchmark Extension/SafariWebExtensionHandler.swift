@@ -1,6 +1,6 @@
 //
 //  SafariWebExtensionHandler.swift
-//  Hookmarks Extension
+//  Hitchmark Extension
 //
 //  Created by Elijah Wright on 6/8/26.
 //
