@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hookmarks</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f4f4f6;
+      --border: #e0e0e4;
+      --accent: #0078d4;
+      --accent-hover: #005a9e;
+      --danger: #c4314b;
+      --text: #1b1b1f;
+      --muted: #5c5c70;
+      --radius: 6px;
+      --font: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1b1b1f;
+        --surface: #2c2c32;
+        --border: #3e3e46;
+        --text: #f0f0f4;
+        --muted: #9999aa;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg);
+      width: 320px;
+      padding: 12px;
+    }
+    h2 {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .uri-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 8px;
+      margin-bottom: 10px;
+    }
+    .uri-text {
+      flex: 1;
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    button {
+      font-family: var(--font);
+      font-size: 12px;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      padding: 5px 10px;
+      transition: background 0.12s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      padding: 4px 6px;
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface); }
+    .section { margin-bottom: 12px; }
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    #links-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+    #links-list li {
+      font-size: 11px;
+      padding: 5px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: monospace;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #links-list li.empty { border: none; background: none; font-style: italic; }
+    .input-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+    label { font-size: 11px; color: var(--muted); }
+    input[type="text"] {
+      font-family: var(--font);
+      font-size: 12px;
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      width: 100%;
+    }
+    input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+    .divider { height: 1px; background: var(--border); margin: 10px 0; }
+    .status {
+      font-size: 11px;
+      color: var(--muted);
+      min-height: 14px;
+      margin-top: 8px;
+    }
+    .server-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 5px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .server-badge.online { color: #107c10; border-color: #107c10; background: #f0fff0; }
+    .server-badge.offline { color: var(--danger); border-color: var(--danger); background: #fff0f2; }
+    details summary { font-size: 11px; color: var(--muted); cursor: pointer; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h2>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M6.5 9.5a3.5 3.5 0 0 0 5 0l2-2a3.535 3.535 0 0 0-5-5l-1 1"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M9.5 6.5a3.5 3.5 0 0 0-5 0l-2 2a3.535 3.535 0 0 0 5 5l1-1"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    Hookmarks
+    <span class="server-badge" id="server-badge">checking…</span>
+  </h2>
+
+  <!-- Current page URI -->
+  <div class="section">
+    <div class="uri-row">
+      <span class="uri-text" id="current-uri" title="">—</span>
+      <button class="btn-ghost" id="btn-copy-uri" title="Copy hook:// URI" aria-label="Copy URI">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2H3.5A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"
+                stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Existing links -->
+  <div class="section">
+    <p class="section-title">Links for this page</p>
+    <ul id="links-list" role="list">
+      <li class="empty">—</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Create link -->
+  <div class="section">
+    <p class="section-title">Add Link</p>
+    <div class="input-row">
+      <label for="link-target">Target URI</label>
+      <input type="text" id="link-target" placeholder="hook://file/…" />
+    </div>
+    <div class="input-row">
+      <label for="link-note">Note (optional)</label>
+      <input type="text" id="link-note" placeholder="Why are these linked?" />
+    </div>
+    <button class="btn-primary" id="btn-create-link">Create Link</button>
+  </div>
+
+  <!-- Settings (collapsed) -->
+  <details>
+    <summary>⚙ Settings</summary>
+    <div class="input-row" style="margin-top: 8px;">
+      <label for="server-url">Server URL</label>
+      <input type="text" id="server-url" placeholder="http://127.0.0.1:2701" />
+    </div>
+    <button class="btn-ghost" id="btn-save-settings" style="margin-top: 4px;">Save</button>
+    <p style="font-size:11px;color:var(--muted);margin-top:6px;">
+      Run <code>hk serve</code> in your terminal to enable this extension.
+    </p>
+  </details>
+
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+
+  <script src="popup.js" type="text/javascript"></script>
+</body>
+</html>

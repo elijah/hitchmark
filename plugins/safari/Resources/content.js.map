@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/content.ts"],
+  "sourcesContent": ["/**\n * Content script \u2014 injected into every page.\n * Provides hook:// URI copy shortcuts and keyboard trigger.\n */\n\n// Listen for keyboard shortcut (Shift+Cmd+H on mac, triggered via popup)\ndocument.addEventListener(\"hookmarks:copy-uri\", () => {\n  chrome.runtime.sendMessage(\n    { type: \"buildUri\", payload: { url: window.location.href } },\n    (res: { uri: string }) => {\n      if (res?.uri) {\n        navigator.clipboard.writeText(res.uri).catch(() => undefined);\n      }\n    },\n  );\n});\n"],
+  "mappings": ";;;AAMA,WAAS,iBAAiB,sBAAsB,MAAM;AACpD,WAAO,QAAQ;AAAA,MACb,EAAE,MAAM,YAAY,SAAS,EAAE,KAAK,OAAO,SAAS,KAAK,EAAE;AAAA,MAC3D,CAAC,QAAyB;AACxB,YAAI,KAAK,KAAK;AACZ,oBAAU,UAAU,UAAU,IAAI,GAAG,EAAE,MAAM,MAAM,MAAS;AAAA,QAC9D;AAAA,MACF;AAAA,IACF;AAAA,EACF,CAAC;",
+  "names": []
+}

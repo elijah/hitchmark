@@ -84,3 +84,55 @@ jobs:
         run: npm ci
       - working-directory: plugins/obsidian
         run: npm test
+
+  vscode-test:
+    name: VS Code Extension Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: plugins/vscode/package-lock.json
+      - working-directory: plugins/vscode
+        run: npm ci
+      - working-directory: plugins/vscode
+        run: npm test
+      - working-directory: plugins/vscode
+        run: npm run compile
+
+  onenote-test:
+    name: OneNote Add-in Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: plugins/onenote/package-lock.json
+      - working-directory: plugins/onenote
+        run: npm ci
+      - working-directory: plugins/onenote
+        run: npm test
+      - working-directory: plugins/onenote
+        run: npm run build
+
+  safari-test:
+    name: Safari Extension Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: plugins/safari/package-lock.json
+      - working-directory: plugins/safari
+        run: npm ci
+      - working-directory: plugins/safari
+        run: npm test
+      - working-directory: plugins/safari
+        run: npm run build
+
