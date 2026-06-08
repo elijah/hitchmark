@@ -12,6 +12,7 @@
 
 use clap::{CommandFactory, Parser, Subcommand};
 use clap_complete::{generate, Shell};
+use clap_mangen::Man;
 
 mod commands;
 mod config;
@@ -114,6 +115,26 @@ enum Commands {
         /// Shell to generate completions for
         shell: Shell,
     },
+
+    /// Generate and install the hk(1) man page
+    ///
+    /// Writes to the given directory (default: /usr/local/share/man/man1 on Unix).
+    /// Example: hk manpage --out /usr/local/share/man/man1
+    Manpage {
+        /// Directory to write hk.1 into
+        #[arg(long, default_value_t = default_man_dir())]
+        out: String,
+    },
+}
+
+fn default_man_dir() -> String {
+    if cfg!(windows) {
+        std::env::var("USERPROFILE")
+            .map(|h| format!(r"{h}\man\man1"))
+            .unwrap_or_else(|_| r"C:\man\man1".to_string())
+    } else {
+        "/usr/local/share/man/man1".to_string()
+    }
 }
 
 fn main() -> anyhow::Result<()> {
@@ -161,6 +182,19 @@ fn main() -> anyhow::Result<()> {
 
         Commands::Completions { shell } => {
             generate(shell, &mut Cli::command(), "hk", &mut std::io::stdout());
+        }
+
+        Commands::Manpage { out } => {
+            let out_dir = std::path::PathBuf::from(&out);
+            std::fs::create_dir_all(&out_dir)
+                .map_err(|e| anyhow::anyhow!("Cannot create directory {out}: {e}"))?;
+            let man = Man::new(Cli::command());
+            let dest = out_dir.join("hk.1");
+            let mut f = std::fs::File::create(&dest)
+                .map_err(|e| anyhow::anyhow!("Cannot write {}: {e}", dest.display()))?;
+            man.render(&mut f)
+                .map_err(|e| anyhow::anyhow!("Man page render failed: {e}"))?;
+            println!("Wrote {}", dest.display());
         }
     }
 
