@@ -1,12 +1,12 @@
 class Hookmarks < Formula
   desc "Stable, addressable links to documents and paragraphs via hook:// URIs"
-  homepage "https://github.com/yourusername/hitchmark"
-  url "https://github.com/yourusername/hitchmark/archive/refs/tags/v0.1.0.tar.gz"
+  homepage "https://github.com/elijah/hitchmark"
+  url "https://github.com/elijah/hitchmark/archive/refs/tags/v0.1.0.tar.gz"
   # Update sha256 after publishing the GitHub release:
   #   curl -L <url> | shasum -a 256
   sha256 "0000000000000000000000000000000000000000000000000000000000000000"
   license "MIT"
-  head "https://github.com/yourusername/hitchmark.git", branch: "master"
+  head "https://github.com/elijah/hitchmark.git", branch: "master"
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0000000000000000000000000000000000000000000000000000000000000000"

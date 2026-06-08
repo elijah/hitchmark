@@ -23,7 +23,7 @@ After tagging a release on GitHub:
 
 1. Update the `url` sha256 in `Formula/hookmarks.rb`:
    ```bash
-   curl -L https://github.com/yourusername/hitchmark/archive/refs/tags/vX.Y.Z.tar.gz | shasum -a 256
+   curl -L https://github.com/elijah/hitchmark/archive/refs/tags/vX.Y.Z.tar.gz | shasum -a 256
    ```
 
 2. Build the bottle on each platform:
