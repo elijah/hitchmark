@@ -10,7 +10,7 @@
 ## Completed Milestones
 
 ### Step 0 — Monorepo Scaffold
-Cargo workspace (3 crates), GitHub Actions CI, governance docs (README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY), Rust 1.75+ toolchain, formatting/lint config.
+Cargo workspace (3 crates), GitHub Actions CI, governance docs (README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY), Rust 1.85+ toolchain, formatting/lint config.
 
 ### Step 1 — Normative Specifications
 - `specs/uri-scheme.md` — `hook://` URI grammar, validation, normalization, security model (v0.1, locked)
@@ -54,7 +54,7 @@ mdBook site (`docs/src/`) — 12 pages across 5 sections. GitHub Actions deploy-
 - SQLite: WAL mode, 5s busy_timeout, `foreign_keys ON`, schema version table, migration guard
 - Graceful `LinkAlreadyExists` error
 - `hk delete` with `--yes` flag; `hk list --json`
-- MSRV pinned (`rust-version = "1.75"`), `deny.toml`, `cargo audit` in CI
+- MSRV pinned (`rust-version = "1.85"`), `deny.toml`, `cargo audit` in CI
 
 ### v0.2.x — Integrations + Rename (merged to master)
 - **`hk serve`** — axum HTTP API on port 2701 with CORS, GET /health /links /uri /purple, POST/DELETE /links
@@ -95,7 +95,7 @@ hitchmark/
 ├── scripts/                 # install-linux.sh, package-chrome.mjs
 ├── .github/workflows/ci.yml # CI: rust, MSRV, deny, audit, node tests
 ├── deny.toml                # cargo-deny config
-├── Cargo.toml               # Workspace root (rust-version = "1.75")
+├── Cargo.toml               # Workspace root (rust-version = "1.85")
 └── rust-toolchain.toml      # Pinned Rust version
 ```
 

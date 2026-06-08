@@ -14,7 +14,7 @@ Thank you for your interest! We're building a cross-platform, open-source implem
 
 ### Prerequisites
 
-- Rust 1.75+ (see `rust-toolchain.toml`)
+- Rust 1.85+ (see `rust-toolchain.toml`)
 - `rustfmt` and `clippy` (installed with Rust)
 
 ### Commands
