@@ -157,8 +157,9 @@ struct HotkeyTab: View {
 // MARK: - CLI Tab
 
 struct CLITab: View {
-    @AppStorage("cliPath")   var cliPath   = ""
-    @AppStorage("serverUrl") var serverUrl = ""
+    @AppStorage("cliPath")        var cliPath        = ""
+    @AppStorage("serverUrl")      var serverUrl      = ""
+    @AppStorage("autoStartServe") var autoStartServe = false
     @State private var detectedPath: String? = nil
     @State private var serverStatus: ServerStatus = .unknown
 
@@ -204,6 +205,11 @@ struct CLITab: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
 
+                    Toggle("Start hk serve automatically at login (via launchd)", isOn: $autoStartServe)
+                        .onChange(of: autoStartServe) { newValue in
+                            ServeAgent.setEnabled(newValue)
+                        }
+
                     HStack {
                         TextField("http://127.0.0.1:2701", text: $serverUrl)
                             .textFieldStyle(.roundedBorder)
@@ -231,7 +237,11 @@ struct CLITab: View {
             Spacer()
         }
         .padding()
-        .onAppear { detectCLI(); if !serverUrl.isEmpty { probeServer() } }
+        .onAppear {
+            detectCLI()
+            if !serverUrl.isEmpty { probeServer() }
+            autoStartServe = ServeAgent.isEnabled()
+        }
     }
 
     private func browseCLI() {
@@ -297,7 +307,7 @@ struct AboutTab: View {
 
             Spacer()
 
-            Text("© 2026 Hookmarks Contributors · MIT License")
+            Text("© 2026 Hitchmark Contributors · MIT License")
                 .font(.caption2)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
