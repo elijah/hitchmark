@@ -8,8 +8,10 @@
 //!   hk file <path>                              Print the hook:// URI for a file
 //!   hk purple <file> [--format markdown|json]   Annotate file with purple numbers
 //!   hk serve [--port 2701] [--host 127.0.0.1]  Start local HTTP API server
+//!   hk completions <shell>                      Print shell completion script
 
-use clap::{Parser, Subcommand};
+use clap::{CommandFactory, Parser, Subcommand};
+use clap_complete::{generate, Shell};
 
 mod commands;
 mod config;
@@ -104,6 +106,14 @@ enum Commands {
         #[arg(long, default_value = "127.0.0.1")]
         host: String,
     },
+
+    /// Print shell completion script to stdout
+    ///
+    /// Example: hk completions bash >> ~/.bashrc
+    Completions {
+        /// Shell to generate completions for
+        shell: Shell,
+    },
 }
 
 fn main() -> anyhow::Result<()> {
@@ -147,6 +157,10 @@ fn main() -> anyhow::Result<()> {
         Commands::Serve { port, host } => {
             let args = commands::serve::ServeArgs { port, host };
             commands::serve::execute(args, &config.store_path)?;
+        }
+
+        Commands::Completions { shell } => {
+            generate(shell, &mut Cli::command(), "hk", &mut std::io::stdout());
         }
     }
 
