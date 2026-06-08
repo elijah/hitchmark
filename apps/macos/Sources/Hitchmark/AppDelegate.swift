@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Hookmarks
+//  Hitchmark
 //
 //  Handles application lifecycle and hook:// URL scheme.
 //
@@ -17,8 +17,40 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Register system services and refresh the Services menu cache
         NSApp.servicesProvider = servicesHandler
         NSUpdateDynamicServices()
+
+        // Start global hotkey monitor if the user has it enabled
+        GlobalHotkeyManager.shared.configure()
+
+        // Act on hotkey activation
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(hotkeyActivated),
+            name: .hitchmarkHotkeyActivated,
+            object: nil
+        )
+
+        // Re-configure whenever any preference changes (debounced by configure() being idempotent)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(prefsChanged),
+            name: UserDefaults.didChangeNotification,
+            object: nil
+        )
     }
-    
+
+    // MARK: - Global hotkey
+
+    @objc private func hotkeyActivated() {
+        NSLog("Hitchmark: global hotkey activated")
+        servicesHandler.copyURIForFrontApp()
+    }
+
+    @objc private func prefsChanged() {
+        GlobalHotkeyManager.shared.configure()
+    }
+
+    // MARK: - hook:// URI handling
+
     // Handle hook:// URIs opened from Safari, Finder, or command line
     func application(
         _ application: NSApplication,
@@ -28,13 +60,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             handleHookmarkURI(url)
         }
     }
-    
+
     private func handleHookmarkURI(_ url: URL) {
         guard url.scheme == "hook" else { return }
-        
+
         NSLog("Opening hook URI: \(url.absoluteString)")
-        
-        // Call `hk open <uri>` via subprocess
+
         HKBridge.open(uri: url.absoluteString) { [weak self] result in
             switch result {
             case .success(let message):
@@ -44,7 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
-    
+
     private func showErrorAlert(_ title: String, _ message: String) {
         DispatchQueue.main.async {
             let alert = NSAlert()
@@ -55,3 +86,4 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 }
+

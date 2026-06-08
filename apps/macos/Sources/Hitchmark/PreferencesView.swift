@@ -107,12 +107,17 @@ struct HotkeyTab: View {
     @AppStorage("useGlobalHotkey") var useGlobalHotkey = false
     @AppStorage("globalHotkey")    var globalHotkey    = "⌃⌥H"
     @State private var isRecordingHotkey = false
+    @State private var accessibilityGranted = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             GroupBox(label: Text("Global Hotkey")) {
                 VStack(alignment: .leading, spacing: 12) {
                     Toggle("Enable global hotkey", isOn: $useGlobalHotkey)
+                        .onChange(of: useGlobalHotkey) { _ in
+                            GlobalHotkeyManager.shared.configure()
+                            if useGlobalHotkey { checkAccessibility() }
+                        }
 
                     if useGlobalHotkey {
                         HStack {
@@ -121,36 +126,62 @@ struct HotkeyTab: View {
                             if isRecordingHotkey {
                                 Text("Press key combination…")
                                     .foregroundColor(.blue)
+                                // Invisible recorder view captures the key event
+                                HotkeyRecorderView(hotkey: $globalHotkey, isRecording: $isRecordingHotkey)
+                                    .frame(width: 1, height: 1)
+                                    .onChange(of: globalHotkey) { _ in
+                                        GlobalHotkeyManager.shared.configure()
+                                    }
+                                Button("Cancel") { isRecordingHotkey = false }
+                                    .buttonStyle(.borderless)
                             } else {
                                 Button(action: { isRecordingHotkey = true }) {
                                     Text(globalHotkey)
                                         .frame(minWidth: 80)
                                 }
                                 .buttonStyle(.bordered)
-                            }
-                            if isRecordingHotkey {
-                                Button("Cancel") {
-                                    isRecordingHotkey = false
-                                }
-                                .buttonStyle(.borderless)
+                                .help("Click then press your desired key combination")
                             }
                         }
                     }
 
-                    Text("Suggested: ⌃⌥H (Ctrl+Option+H)")
+                    Text("Default: ⌃⌥H (Ctrl+Option+H)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
                 .padding()
             }
 
-            Text("Global hotkeys require accessibility permissions (System Settings → Privacy & Security → Accessibility).")
-                .font(.caption)
-                .foregroundColor(.secondary)
+            if useGlobalHotkey && !accessibilityGranted {
+                GroupBox {
+                    HStack(spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.orange)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Accessibility Permission Required")
+                                .fontWeight(.medium)
+                            Text("Global hotkeys require access to monitor keyboard input system-wide.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        Button("Open Settings") {
+                            GlobalHotkeyManager.openAccessibilitySettings()
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                    .padding(4)
+                }
+            }
 
             Spacer()
         }
         .padding()
+        .onAppear { checkAccessibility() }
+    }
+
+    private func checkAccessibility() {
+        accessibilityGranted = GlobalHotkeyManager.accessibilityGranted()
     }
 }
 

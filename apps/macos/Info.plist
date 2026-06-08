@@ -106,11 +106,11 @@
     
     <!-- Permissions & Features -->
     <key>NSAppleEventsUsageDescription</key>
-    <string>Hookmarks needs to interact with Finder and other applications to create and manage links.</string>
+    <string>Hitchmark needs to interact with Finder and other applications to create and manage links.</string>
     <key>NSAccessibilityUsageDescription</key>
-    <string>Hookmarks uses accessibility features to enable global hotkey functionality.</string>
+    <string>Hitchmark uses accessibility features to enable global hotkey functionality.</string>
     <key>NSDocumentsFolderUsageDescription</key>
-    <string>Hookmarks needs access to your files to create addressable links.</string>
+    <string>Hitchmark needs access to your files to create addressable links.</string>
     
     <!-- Development -->
     <key>UTExportedTypeDeclarations</key>
