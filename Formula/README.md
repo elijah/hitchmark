@@ -1,4 +1,4 @@
-# Homebrew Tap — Hookmarks
+# Homebrew Tap — Hitchmark
 
 This directory contains the Homebrew formula for the `hk` CLI tool.
 
@@ -7,29 +7,29 @@ This directory contains the Homebrew formula for the `hk` CLI tool.
 Once this tap is published:
 
 ```bash
-brew tap yourusername/hookmarks
-brew install hookmarks
+brew tap elijah/hitchmark
+brew install hitchmark
 ```
 
 Or install directly from the formula:
 
 ```bash
-brew install yourusername/hookmarks/hookmarks
+brew install elijah/hitchmark/hitchmark
 ```
 
 ## Building bottles
 
 After tagging a release on GitHub:
 
-1. Update the `url` sha256 in `Formula/hookmarks.rb`:
+1. Update the `url` and `sha256` in `Formula/hitchmark.rb`:
    ```bash
    curl -L https://github.com/elijah/hitchmark/archive/refs/tags/vX.Y.Z.tar.gz | shasum -a 256
    ```
 
 2. Build the bottle on each platform:
    ```bash
-   brew install --build-bottle hookmarks
-   brew bottle hookmarks
+   brew install --build-bottle hitchmark
+   brew bottle hitchmark
    ```
 
 3. Upload bottle tarballs to the GitHub release and update the `bottle do` block.
