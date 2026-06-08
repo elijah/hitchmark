@@ -58,7 +58,7 @@ mod linux {
                 UriType::File(path) => path.to_string_lossy().to_string(),
                 UriType::Bookmark(id) => {
                     return Err(zbus::fdo::Error::NotSupported(format!(
-                        "Bookmark URIs not yet supported: {id}"
+                        "Bookmark resolution via DBus not implemented; use 'hk open hook://bookmark/{id}' instead"
                     )));
                 }
                 UriType::XCallbackUrl(action) => {

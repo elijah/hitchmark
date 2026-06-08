@@ -1,5 +1,6 @@
 //! CLI subcommands.
 
+pub mod bookmark;
 pub mod delete;
 pub mod file;
 pub mod link;

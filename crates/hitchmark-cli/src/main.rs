@@ -5,10 +5,12 @@
 //!   hk list <uri> [--json]                      List all links for a resource
 //!   hk delete <uri-a> <uri-b> [-y]             Remove a link
 //!   hk open <hook-uri>                          Open a hook:// URI
-//!   hk file <path>                              Print the hook:// URI for a file
+//!   hk file <path> [--bookmark]                 Print the hook:// URI for a file
+//!   hk bookmark <create|show|update|list>       Manage stored bookmark URIs
 //!   hk purple <file> [--format markdown|json]   Annotate file with purple numbers
 //!   hk serve [--port 2701] [--host 127.0.0.1]  Start local HTTP API server
 //!   hk completions <shell>                      Print shell completion script
+//!   hk manpage [--out <dir>]                    Generate hk(1) man page
 
 use clap::{CommandFactory, Parser, Subcommand};
 use clap_complete::{generate, Shell};
@@ -85,7 +87,17 @@ enum Commands {
     File {
         /// Path to file
         path: String,
+
+        /// Store and return a stable bookmark URI instead of a file URI
+        #[arg(long)]
+        bookmark: bool,
     },
+
+    /// Manage stored bookmark URIs
+    ///
+    /// Bookmark URIs are stable identifiers for files that persist even after
+    /// the file is renamed or moved (requires updating via `hk bookmark update`).
+    Bookmark(commands::bookmark::BookmarkArgs),
 
     /// Annotate a file with purple numbers (stable paragraph IDs)
     Purple {
@@ -162,12 +174,16 @@ fn main() -> anyhow::Result<()> {
 
         Commands::Open { uri } => {
             let args = commands::open::OpenArgs { uri };
-            commands::open::execute(args)?;
+            commands::open::execute(args, &config.store_path)?;
         }
 
-        Commands::File { path } => {
-            let args = commands::file::FileArgs { path };
-            commands::file::execute(args)?;
+        Commands::File { path, bookmark } => {
+            let args = commands::file::FileArgs { path, bookmark };
+            commands::file::execute(args, &config.store_path)?;
+        }
+
+        Commands::Bookmark(args) => {
+            commands::bookmark::execute(args, &config.store_path)?;
         }
 
         Commands::Purple { path, format } => {
