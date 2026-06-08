@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Nautilus script: Copy hook:// URI for selected file(s).
+# Installed to: ~/.local/share/nautilus/scripts/Hookmarks - Copy URI
+# Right-click → Scripts → Hookmarks - Copy URI
+
+set -euo pipefail
+SCRIPTS_DIR="${HK_SCRIPTS_DIR:-$HOME/.local/share/hookmarks/scripts}"
+
+# Nautilus passes newline-separated paths in this env var
+FILE=$(echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" | head -1)
+if [[ -z "$FILE" ]]; then
+    # Fallback: try argument
+    FILE="${1:-}"
+fi
+[[ -z "$FILE" ]] && exit 0
+
+exec "${SCRIPTS_DIR}/hk-copy-uri.sh" "$FILE"

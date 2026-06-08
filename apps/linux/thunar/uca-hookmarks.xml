@@ -1,0 +1,55 @@
+<!--
+  Thunar Custom Actions for Hookmarks.
+  These <action> entries are appended to ~/.config/Thunar/uca.xml by install.sh.
+
+  Manual install: copy each <action> block into ~/.config/Thunar/uca.xml
+  inside the <actions> root element.
+-->
+
+<action>
+    <icon>edit-copy</icon>
+    <name>Hookmarks: Copy hook:// URI</name>
+    <unique-id>hookmarks-copy-uri-001</unique-id>
+    <command>hookmarks-copy-uri %f</command>
+    <description>Copy a hook:// URI for this file to the clipboard</description>
+    <range></range>
+    <patterns>*</patterns>
+    <directories/>
+    <audio-files/>
+    <image-files/>
+    <other-files/>
+    <text-files/>
+    <video-files/>
+</action>
+
+<action>
+    <icon>emblem-symbolic-link</icon>
+    <name>Hookmarks: Link Two Files</name>
+    <unique-id>hookmarks-link-files-001</unique-id>
+    <command>hookmarks-link-files %F</command>
+    <description>Create a bidirectional Hookmarks link between two selected files</description>
+    <range>2</range>
+    <patterns>*</patterns>
+    <directories/>
+    <audio-files/>
+    <image-files/>
+    <other-files/>
+    <text-files/>
+    <video-files/>
+</action>
+
+<action>
+    <icon>edit-find</icon>
+    <name>Hookmarks: Show Links</name>
+    <unique-id>hookmarks-show-links-001</unique-id>
+    <command>hookmarks-show-links %f</command>
+    <description>Show all documents linked to this file</description>
+    <range></range>
+    <patterns>*</patterns>
+    <directories/>
+    <audio-files/>
+    <image-files/>
+    <other-files/>
+    <text-files/>
+    <video-files/>
+</action>

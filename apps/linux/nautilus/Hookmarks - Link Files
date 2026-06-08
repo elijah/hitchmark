@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Nautilus script: Link two selected files.
+# Installed to: ~/.local/share/nautilus/scripts/Hookmarks - Link Files
+# Select exactly 2 files, right-click → Scripts → Hookmarks - Link Files
+
+set -euo pipefail
+SCRIPTS_DIR="${HK_SCRIPTS_DIR:-$HOME/.local/share/hookmarks/scripts}"
+
+mapfile -t FILES <<< "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
+# Filter blank lines
+FILES=("${FILES[@]// /}")
+FILES=($(printf '%s\n' "${FILES[@]}" | grep -v '^$'))
+
+if [[ ${#FILES[@]} -lt 2 ]]; then
+    if command -v notify-send &>/dev/null; then
+        notify-send -i dialog-error "Hookmarks" \
+            "Select exactly two files to link, then use this script."
+    fi
+    exit 1
+fi
+
+exec "${SCRIPTS_DIR}/hk-link-files.sh" "${FILES[0]}" "${FILES[1]}"

@@ -1,0 +1,8 @@
+[Nemo Action]
+Name=Hookmarks: Show Links
+Comment=Show all documents linked to this file
+Exec=hookmarks-show-links %F
+Icon-Name=edit-find
+Selection=Single
+Extensions=any;
+EscapeSpaces=true
