@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Hookmarks
+//  Hitchmark
 //
 //  Created by Elijah Wright on 6/8/26.
 //

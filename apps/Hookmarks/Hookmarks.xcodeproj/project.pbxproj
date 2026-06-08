@@ -15,7 +15,7 @@
 		3D6A11872FD70F07003012AB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6A11862FD70F07003012AB /* ViewController.swift */; };
 		3D6A118A2FD70F07003012AB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D6A11882FD70F07003012AB /* Main.storyboard */; };
 		3D6A118C2FD70F0A003012AB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D6A118B2FD70F0A003012AB /* Assets.xcassets */; };
-		3D6A11932FD70F0A003012AB /* Hookmarks Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3D6A11922FD70F0A003012AB /* Hookmarks Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		3D6A11932FD70F0A003012AB /*/* Hitchmark Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3D6A11922FD70F0A003012AB /* Hitchmark Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		3D6A11982FD70F0A003012AB /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6A11972FD70F0A003012AB /* SafariWebExtensionHandler.swift */; };
 		3D6A11AC2FD70F0B003012AB /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = 3D6A11A42FD70F0B003012AB /* popup.js */; };
 		3D6A11AD2FD70F0B003012AB /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 3D6A11A62FD70F0B003012AB /* background.js */; };
@@ -30,7 +30,7 @@
 			containerPortal = 3D6A116F2FD70F07003012AB /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 3D6A11912FD70F0A003012AB;
-			remoteInfo = "Hookmarks Extension";
+			remoteInfo = "Hitchmark Extenpath = "Hitchmark Extension";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -41,7 +41,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				3D6A11932FD70F0A003012AB /* Hookmarks Extension.appex in Embed Foundation Extensions */,
+				3D6A11932FD70F0A003012AB /*/* Hitchmark Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -49,7 +49,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3D6A11772FD70F07003012AB /* Hookmarks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hookmarks.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D6A11772FD70F07003012AB /* Hitchmark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hitchmark.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D6A117A2FD70F07003012AB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3D6A117E2FD70F07003012AB /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
 		3D6A11802FD70F07003012AB /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
@@ -59,7 +59,7 @@
 		3D6A11892FD70F07003012AB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3D6A118B2FD70F0A003012AB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D6A118D2FD70F0A003012AB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3D6A11922FD70F0A003012AB /* Hookmarks Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Hookmarks Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D6A11922FD70F0A003012AB /* Hitchmark Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Hitchmark Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D6A11972FD70F0A003012AB /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
 		3D6A11992FD70F0A003012AB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3D6A11A42FD70F0B003012AB /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = popup.js; path = ../../../plugins/safari/Resources/popup.js; sourceTree = "<group>"; };
@@ -93,8 +93,8 @@
 		3D6A116E2FD70F07003012AB = {
 			isa = PBXGroup;
 			children = (
-				3D6A11792FD70F07003012AB /* Hookmarks */,
-				3D6A11962FD70F0A003012AB /* Hookmarks Extension */,
+				3D6A11792FD70F07003012AB /* Hitchmark */,
+				3D6A11962FD70F0A003012AB /* Hitchmark Extension */,
 				3D6A11782FD70F07003012AB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -102,13 +102,13 @@
 		3D6A11782FD70F07003012AB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3D6A11772FD70F07003012AB /* Hookmarks.app */,
-				3D6A11922FD70F0A003012AB /* Hookmarks Extension.appex */,
+				3D6A11772FD70F07003012AB /* Hitchmark.app */,
+				3D6A11922FD70F0A003012AB /* Hitchmark Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3D6A11792FD70F07003012AB /* Hookmarks */ = {
+		3D6A11792FD70F07003012AB /* Hitchmark */ = {
 			isa = PBXGroup;
 			children = (
 				3D6A117A2FD70F07003012AB /* AppDelegate.swift */,
@@ -118,7 +118,7 @@
 				3D6A118D2FD70F0A003012AB /* Info.plist */,
 				3D6A117C2FD70F07003012AB /* Resources */,
 			);
-			path = Hookmarks;
+			path = Hitchmark;
 			sourceTree = "<group>";
 		};
 		3D6A117C2FD70F07003012AB /* Resources */ = {
@@ -132,14 +132,14 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		3D6A11962FD70F0A003012AB /* Hookmarks Extension */ = {
+		3D6A11962FD70F0A003012AB /* Hitchmark Extension */ = {
 			isa = PBXGroup;
 			children = (
 				3D6A11A32FD70F0B003012AB /* Resources */,
 				3D6A11972FD70F0A003012AB /* SafariWebExtensionHandler.swift */,
 				3D6A11992FD70F0A003012AB /* Info.plist */,
 			);
-			path = "Hookmarks Extension";
+			path = "Hitchmark Extension";
 			sourceTree = "<group>";
 		};
 		3D6A11A32FD70F0B003012AB /* Resources */ = {
@@ -155,15 +155,15 @@
 				3D6A11AB2FD70F0B003012AB /* background.js.map */,
 			);
 			name = Resources;
-			path = "Hookmarks Extension";
+			path = "Hitchmark Extension";
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3D6A11762FD70F07003012AB /* Hookmarks */ = {
+		3D6A11762FD70F07003012AB /* Hitchmark */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3D6A11A02FD70F0A003012AB /* Build configuration list for PBXNativeTarget "Hookmarks" */;
+			buildConfigurationList = 3D6A11A02FD70F0A003012AB /* Build configuration list for PBXNativeTarget "Hitchmark" */;
 			buildPhases = (
 				3D6A11732FD70F07003012AB /* Sources */,
 				3D6A11742FD70F07003012AB /* Frameworks */,
@@ -175,16 +175,16 @@
 			dependencies = (
 				3D6A11952FD70F0A003012AB /* PBXTargetDependency */,
 			);
-			name = Hookmarks;
+			name = Hitchmark;
 			packageProductDependencies = (
 			);
-			productName = Hookmarks;
-			productReference = 3D6A11772FD70F07003012AB /* Hookmarks.app */;
+			productName = Hitchmark;
+			productReference = 3D6A11772FD70F07003012AB /* Hitchmark.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3D6A11912FD70F0A003012AB /* Hookmarks Extension */ = {
+		3D6A11912FD70F0A003012AB /* Hitchmark Extension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3D6A119C2FD70F0A003012AB /* Build configuration list for PBXNativeTarget "Hookmarks Extension" */;
+			buildConfigurationList = 3D6A119C2FD70F0A003012AB /* Build configuration list for PBXNativeTarget "Hitchmark Extension" */;
 			buildPhases = (
 				3D6A118E2FD70F0A003012AB /* Sources */,
 				3D6A118F2FD70F0A003012AB /* Frameworks */,
@@ -194,12 +194,12 @@
 			);
 			dependencies = (
 			);
-			name = "Hookmarks Extension";
+			name = "Hitchmark Extenpath = "Hitchmark Extension";
 			packageProductDependencies = (
 			);
-			productName = "Hookmarks Extension";
-			productReference = 3D6A11922FD70F0A003012AB /* Hookmarks Extension.appex */;
-			productType = "com.apple.product-type.app-extension";
+			productName = "Hitchmark Extenpath = "Hitchmark Extension";
+			productReference = 3D6A11922FD70F0A003012AB /* Hitchmark Extension.appex */;
+			productType = "com.apple.product-type.app-extenpath = "Hitchmark Extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -219,7 +219,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3D6A11722FD70F07003012AB /* Build configuration list for PBXProject "Hookmarks" */;
+			buildConfigurationList = 3D6A11722FD70F07003012AB /* Build configuration list for PBXProject "Hitchmark" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -233,8 +233,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3D6A11762FD70F07003012AB /* Hookmarks */,
-				3D6A11912FD70F0A003012AB /* Hookmarks Extension */,
+				3D6A11762FD70F07003012AB /* Hitchmark */,
+				3D6A11912FD70F0A003012AB /* Hitchmark Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -290,7 +290,7 @@
 /* Begin PBXTargetDependency section */
 		3D6A11952FD70F0A003012AB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3D6A11912FD70F0A003012AB /* Hookmarks Extension */;
+			target = 3D6A11912FD70F0A003012AB /* Hitchmark Extension */;
 			targetProxy = 3D6A11942FD70F0A003012AB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -442,8 +442,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Hookmarks Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Hookmarks Extension";
+				INFOPLIST_FILE = "Hitchmark Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Hitchmark Extenpath = "Hitchmark Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -456,7 +456,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "app.hitchmark.safari-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "app.hitchmark.safari-extenpath = "Hitchmark Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -476,8 +476,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Hookmarks Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Hookmarks Extension";
+				INFOPLIST_FILE = "Hitchmark Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Hitchmark Extenpath = "Hitchmark Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -490,7 +490,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "app.hitchmark.safari-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "app.hitchmark.safari-extenpath = "Hitchmark Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -514,8 +514,8 @@
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Hookmarks/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Hookmarks;
+				INFOPLIST_FILE = Hitchmark/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Hitchmark;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -555,8 +555,8 @@
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Hookmarks/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Hookmarks;
+				INFOPLIST_FILE = Hitchmark/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Hitchmark;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -586,7 +586,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3D6A11722FD70F07003012AB /* Build configuration list for PBXProject "Hookmarks" */ = {
+		3D6A11722FD70F07003012AB /* Build configuration list for PBXProject "Hitchmark" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3D6A119A2FD70F0A003012AB /* Debug */,
@@ -595,7 +595,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3D6A119C2FD70F0A003012AB /* Build configuration list for PBXNativeTarget "Hookmarks Extension" */ = {
+		3D6A119C2FD70F0A003012AB /* Build configuration list for PBXNativeTarget "Hitchmark Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3D6A119D2FD70F0A003012AB /* Debug */,
@@ -604,7 +604,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3D6A11A02FD70F0A003012AB /* Build configuration list for PBXNativeTarget "Hookmarks" */ = {
+		3D6A11A02FD70F0A003012AB /* Build configuration list for PBXNativeTarget "Hitchmark" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3D6A11A12FD70F0A003012AB /* Debug */,
