@@ -1,0 +1,6 @@
+# Xcode build artifacts
+apps/Hitchmark/build/
+apps/Hitchmark/*.xcodeproj/xcuserdata/
+apps/Hitchmark/*.xcworkspace/xcuserdata/
+apps/Hitchmark/*.xcworkspace/xcshareddata/swiftpm/
+apps/Hitchmark/DerivedData/

@@ -1,6 +1,0 @@
-# Xcode build artifacts
-apps/Hookmarks/build/
-apps/Hookmarks/*.xcodeproj/xcuserdata/
-apps/Hookmarks/*.xcworkspace/xcuserdata/
-apps/Hookmarks/*.xcworkspace/xcshareddata/swiftpm/
-apps/Hookmarks/DerivedData/
