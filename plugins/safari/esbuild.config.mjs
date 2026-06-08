@@ -16,7 +16,7 @@ const sharedConfig = {
 await esbuild.build({
   ...sharedConfig,
   entryPoints: [{ in: "src/background.ts", out: "background" }],
-  format: "esm",
+  format: "iife",
   outdir: "Resources",
 });
 
