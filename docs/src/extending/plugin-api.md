@@ -75,19 +75,19 @@ The Obsidian plugin already has the `daemonUrl` setting ready for this.
 On Linux, the daemon exposes a session bus service. See
 [DBus Interface](./dbus.md) for the full reference.
 
-## Rust library (`hookmarks-core`)
+## Rust library (`hitchmark-core`)
 
-For Rust projects, you can depend on `hookmarks-core` directly:
+For Rust projects, you can depend on `hitchmark-core` directly:
 
 ```toml
 [dependencies]
-hookmarks-core = { git = "https://github.com/elw/not-hookmarks" }
+hitchmark-core = { git = "https://github.com/elw/hitchmark" }
 ```
 
 Key types:
 ```rust
-use hookmarks_core::{HookUri, UriType, LinkStore};
-use hookmarks_core::purple::{PurpleNumberGenerator, split_paragraphs};
+use hitchmark_core::{HookUri, UriType, LinkStore};
+use hitchmark_core::purple::{PurpleNumberGenerator, split_paragraphs};
 
 // Parse a URI
 let uri = HookUri::parse("hook://file/L1Zvby9iYXI")?;

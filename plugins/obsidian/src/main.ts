@@ -1,5 +1,5 @@
 /**
- * Hookmarks Obsidian Plugin — main entry point.
+ * Hitchmark Obsidian Plugin — main entry point.
  *
  * Features:
  *  • Purple numbers in live editor (§abc123 annotations)
@@ -17,9 +17,9 @@ import {
   WorkspaceLeaf,
 } from "obsidian";
 import { Extension } from "@codemirror/state";
-import { DEFAULT_SETTINGS, HookmarksSettings } from "./types";
+import { DEFAULT_SETTINGS, HitchmarkSettings } from "./types";
 import { HKBridge } from "./bridge";
-import { HookmarksSettingsTab } from "./settings";
+import { HitchmarkSettingsTab } from "./settings";
 import {
   LINK_PANEL_VIEW_TYPE,
   LinkPanelView,
@@ -31,8 +31,8 @@ import {
 } from "./purple-widget";
 import { generatePurpleIdWithCollision, splitParagraphs } from "./purple";
 
-export default class HookmarksPlugin extends Plugin {
-  settings!: HookmarksSettings;
+export default class HitchmarkPlugin extends Plugin {
+  settings!: HitchmarkSettings;
   bridge!: HKBridge;
   private cmExtensions: Extension[] = [];
   private purpleExtension: Extension | undefined = undefined;
@@ -54,10 +54,10 @@ export default class HookmarksPlugin extends Plugin {
     this.registerCommands();
 
     // Settings tab
-    this.addSettingTab(new HookmarksSettingsTab(this.app, this));
+    this.addSettingTab(new HitchmarkSettingsTab(this.app, this));
 
     // Ribbon icon to open link panel
-    this.addRibbonIcon("link", "Hookmarks: Open link panel", () =>
+    this.addRibbonIcon("link", "Hitchmark: Open link panel", () =>
       this.openLinkPanel()
     );
 
@@ -73,12 +73,12 @@ export default class HookmarksPlugin extends Plugin {
       this.app.workspace.on("file-open", () => this.updateEditorFileUri())
     );
 
-    console.log("Hookmarks plugin loaded");
+    console.log("Hitchmark plugin loaded");
   }
 
   async onunload(): Promise<void> {
     this.app.workspace.detachLeavesOfType(LINK_PANEL_VIEW_TYPE);
-    console.log("Hookmarks plugin unloaded");
+    console.log("Hitchmark plugin unloaded");
   }
 
   // ----- Settings -----
@@ -124,7 +124,7 @@ export default class HookmarksPlugin extends Plugin {
 
   updatePurpleNumberColor(color: string): void {
     document.documentElement.style.setProperty(
-      "--hookmarks-purple-color",
+      "--hitchmark-purple-color",
       color
     );
   }

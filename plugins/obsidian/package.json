@@ -1,5 +1,5 @@
 {
-  "name": "hookmarks-obsidian",
+  "name": "hitchmark-obsidian",
   "version": "0.1.0",
   "description": "Obsidian plugin for purple numbers and hook:// link management",
   "main": "main.js",
@@ -22,7 +22,7 @@
   },
   "keywords": [
     "obsidian",
-    "hookmarks",
+    "hitchmark",
     "purple-numbers",
     "links"
   ],

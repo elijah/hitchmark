@@ -1,12 +1,12 @@
 [Unit]
 Description=Hookmarks daemon — stable paragraph links via hook:// URI
-Documentation=https://github.com/elw/not-hookmarks
+Documentation=https://github.com/elw/hitchmark
 After=graphical-session.target
 PartOf=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=%h/.local/bin/hookmarks-daemon
+ExecStart=%h/.local/bin/hitchmark-daemon
 Restart=on-failure
 RestartSec=5s
 Environment=RUST_LOG=info

@@ -71,7 +71,7 @@ First complete release covering all 7 blueprint steps plus a stability hardening
 
 ### Added
 
-#### Core (`hookmarks-core`)
+#### Core (`hitchmark-core`)
 - `hook://` URI parser and validator (`uri.rs`) with base64url encoding for file paths
 - Purple number generator (`purple.rs`) — SHA-256 → base58 stable paragraph IDs, first 6 chars, extends to 8 on collision
 - SQLite link store (`store.rs`) — bidirectional links, WAL mode, 5s busy_timeout, `foreign_keys ON`
@@ -97,7 +97,7 @@ First complete release covering all 7 blueprint steps plus a stability hardening
 - `hook://` URL scheme handler (`AppDelegate.swift`)
 - Zero external Swift dependencies
 
-#### Linux Daemon (`hookmarks-daemon`)
+#### Linux Daemon (`hitchmark-daemon`)
 - zbus/DBus session service with 4 methods: `OpenUri`, `CreateLink`, `ListLinks`, `FileToUri`
 - systemd user service with security hardening directives
 - `install-linux.sh` installer script
@@ -130,4 +130,4 @@ First complete release covering all 7 blueprint steps plus a stability hardening
 - No global hotkey support
 - No code signing
 
-[0.1.0]: https://github.com/yourusername/not-hookmarks/releases/tag/v0.1.0
+[0.1.0]: https://github.com/yourusername/hitchmark/releases/tag/v0.1.0

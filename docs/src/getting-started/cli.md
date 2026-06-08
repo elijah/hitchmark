@@ -6,12 +6,12 @@ delegate to it.
 ## Installation
 
 ```bash
-cargo install hookmarks-cli
+cargo install hitchmark-cli
 ```
 
 Or build from source:
 ```bash
-cargo build --release -p hookmarks-cli
+cargo build --release -p hitchmark-cli
 ```
 
 ## Commands

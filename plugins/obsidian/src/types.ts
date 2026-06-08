@@ -1,6 +1,6 @@
-/** Shared type definitions for the Hookmarks Obsidian plugin. */
+/** Shared type definitions for the Hitchmark Obsidian plugin. */
 
-export interface HookmarksSettings {
+export interface HitchmarkSettings {
   /** Whether to show purple numbers in the editor margin */
   showPurpleNumbers: boolean;
   /** CSS color for purple number annotations */
@@ -13,7 +13,7 @@ export interface HookmarksSettings {
   hkBinaryPath: string;
 }
 
-export const DEFAULT_SETTINGS: HookmarksSettings = {
+export const DEFAULT_SETTINGS: HitchmarkSettings = {
   showPurpleNumbers: true,
   purpleNumberColor: "#888",
   daemonUrl: "http://localhost:7878",

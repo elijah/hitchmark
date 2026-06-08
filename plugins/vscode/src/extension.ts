@@ -1,5 +1,5 @@
 /**
- * Hookmarks VS Code Extension — entry point.
+ * Hitchmark VS Code Extension — entry point.
  *
  * Registers 6 commands, reads config, and wires HKBridge.
  */
@@ -16,19 +16,19 @@ export function activate(context: vscode.ExtensionContext): void {
   // Re-build bridge when settings change
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration("hookmarks")) {
+      if (e.affectsConfiguration("hitchmark")) {
         bridge = buildBridge();
       }
     })
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("hookmarks.copyUri", cmdCopyUri),
-    vscode.commands.registerCommand("hookmarks.copyUriWithParagraph", cmdCopyUriWithParagraph),
-    vscode.commands.registerCommand("hookmarks.listLinks", cmdListLinks),
-    vscode.commands.registerCommand("hookmarks.openUri", cmdOpenUri),
-    vscode.commands.registerCommand("hookmarks.showPurpleNumbers", cmdShowPurpleNumbers),
-    vscode.commands.registerCommand("hookmarks.startServer", cmdStartServer)
+    vscode.commands.registerCommand("hitchmark.copyUri", cmdCopyUri),
+    vscode.commands.registerCommand("hitchmark.copyUriWithParagraph", cmdCopyUriWithParagraph),
+    vscode.commands.registerCommand("hitchmark.listLinks", cmdListLinks),
+    vscode.commands.registerCommand("hitchmark.openUri", cmdOpenUri),
+    vscode.commands.registerCommand("hitchmark.showPurpleNumbers", cmdShowPurpleNumbers),
+    vscode.commands.registerCommand("hitchmark.startServer", cmdStartServer)
   );
 }
 
@@ -37,7 +37,7 @@ export function deactivate(): void {}
 // ── bridge factory ────────────────────────────────────────────────────────────
 
 function buildBridge(): HKBridge {
-  const cfg = vscode.workspace.getConfiguration("hookmarks");
+  const cfg = vscode.workspace.getConfiguration("hitchmark");
   const cliPath = cfg.get<string>("cliPath", "");
   const serverUrl = cfg.get<string>("serverUrl", "http://127.0.0.1:2701");
   return new HKBridge(cliPath, serverUrl);
@@ -51,7 +51,7 @@ async function cmdCopyUri(_uri?: vscode.Uri): Promise<void> {
 
   const result = await bridge.fileToUri(filePath);
   if (!result.ok || !result.value) {
-    vscode.window.showErrorMessage(`Hookmarks: ${result.error}`);
+    vscode.window.showErrorMessage(`Hitchmark: ${result.error}`);
     return;
   }
   await vscode.env.clipboard.writeText(result.value);
@@ -68,7 +68,7 @@ async function cmdCopyUriWithParagraph(): Promise<void> {
   // Get the file URI
   const uriResult = await bridge.fileToUri(filePath);
   if (!uriResult.ok || !uriResult.value) {
-    vscode.window.showErrorMessage(`Hookmarks: ${uriResult.error}`);
+    vscode.window.showErrorMessage(`Hitchmark: ${uriResult.error}`);
     return;
   }
 
@@ -93,25 +93,25 @@ async function cmdCopyUriWithParagraph(): Promise<void> {
 async function cmdListLinks(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
-    vscode.window.showWarningMessage("Hookmarks: Open a file first.");
+    vscode.window.showWarningMessage("Hitchmark: Open a file first.");
     return;
   }
 
   const uriResult = await bridge.fileToUri(editor.document.uri.fsPath);
   if (!uriResult.ok || !uriResult.value) {
-    vscode.window.showErrorMessage(`Hookmarks: ${uriResult.error}`);
+    vscode.window.showErrorMessage(`Hitchmark: ${uriResult.error}`);
     return;
   }
 
   const linksResult = await bridge.listLinks(uriResult.value);
   if (!linksResult.ok) {
-    vscode.window.showErrorMessage(`Hookmarks: ${linksResult.error}`);
+    vscode.window.showErrorMessage(`Hitchmark: ${linksResult.error}`);
     return;
   }
 
   const links = linksResult.value ?? [];
   if (links.length === 0) {
-    vscode.window.showInformationMessage("Hookmarks: No links for this file.");
+    vscode.window.showInformationMessage("Hitchmark: No links for this file.");
     return;
   }
 
@@ -148,20 +148,20 @@ async function cmdOpenUri(): Promise<void> {
 
   const result = await bridge.openUri(input);
   if (!result.ok) {
-    vscode.window.showErrorMessage(`Hookmarks: ${result.error}`);
+    vscode.window.showErrorMessage(`Hitchmark: ${result.error}`);
   }
 }
 
 async function cmdShowPurpleNumbers(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
-    vscode.window.showWarningMessage("Hookmarks: Open a file first.");
+    vscode.window.showWarningMessage("Hitchmark: Open a file first.");
     return;
   }
 
   const result = await bridge.getPurpleNumbers(editor.document.uri.fsPath);
   if (!result.ok) {
-    vscode.window.showErrorMessage(`Hookmarks: ${result.error}`);
+    vscode.window.showErrorMessage(`Hitchmark: ${result.error}`);
     return;
   }
 
@@ -172,7 +172,7 @@ async function cmdShowPurpleNumbers(): Promise<void> {
   }));
 
   if (items.length === 0) {
-    vscode.window.showInformationMessage("Hookmarks: No paragraphs found.");
+    vscode.window.showInformationMessage("Hitchmark: No paragraphs found.");
     return;
   }
 
@@ -190,7 +190,7 @@ async function cmdStartServer(): Promise<void> {
   const terminal = vscode.window.createTerminal("hk serve");
   terminal.show();
   terminal.sendText("hk serve");
-  vscode.window.showInformationMessage("Hookmarks server starting at http://127.0.0.1:2701");
+  vscode.window.showInformationMessage("Hitchmark server starting at http://127.0.0.1:2701");
 }
 
 // ── helpers ───────────────────────────────────────────────────────────────────

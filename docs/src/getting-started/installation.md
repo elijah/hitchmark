@@ -16,15 +16,15 @@ All platforms require the `hk` CLI. The platform-specific apps depend on it.
 ### Install hk via Cargo (all platforms)
 
 ```bash
-cargo install hookmarks-cli
+cargo install hitchmark-cli
 ```
 
 ### From source
 
 ```bash
-git clone https://github.com/elw/not-hookmarks
-cd not-hookmarks
-cargo build --release -p hookmarks-cli
+git clone https://github.com/elw/hitchmark
+cd hitchmark
+cargo build --release -p hitchmark-cli
 cp target/release/hk ~/.local/bin/hk   # Linux
 cp target/release/hk /usr/local/bin/hk # macOS
 ```

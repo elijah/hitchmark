@@ -21,7 +21,7 @@ const HK_SEARCH_PATHS = [
   `${process.env.HOME ?? "~"}/.cargo/bin/hk`,
   "/opt/homebrew/bin/hk",
   "/usr/bin/hk",
-  "/usr/local/opt/hookmarks/bin/hk",
+  "/usr/local/opt/hitchmark/bin/hk",
 ];
 
 export class HKBridge {
@@ -109,7 +109,7 @@ export class HKBridge {
       return {
         ok: false,
         error:
-          "hk binary not found. Install with: cargo install hookmarks-cli or brew install hookmarks",
+          "hk binary not found. Install with: cargo install hitchmark-cli or brew install hitchmark",
       };
     }
 

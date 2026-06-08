@@ -1,7 +1,7 @@
 {
-  "name": "hookmarks-web-extension",
+  "name": "hitchmark-web-extension",
   "version": "0.2.0",
-  "description": "Hookmarks Web Extension (Safari / Chrome / Edge / Brave)",
+  "description": "Hitchmark Web Extension (Safari / Chrome / Edge / Brave)",
   "private": true,
   "scripts": {
     "build": "node esbuild.config.mjs",

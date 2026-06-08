@@ -1,5 +1,5 @@
 /**
- * Hookmarks OneNote Add-in manifest.
+ * Hitchmark OneNote Add-in manifest.
  *
  * Platforms supported:
  *   - OneNote Online (web, any OS including macOS)
@@ -22,13 +22,13 @@
 
   <Id>a1b2c3d4-e5f6-7890-abcd-ef1234567890</Id>
   <Version>0.1.0.0</Version>
-  <ProviderName>Hookmarks</ProviderName>
+  <ProviderName>Hitchmark</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Hookmarks"/>
+  <DisplayName DefaultValue="Hitchmark"/>
   <Description DefaultValue="Stable, addressable hook:// links and purple numbers for OneNote pages"/>
   <IconUrl DefaultValue="https://127.0.0.1:3000/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://127.0.0.1:3000/icon-80.png"/>
-  <SupportUrl DefaultValue="https://github.com/yourusername/not-hookmarks"/>
+  <SupportUrl DefaultValue="https://github.com/yourusername/hitchmark"/>
 
   <AppDomains>
     <AppDomain>https://127.0.0.1:3000</AppDomain>
@@ -110,17 +110,17 @@
       <bt:Urls>
         <bt:Url id="Commands.Url" DefaultValue="https://127.0.0.1:3000/commands.html"/>
         <bt:Url id="Taskpane.Url" DefaultValue="https://127.0.0.1:3000/taskpane.html"/>
-        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://github.com/yourusername/not-hookmarks"/>
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://github.com/yourusername/hitchmark"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="Get started with Hookmarks"/>
-        <bt:String id="CommandsGroup.Label" DefaultValue="Hookmarks"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="Hookmarks Panel"/>
+        <bt:String id="GetStarted.Title" DefaultValue="Get started with Hitchmark"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Hitchmark"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Hitchmark Panel"/>
         <bt:String id="CopyUri.Label" DefaultValue="Copy hook:// URI"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="Hookmarks creates stable links to OneNote pages and sections."/>
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open the Hookmarks panel to manage links and purple numbers."/>
+        <bt:String id="GetStarted.Description" DefaultValue="Hitchmark creates stable links to OneNote pages and sections."/>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open the Hitchmark panel to manage links and purple numbers."/>
         <bt:String id="CopyUri.Tooltip" DefaultValue="Copy a stable hook:// URI for the current page to the clipboard."/>
       </bt:LongStrings>
     </Resources>

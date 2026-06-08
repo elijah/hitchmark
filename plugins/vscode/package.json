@@ -1,62 +1,62 @@
 {
-  "name": "hookmarks",
-  "displayName": "Hookmarks",
+  "name": "hitchmark",
+  "displayName": "Hitchmark",
   "description": "Stable, addressable hook:// links to files and paragraphs",
   "version": "0.1.0",
-  "publisher": "hookmarks",
+  "publisher": "hitchmark",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/not-hookmarks"
+    "url": "https://github.com/yourusername/hitchmark"
   },
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": ["Other"],
-  "keywords": ["hookmarks", "hook", "links", "purple numbers", "addressable"],
+  "keywords": ["hitchmark", "hook", "links", "purple numbers", "addressable"],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "hookmarks.copyUri",
-        "title": "Hookmarks: Copy hook:// URI for Current File"
+        "command": "hitchmark.copyUri",
+        "title": "Hitchmark: Copy hook:// URI for Current File"
       },
       {
-        "command": "hookmarks.copyUriWithParagraph",
-        "title": "Hookmarks: Copy hook:// URI with Paragraph ID"
+        "command": "hitchmark.copyUriWithParagraph",
+        "title": "Hitchmark: Copy hook:// URI with Paragraph ID"
       },
       {
-        "command": "hookmarks.listLinks",
-        "title": "Hookmarks: Show Links for Current File"
+        "command": "hitchmark.listLinks",
+        "title": "Hitchmark: Show Links for Current File"
       },
       {
-        "command": "hookmarks.openUri",
-        "title": "Hookmarks: Open hook:// URI from Clipboard"
+        "command": "hitchmark.openUri",
+        "title": "Hitchmark: Open hook:// URI from Clipboard"
       },
       {
-        "command": "hookmarks.showPurpleNumbers",
-        "title": "Hookmarks: Show Purple Numbers for Current File"
+        "command": "hitchmark.showPurpleNumbers",
+        "title": "Hitchmark: Show Purple Numbers for Current File"
       },
       {
-        "command": "hookmarks.startServer",
-        "title": "Hookmarks: Start hk serve"
+        "command": "hitchmark.startServer",
+        "title": "Hitchmark: Start hk serve"
       }
     ],
     "configuration": {
-      "title": "Hookmarks",
+      "title": "Hitchmark",
       "properties": {
-        "hookmarks.cliPath": {
+        "hitchmark.cliPath": {
           "type": "string",
           "default": "",
           "description": "Path to the hk binary. Leave blank to auto-detect."
         },
-        "hookmarks.serverUrl": {
+        "hitchmark.serverUrl": {
           "type": "string",
           "default": "http://127.0.0.1:2701",
           "description": "URL of the hk serve HTTP server. Leave blank to use subprocess."
         },
-        "hookmarks.autoDetectServer": {
+        "hitchmark.autoDetectServer": {
           "type": "boolean",
           "default": true,
           "description": "Automatically use the HTTP server if it is running."
@@ -66,26 +66,26 @@
     "menus": {
       "editor/context": [
         {
-          "command": "hookmarks.copyUri",
-          "group": "hookmarks@1",
+          "command": "hitchmark.copyUri",
+          "group": "hitchmark@1",
           "when": "editorFocus"
         },
         {
-          "command": "hookmarks.copyUriWithParagraph",
-          "group": "hookmarks@2",
+          "command": "hitchmark.copyUriWithParagraph",
+          "group": "hitchmark@2",
           "when": "editorFocus && editorHasSelection"
         }
       ],
       "explorer/context": [
         {
-          "command": "hookmarks.copyUri",
-          "group": "hookmarks@1"
+          "command": "hitchmark.copyUri",
+          "group": "hitchmark@1"
         }
       ]
     },
     "keybindings": [
       {
-        "command": "hookmarks.copyUri",
+        "command": "hitchmark.copyUri",
         "key": "ctrl+alt+h",
         "mac": "ctrl+alt+h",
         "when": "editorFocus"

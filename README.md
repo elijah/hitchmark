@@ -1,4 +1,4 @@
-# not-hookmarks
+# hitchmark
 
 A cross-platform implementation of the Hookmarks protocol — stable, addressable links to files, web pages, emails, and intra-document locations using the `hook://` URI scheme.
 
@@ -16,9 +16,9 @@ Read the spec at [`specs/uri-scheme.md`](specs/uri-scheme.md).
 
 | Component | Role | Status |
 |-----------|------|--------|
-| **hookmarks-core** | URI parser, storage engine, purple-number algorithm | ✅ v0.1.0 |
-| **hookmarks-cli** (`hk`) | 7-command CLI tool, HTTP API server | ✅ v0.1.0 |
-| **hookmarks-daemon** | Linux DBus service (systemd) | ✅ v0.1.0 |
+| **hitchmark-core** | URI parser, storage engine, purple-number algorithm | ✅ v0.1.0 |
+| **hitchmark-cli** (`hk`) | 7-command CLI tool, HTTP API server | ✅ v0.1.0 |
+| **hitchmark-daemon** | Linux DBus service (systemd) | ✅ v0.1.0 |
 | **hookmarks-macos** | SwiftUI menu-bar app | ✅ v0.1.0 |
 | **hookmarks-obsidian** | Obsidian community plugin (CM6, 12 tests) | ✅ v0.1.0 |
 
@@ -34,7 +34,7 @@ brew install hookmarks
 ### From source (requires Rust 1.75+)
 
 ```bash
-cargo install --path crates/hookmarks-cli --locked
+cargo install --path crates/hitchmark-cli --locked
 ```
 
 ### Shell completions
@@ -93,12 +93,12 @@ cargo clippy -- -D warnings
 ## Architecture
 
 ```
-not-hookmarks/
+hitchmark/
 ├── specs/                       # Normative specs (URI scheme, purple numbers)
 ├── crates/
-│   ├── hookmarks-core/          # Rust library (URI, storage, purple IDs)
-│   ├── hookmarks-cli/           # CLI binary (hk)
-│   └── hookmarks-daemon/        # Linux daemon
+│   ├── hitchmark-core/          # Rust library (URI, storage, purple IDs)
+│   ├── hitchmark-cli/           # CLI binary (hk)
+│   └── hitchmark-daemon/        # Linux daemon
 ├── apps/
 │   └── macos/                   # Swift package (menu bar app)
 ├── plugins/

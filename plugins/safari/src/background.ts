@@ -1,5 +1,5 @@
 /**
- * Background service worker for the Hookmarks Safari extension.
+ * Background service worker for the Hitchmark Safari extension.
  *
  * Handles context menu clicks and messages from the popup.
  * Safari MV3 background runs as a service worker — no persistent state.
@@ -19,12 +19,12 @@ chrome.storage.local.get(["serverUrl"], (result) => {
 // Context menu — "Copy hook:// link"
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus?.create({
-    id: "hookmarks-copy-uri",
+    id: "hitchmark-copy-uri",
     title: "Copy hook:// link",
     contexts: ["page", "link"],
   });
   chrome.contextMenus?.create({
-    id: "hookmarks-link-to-page",
+    id: "hitchmark-link-to-page",
     title: "Link to current page…",
     contexts: ["page"],
   });
@@ -34,7 +34,7 @@ chrome.contextMenus?.onClicked.addListener((info, tab) => {
   if (!tab?.url) return;
   const targetUrl = info.linkUrl ?? tab.url;
 
-  if (info.menuItemId === "hookmarks-copy-uri") {
+  if (info.menuItemId === "hitchmark-copy-uri") {
     const uri = HKSafariBridge.buildWebUri(targetUrl);
     // Write to clipboard via content script injection
     chrome.scripting.executeScript({

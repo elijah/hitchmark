@@ -6,7 +6,7 @@ A Web Extension (Manifest V3) that lets you create and copy `hook://` links for 
 
 ## Requirements
 
-- [`hk serve`](../../crates/hookmarks-cli/) running locally on port 2701
+- [`hk serve`](../../crates/hitchmark-cli/) running locally on port 2701
 - **Safari**: macOS 12+, Safari 15+, Xcode 14+ (to build the wrapper)
 - **Chrome / Brave / Arc**: Chrome 88+ (any platform — macOS, Windows, Linux)
 - **Edge**: Edge 88+ (any platform)

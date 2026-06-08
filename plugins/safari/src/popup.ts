@@ -1,5 +1,5 @@
 /**
- * Popup script for the Hookmarks Safari extension.
+ * Popup script for the Hitchmark Safari extension.
  * Communicates with the background service worker via chrome.runtime.sendMessage.
  */
 

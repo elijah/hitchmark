@@ -1,7 +1,7 @@
 /**
  * Purple number generation — TypeScript port of the Rust implementation.
  *
- * Algorithm (must match crates/hookmarks-core/src/purple.rs exactly):
+ * Algorithm (must match crates/hitchmark-core/src/purple.rs exactly):
  *   SHA-256(paragraph_text) → base58_encode(32 bytes) → first 6 chars
  *
  * Uses @noble/hashes for SHA-256 (sync, no WebCrypto needed).

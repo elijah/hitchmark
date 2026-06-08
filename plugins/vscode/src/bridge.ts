@@ -116,7 +116,7 @@ export class HKBridge {
     if (!hkPath) {
       return {
         ok: false,
-        error: "hk binary not found. Install with: cargo install hookmarks-cli",
+        error: "hk binary not found. Install with: cargo install hitchmark-cli",
       };
     }
     try {

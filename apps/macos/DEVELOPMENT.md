@@ -140,7 +140,7 @@ end tell
 **Purpose:** App bundle manifest with permissions and URL scheme
 
 **Key entries:**
-- `CFBundleIdentifier`: `com.elw.hookmarks`
+- `CFBundleIdentifier`: `app.hitchmark`
 - `CFBundleURLTypes`: Registers `hook://` protocol
 - `NSAppleEventsUsageDescription`: Finder/AppleScript permission text
 - `NSAccessibilityUsageDescription`: Global hotkey permission text

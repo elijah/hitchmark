@@ -1,4 +1,4 @@
-# Contributing to not-hookmarks
+# Contributing to hitchmark
 
 Thank you for your interest! We're building a cross-platform, open-source implementation of Hookmarks. All contributions — code, documentation, design, and discussion — are welcome.
 
@@ -60,9 +60,9 @@ Changes to the URI scheme or purple-number algorithm are high-impact. If you're 
 ### Unit Tests
 
 All crate-level functionality has unit tests:
-- `hookmarks-core`: URI parsing, purple-ID generation, storage operations
-- `hookmarks-cli`: argument parsing, command behavior
-- `hookmarks-daemon`: DBus interface (Linux only)
+- `hitchmark-core`: URI parsing, purple-ID generation, storage operations
+- `hitchmark-cli`: argument parsing, command behavior
+- `hitchmark-daemon`: DBus interface (Linux only)
 
 ### Integration Tests
 

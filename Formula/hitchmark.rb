@@ -1,12 +1,12 @@
 class Hookmarks < Formula
   desc "Stable, addressable links to documents and paragraphs via hook:// URIs"
-  homepage "https://github.com/yourusername/not-hookmarks"
-  url "https://github.com/yourusername/not-hookmarks/archive/refs/tags/v0.1.0.tar.gz"
+  homepage "https://github.com/yourusername/hitchmark"
+  url "https://github.com/yourusername/hitchmark/archive/refs/tags/v0.1.0.tar.gz"
   # Update sha256 after publishing the GitHub release:
   #   curl -L <url> | shasum -a 256
   sha256 "0000000000000000000000000000000000000000000000000000000000000000"
   license "MIT"
-  head "https://github.com/yourusername/not-hookmarks.git", branch: "master"
+  head "https://github.com/yourusername/hitchmark.git", branch: "master"
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0000000000000000000000000000000000000000000000000000000000000000"
@@ -20,9 +20,9 @@ class Hookmarks < Formula
 
   def install
     # Build only the CLI binary; skip macOS app and Linux daemon
-    system "cargo", "build", "--release", "-p", "hookmarks-cli",
+    system "cargo", "build", "--release", "-p", "hitchmark-cli",
            "--locked",
-           *std_cargo_args(root: buildpath, path: "crates/hookmarks-cli")
+           *std_cargo_args(root: buildpath, path: "crates/hitchmark-cli")
 
     bin.install "target/release/hk"
 

@@ -6,8 +6,8 @@
  *   - Any Chromium-based browser's "load unpacked" flow
  *
  * Usage:
- *   node scripts/package-chrome.mjs           → hookmarks-chrome-<version>.zip
- *   node scripts/package-chrome.mjs --edge    → hookmarks-edge-<version>.zip
+ *   node scripts/package-chrome.mjs           → hitchmark-chrome-<version>.zip
+ *   node scripts/package-chrome.mjs --edge    → hitchmark-edge-<version>.zip
  */
 
 import { createWriteStream, readdirSync, statSync, readFileSync } from "fs";
@@ -28,7 +28,7 @@ const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf-8"));
 const version = pkg.version;
 const isEdge = process.argv.includes("--edge");
 const browser = isEdge ? "edge" : "chrome";
-const outFile = join(root, `hookmarks-${browser}-${version}.zip`);
+const outFile = join(root, `hitchmark-${browser}-${version}.zip`);
 
 const resourcesDir = join(root, "Resources");
 

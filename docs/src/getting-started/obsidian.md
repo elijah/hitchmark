@@ -16,7 +16,7 @@ link management, and `hook://` URI support to your Obsidian vault.
 1. Install [BRAT](https://github.com/TfTHacker/obsidian42-brat) from the
    Community Plugins browser
 2. Open BRAT settings → Add Beta Plugin
-3. Enter: `https://github.com/elw/not-hookmarks`
+3. Enter: `https://github.com/elw/hitchmark`
 4. Click **Add Plugin**
 5. Enable **Hookmarks** in Community Plugins
 
