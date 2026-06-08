@@ -16,15 +16,60 @@ Read the spec at [`specs/uri-scheme.md`](specs/uri-scheme.md).
 
 | Component | Role | Status |
 |-----------|------|--------|
-| **hookmarks-core** | URI parser, storage engine, purple-number algorithm | In progress |
-| **hookmarks-cli** | `hk` command-line tool | Planned |
-| **hookmarks-daemon** | Linux DBus service | Planned |
-| **hookmarks-macos** | SwiftUI menu-bar app | Planned |
-| **hookmarks-obsidian** | Obsidian community plugin | Planned |
+| **hookmarks-core** | URI parser, storage engine, purple-number algorithm | ✅ v0.1.0 |
+| **hookmarks-cli** (`hk`) | 7-command CLI tool, HTTP API server | ✅ v0.1.0 |
+| **hookmarks-daemon** | Linux DBus service (systemd) | ✅ v0.1.0 |
+| **hookmarks-macos** | SwiftUI menu-bar app | ✅ v0.1.0 |
+| **hookmarks-obsidian** | Obsidian community plugin (CM6, 12 tests) | ✅ v0.1.0 |
+
+## Installation
+
+### Homebrew (coming soon)
+
+```bash
+brew tap yourusername/hookmarks
+brew install hookmarks
+```
+
+### From source (requires Rust 1.75+)
+
+```bash
+cargo install --path crates/hookmarks-cli --locked
+```
+
+### Shell completions
+
+```bash
+# Bash
+hk completions bash >> ~/.bashrc
+
+# Zsh
+hk completions zsh > "$(brew --prefix)/share/zsh/site-functions/_hk"
+
+# Fish
+hk completions fish > ~/.config/fish/completions/hk.fish
+```
 
 ## Quick Start
 
-### Build
+```bash
+# Convert a file to a hook:// URI
+hk file ~/docs/note.md
+
+# Link two documents together
+hk link ~/docs/note.md ~/docs/reference.md --note "See section 3"
+
+# List links for a file (JSON output)
+hk list ~/docs/note.md --json
+
+# Remove a link
+hk delete ~/docs/note.md ~/docs/reference.md
+
+# Start the HTTP API server (for Obsidian plugin, editor integrations)
+hk serve
+```
+
+### Build from source
 
 ```bash
 cargo build --release
@@ -33,7 +78,9 @@ cargo build --release
 ### Test
 
 ```bash
-cargo test
+cargo test --all          # Rust (22 tests)
+cd plugins/obsidian && npm test  # TypeScript (12 tests)
+cd apps/macos && swift test      # Swift (24 tests)
 ```
 
 ### Lint & Format
@@ -50,13 +97,13 @@ not-hookmarks/
 ├── specs/                       # Normative specs (URI scheme, purple numbers)
 ├── crates/
 │   ├── hookmarks-core/          # Rust library (URI, storage, purple IDs)
-│   ├── hookmarks-cli/           # CLI binary
+│   ├── hookmarks-cli/           # CLI binary (hk)
 │   └── hookmarks-daemon/        # Linux daemon
 ├── apps/
-│   ├── macos/                   # Swift package
-│   └── linux-tray/              # (Future)
+│   └── macos/                   # Swift package (menu bar app)
 ├── plugins/
 │   └── obsidian/                # TypeScript plugin
+├── Formula/                     # Homebrew formula
 └── docs/                        # mdBook documentation site
 ```
 
