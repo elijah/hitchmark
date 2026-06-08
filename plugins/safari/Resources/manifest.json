@@ -20,7 +20,7 @@
       "32": "images/icon-32.png"
     }
   },
-  "permissions": ["activeTab", "storage", "scripting"],
+  "permissions": ["activeTab", "storage", "scripting", "contextMenus"],
   "host_permissions": ["http://127.0.0.1/*"],
   "content_scripts": [
     {

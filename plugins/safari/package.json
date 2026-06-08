@@ -1,13 +1,15 @@
 {
-  "name": "hookmarks-safari-extension",
+  "name": "hookmarks-web-extension",
   "version": "0.2.0",
-  "description": "Hookmarks Safari Web Extension",
+  "description": "Hookmarks Web Extension (Safari / Chrome / Edge / Brave)",
   "private": true,
   "scripts": {
     "build": "node esbuild.config.mjs",
     "build:prod": "node esbuild.config.mjs --production",
     "watch": "node esbuild.config.mjs --watch",
-    "test": "jest"
+    "test": "jest",
+    "package:chrome": "npm run build:prod && node scripts/package-chrome.mjs",
+    "package:edge": "npm run build:prod && node scripts/package-chrome.mjs --edge"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.268",
