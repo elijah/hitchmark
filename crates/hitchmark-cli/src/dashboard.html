@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hitchmark</title>
+<style>
+  :root {
+    --bg: #f8f8f8;
+    --surface: #ffffff;
+    --border: #e0e0e0;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --danger: #dc2626;
+    --success: #16a34a;
+    --mono: "SF Mono", "Fira Mono", "Cascadia Code", "Consolas", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111827;
+      --surface: #1f2937;
+      --border: #374151;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --danger: #f87171;
+      --success: #4ade80;
+      --shadow: 0 1px 3px rgba(0,0,0,.4);
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+
+  header {
+    max-width: 900px;
+    margin: 0 auto 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -.02em;
+  }
+
+  .badge {
+    font-size: .7rem;
+    font-family: var(--mono);
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--success);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .badge.loading { background: var(--muted); }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .section-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .section-title {
+    font-size: .95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .count {
+    font-size: .75rem;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+
+  .search-bar {
+    flex: 1;
+    min-width: 180px;
+    max-width: 300px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: .875rem;
+    outline: none;
+    transition: border-color .15s;
+  }
+
+  .search-bar:focus {
+    border-color: var(--accent);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .875rem;
+  }
+
+  thead th {
+    padding: 10px 20px;
+    text-align: left;
+    font-size: .75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  thead th:hover { color: var(--accent); }
+
+  thead th .sort-arrow { margin-left: 4px; opacity: .4; }
+  thead th.sorted .sort-arrow { opacity: 1; color: var(--accent); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg); }
+
+  td {
+    padding: 12px 20px;
+    vertical-align: top;
+  }
+
+  .uri-cell {
+    font-family: var(--mono);
+    font-size: .8rem;
+    color: var(--accent);
+    word-break: break-all;
+    max-width: 340px;
+  }
+
+  .note-cell {
+    color: var(--muted);
+    font-size: .8rem;
+    max-width: 200px;
+  }
+
+  .date-cell {
+    color: var(--muted);
+    font-size: .75rem;
+    white-space: nowrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: .75rem;
+    cursor: pointer;
+    transition: background .1s, border-color .1s, color .1s;
+    white-space: nowrap;
+  }
+
+  .btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .btn.copied {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+  }
+
+  .empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: .875rem;
+  }
+
+  .status-bar {
+    text-align: center;
+    font-size: .75rem;
+    color: var(--muted);
+    padding: 24px 0 0;
+  }
+
+  @media (max-width: 600px) {
+    .uri-cell { max-width: 160px; }
+    .note-cell, .date-cell { display: none; }
+    thead th:nth-child(3), thead th:nth-child(4) { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔗 Hitchmark</h1>
+  <span class="badge loading" id="status-badge">loading…</span>
+</header>
+
+<main>
+
+  <!-- Links section -->
+  <section id="links-section">
+    <div class="section-header">
+      <div class="section-title">
+        Links
+        <span class="count" id="links-count">—</span>
+      </div>
+      <input class="search-bar" id="links-search" type="search"
+             placeholder="Filter links…" aria-label="Filter links">
+    </div>
+    <table id="links-table" aria-label="Links">
+      <thead>
+        <tr>
+          <th data-col="source">Source <span class="sort-arrow">↕</span></th>
+          <th data-col="target">Target <span class="sort-arrow">↕</span></th>
+          <th data-col="note">Note <span class="sort-arrow">↕</span></th>
+          <th data-col="created_at">Created <span class="sort-arrow">↕</span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="links-body">
+        <tr><td class="empty" colspan="5">Loading…</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Bookmarks section -->
+  <section id="bookmarks-section">
+    <div class="section-header">
+      <div class="section-title">
+        Bookmarks
+        <span class="count" id="bookmarks-count">—</span>
+      </div>
+      <input class="search-bar" id="bookmarks-search" type="search"
+             placeholder="Filter bookmarks…" aria-label="Filter bookmarks">
+    </div>
+    <table id="bookmarks-table" aria-label="Bookmarks">
+      <thead>
+        <tr>
+          <th data-col="id">UUID <span class="sort-arrow">↕</span></th>
+          <th data-col="file_path">File path <span class="sort-arrow">↕</span></th>
+          <th data-col="created_at">Created <span class="sort-arrow">↕</span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="bookmarks-body">
+        <tr><td class="empty" colspan="4">Loading…</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<p class="status-bar" id="status-bar">Connecting to http://127.0.0.1:2701…</p>
+
+<script>
+'use strict';
+
+const BASE = '';  // relative — served from same origin
+
+// ── state ────────────────────────────────────────────────────────────────────
+
+let allLinks = [];
+let allBookmarks = [];
+let linkSort = { col: 'created_at', asc: false };
+let bookmarkSort = { col: 'created_at', asc: false };
+
+// ── fetch ─────────────────────────────────────────────────────────────────────
+
+async function fetchJSON(path) {
+  const r = await fetch(BASE + path);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+async function loadAll() {
+  try {
+    const [health, linksData, bookmarksData] = await Promise.all([
+      fetchJSON('/health'),
+      fetchJSON('/links/all'),
+      fetchJSON('/bookmarks'),
+    ]);
+    setBadge('ok', `v${health.version}`);
+    allLinks = linksData;
+    allBookmarks = bookmarksData;
+    renderLinks();
+    renderBookmarks();
+    document.getElementById('status-bar').textContent =
+      `Connected · ${allLinks.length} links · ${allBookmarks.length} bookmarks · refreshed ${new Date().toLocaleTimeString()}`;
+  } catch (err) {
+    setBadge('error', 'offline');
+    document.getElementById('links-body').innerHTML =
+      `<tr><td class="empty" colspan="5">Could not connect to hk serve: ${err.message}</td></tr>`;
+    document.getElementById('bookmarks-body').innerHTML =
+      `<tr><td class="empty" colspan="4">—</td></tr>`;
+    document.getElementById('status-bar').textContent =
+      `⚠ Not connected — is 'hk serve' running?`;
+  }
+}
+
+// ── render ────────────────────────────────────────────────────────────────────
+
+function renderLinks() {
+  const q = document.getElementById('links-search').value.toLowerCase();
+  let rows = allLinks.filter(l =>
+    !q || l.source.toLowerCase().includes(q) ||
+          l.target.toLowerCase().includes(q) ||
+          (l.note || '').toLowerCase().includes(q)
+  );
+  rows = sortBy(rows, linkSort);
+  document.getElementById('links-count').textContent = rows.length;
+
+  if (rows.length === 0) {
+    document.getElementById('links-body').innerHTML =
+      `<tr><td class="empty" colspan="5">${q ? 'No matches.' : 'No links yet. Use hk link to create one.'}</td></tr>`;
+    return;
+  }
+
+  document.getElementById('links-body').innerHTML = rows.map(l => `
+    <tr>
+      <td class="uri-cell" title="${esc(l.source)}">${esc(shorten(l.source))}</td>
+      <td class="uri-cell" title="${esc(l.target)}">${esc(shorten(l.target))}</td>
+      <td class="note-cell">${esc(l.note || '')}</td>
+      <td class="date-cell">${fmtDate(l.created_at)}</td>
+      <td>
+        <button class="btn" onclick="copyText('${esc(l.source)}', this)" title="Copy source URI">Copy source</button>
+      </td>
+    </tr>
+  `).join('');
+
+  highlightSort('links-table', linkSort);
+}
+
+function renderBookmarks() {
+  const q = document.getElementById('bookmarks-search').value.toLowerCase();
+  let rows = allBookmarks.filter(b =>
+    !q || b.id.toLowerCase().includes(q) ||
+          b.file_path.toLowerCase().includes(q)
+  );
+  rows = sortBy(rows, bookmarkSort);
+  document.getElementById('bookmarks-count').textContent = rows.length;
+
+  if (rows.length === 0) {
+    document.getElementById('bookmarks-body').innerHTML =
+      `<tr><td class="empty" colspan="4">${q ? 'No matches.' : 'No bookmarks yet. Use hk file --bookmark to create one.'}</td></tr>`;
+    return;
+  }
+
+  document.getElementById('bookmarks-body').innerHTML = rows.map(b => `
+    <tr>
+      <td class="uri-cell" title="hook://bookmark/${esc(b.id)}">${esc(b.id.slice(0,8))}…</td>
+      <td class="note-cell" title="${esc(b.file_path)}">${esc(basename(b.file_path))}</td>
+      <td class="date-cell">${fmtDate(b.created_at)}</td>
+      <td>
+        <button class="btn" onclick="copyText('hook://bookmark/${esc(b.id)}', this)" title="Copy bookmark URI">Copy URI</button>
+      </td>
+    </tr>
+  `).join('');
+
+  highlightSort('bookmarks-table', bookmarkSort);
+}
+
+// ── sorting ───────────────────────────────────────────────────────────────────
+
+function sortBy(arr, { col, asc }) {
+  return [...arr].sort((a, b) => {
+    const va = (a[col] || '').toString().toLowerCase();
+    const vb = (b[col] || '').toString().toLowerCase();
+    return asc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+}
+
+function highlightSort(tableId, { col }) {
+  document.querySelectorAll(`#${tableId} thead th`).forEach(th => {
+    th.classList.toggle('sorted', th.dataset.col === col);
+  });
+}
+
+document.querySelectorAll('#links-table thead th[data-col]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    linkSort = { col, asc: linkSort.col === col ? !linkSort.asc : false };
+    renderLinks();
+  });
+});
+
+document.querySelectorAll('#bookmarks-table thead th[data-col]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    bookmarkSort = { col, asc: bookmarkSort.col === col ? !bookmarkSort.asc : false };
+    renderBookmarks();
+  });
+});
+
+// ── search ────────────────────────────────────────────────────────────────────
+
+document.getElementById('links-search').addEventListener('input', renderLinks);
+document.getElementById('bookmarks-search').addEventListener('input', renderBookmarks);
+
+// ── clipboard ────────────────────────────────────────────────────────────────
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+// ── helpers ───────────────────────────────────────────────────────────────────
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function shorten(uri) {
+  // Abbreviate base64 middle of hook://file/ URIs
+  if (uri.startsWith('hook://file/')) {
+    const b64 = uri.slice(12);
+    return b64.length > 20 ? `hook://file/${b64.slice(0,8)}…${b64.slice(-4)}` : uri;
+  }
+  if (uri.startsWith('hook://bookmark/')) return `hook://bookmark/${uri.slice(16,24)}…`;
+  return uri;
+}
+
+function basename(p) {
+  return p.split(/[\\/]/).pop() || p;
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch { return iso; }
+}
+
+function setBadge(state, label) {
+  const b = document.getElementById('status-badge');
+  b.textContent = label;
+  b.className = 'badge' + (state === 'ok' ? '' : ' loading');
+}
+
+// ── init ──────────────────────────────────────────────────────────────────────
+
+loadAll();
+// Auto-refresh every 30 seconds
+setInterval(loadAll, 30_000);
+</script>
+</body>
+</html>

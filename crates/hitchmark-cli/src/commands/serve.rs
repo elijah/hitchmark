@@ -10,11 +10,15 @@
 //!
 //! | Method | Path | Description |
 //! |--------|------|-------------|
+//! | GET  | `/`                | Web dashboard (browser UI) |
 //! | GET  | `/health`          | Liveness check |
 //! | GET  | `/links?uri=<uri>` | List links for a resource |
+//! | GET  | `/links/all`       | List all links (used by dashboard) |
 //! | POST | `/links`           | Create a bidirectional link |
 //! | DELETE | `/links`         | Remove a bidirectional link |
+//! | GET  | `/bookmarks`       | List all bookmarks |
 //! | GET  | `/uri?path=<path>` | Convert file path → hook:// URI |
+//! | GET  | `/purple?path=<path>` | Generate purple numbers for a file |
 
 use std::net::SocketAddr;
 use std::path::PathBuf;
@@ -22,7 +26,7 @@ use std::sync::{Arc, Mutex};
 
 use axum::extract::{Query, State};
 use axum::http::{HeaderValue, Method, StatusCode};
-use axum::response::IntoResponse;
+use axum::response::{Html, IntoResponse};
 use axum::routing::get;
 use axum::{Json, Router};
 use hitchmark_core::{Error as CoreError, LinkStore};
@@ -74,6 +78,14 @@ struct DeleteLinkBody {
     uri_b: String,
 }
 
+// ── dashboard ─────────────────────────────────────────────────────────────────
+
+const DASHBOARD_HTML: &str = include_str!("../dashboard.html");
+
+async fn dashboard() -> Html<&'static str> {
+    Html(DASHBOARD_HTML)
+}
+
 // ── handlers ─────────────────────────────────────────────────────────────────
 
 async fn health() -> Json<HealthResponse> {
@@ -95,6 +107,30 @@ async fn list_links(
             Json(serde_json::json!({ "error": "invalid URI" })),
         )
             .into_response(),
+        Err(e) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string() })),
+        )
+            .into_response(),
+    }
+}
+
+async fn list_all_links_handler(State(store): State<SharedStore>) -> impl IntoResponse {
+    let store = store.lock().unwrap();
+    match store.list_all_links() {
+        Ok(links) => (StatusCode::OK, Json(serde_json::to_value(links).unwrap())).into_response(),
+        Err(e) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string() })),
+        )
+            .into_response(),
+    }
+}
+
+async fn list_bookmarks_handler(State(store): State<SharedStore>) -> impl IntoResponse {
+    let store = store.lock().unwrap();
+    match store.list_bookmarks() {
+        Ok(bms) => (StatusCode::OK, Json(serde_json::to_value(bms).unwrap())).into_response(),
         Err(e) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(serde_json::json!({ "error": e.to_string() })),
@@ -219,8 +255,11 @@ pub fn execute(args: ServeArgs, store_path: &PathBuf) -> anyhow::Result<()> {
         .map_err(|e| anyhow::anyhow!("Invalid address: {e}"))?;
 
     let app = Router::new()
+        .route("/", get(dashboard))
         .route("/health", get(health))
         .route("/links", get(list_links).post(create_link).delete(delete_link))
+        .route("/links/all", get(list_all_links_handler))
+        .route("/bookmarks", get(list_bookmarks_handler))
         .route("/uri", get(file_to_uri))
         .route("/purple", get(purple_for_file))
         .layer(cors_layer())
