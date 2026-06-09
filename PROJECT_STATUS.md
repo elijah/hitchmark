@@ -1,9 +1,9 @@
 # Project Status — Hitchmark
 
-**Last Updated**: 2026-06-08 (v0.2.1)
-**Status**: v0.2.1 on master; rename complete; all integrations shipped
-**Build**: Rust 22/22 · Swift 32/32 · JS 40/40 — **94 tests passing, zero warnings**
-**Next**: Cut v0.2.1 tag, update Homebrew SHA-256 after first GitHub release
+**Last Updated**: 2026-06-09 (v0.3.0)
+**Status**: v0.3.0 on master; all 6 sprint items complete
+**Build**: Rust 47/47 · Swift 32/32 · JS 40/40 — **119 tests passing, zero warnings**
+**Next**: Tag v0.3.0, update Homebrew SHA-256 after GitHub release
 
 ---
 
@@ -30,11 +30,15 @@ Cargo workspace (3 crates), GitHub Actions CI, governance docs (README, CONTRIBU
 | `hk link <a> <b> [--note]` | Create bidirectional link |
 | `hk list <uri> [--json]` | Query links (plain or JSON) |
 | `hk delete <a> <b> [-y]` | Remove a link |
-| `hk open <uri>` | Resolve and open a hook:// URI |
+| `hk open <uri>` | Resolve and open a hook:// URI (file, bookmark, x-callback-url) |
 | `hk file <path>` | Print hook:// URI for a file |
 | `hk purple <file>` | Annotate file with stable paragraph IDs |
-| `hk serve [--port]` | Start HTTP API server |
+| `hk serve [--port]` | Start HTTP API server (includes web dashboard at `/`) |
 | `hk completions <shell>` | Print shell completions |
+| `hk gc [--delete] [--json]` | Garbage-collect stale links & bookmarks |
+| `hk export [--format] [--out]` | Export all links/bookmarks (NDJSON or JSON) |
+| `hk import <file>` | Import links/bookmarks (idempotent, dry-run flag) |
+| `hk watch` | Auto-repair bookmarks when files are renamed/moved |
 
 XDG-compliant config (`~/.config/hitchmark/`), panic-free error handling.
 
@@ -88,7 +92,8 @@ hitchmark/
 │   ├── vscode/              # VS Code extension — 7 tests
 │   ├── onenote/             # OneNote add-in — 10 tests
 │   ├── safari/              # Safari/Chrome/Edge MV3 extension — 11 tests
-│   └── chromium -> safari   # symlink
+│   ├── chromium -> safari   # symlink
+│   └── neovim/              # Neovim Lua plugin (lazy.nvim/packer)
 ├── Formula/                 # Homebrew formula (hitchmark.rb)
 ├── specs/                   # Normative specifications (locked)
 ├── docs/src/                # mdBook source (12 pages)
@@ -105,14 +110,14 @@ hitchmark/
 
 | Suite | Count | Status |
 |-------|-------|--------|
-| Rust core (uri, purple, store) | 20 | ✅ passing |
+| Rust core (uri, purple, store, gc, import) | 45 | ✅ passing |
 | Rust CLI integration | 2 | ✅ passing |
 | macOS Swift | 32 | ✅ passing |
 | Obsidian plugin (Jest) | 12 | ✅ passing |
 | VS Code extension (Jest) | 7 | ✅ passing |
 | OneNote add-in (Jest) | 10 | ✅ passing |
 | Safari/Chrome extension (Jest) | 11 | ✅ passing |
-| **Total** | **94** | **✅ all passing** |
+| **Total** | **119** | **✅ all passing** |
 
 ---
 
@@ -149,13 +154,12 @@ Built-in only: `SwiftUI`, `Cocoa`, `Foundation`, `ServiceManagement`, `SafariSer
 
 ## Known Limitations
 
-- Bookmark URI resolution not implemented (`UriType::Bookmark` returns "not yet implemented")
-- `x-callback-url` not supported
 - No code signing (can't distribute via Mac App Store or notarize)
 - Linux daemon system tray (ksni) feature-flagged, not wired
 - Native macOS OneNote app has no add-in API (Microsoft limitation)
 - Homebrew formula SHA-256 placeholders need updating after first GitHub release
 - Windows path handling untested
+- `hk watch` rename tracking uses `RenameMode::Both` only (Linux inotify may split into two events)
 
 ---
 
@@ -166,7 +170,7 @@ Built-in only: `SwiftUI`, `Cocoa`, `Foundation`, `ServiceManagement`, `SafariSer
 | **v0.1.0** ✅ | All 7 blueprint steps + hardening |
 | **v0.2.0** ✅ | `hk serve`, macOS prefs, VS Code + OneNote extensions |
 | **v0.2.1** ✅ | Rename, browser extensions, System Services, Linux XDG, global hotkey, auto-start |
-| v0.3.0 | Code signing, Homebrew live SHA-256, Windows installer |
-| v0.4.0 | Web dashboard, `x-callback-url`, bookmark URI resolution |
+| **v0.3.0** ✅ | `hk gc`, `hk export/import`, x-callback-url, `hk watch`, web dashboard, Neovim plugin |
+| v0.4.0 | Windows port + system tray, code signing, Homebrew live SHA-256 |
 | v1.0.0 | Stable API, production release |
 

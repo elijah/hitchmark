@@ -11,6 +11,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] — 2026-06-09
+
+Enhancement sprint: garbage collection, backup/restore, x-callback-url, file watching, web dashboard, and Neovim plugin.
+
+### Added
+
+#### CLI
+- **`hk gc`** — scan and optionally delete stale links & bookmarks (files that no longer exist); `--dry-run` by default, `--delete` to act; `--json` output; exit code 1 when stale entries found (script-friendly)
+- **`hk export`** — export all links and bookmarks to NDJSON (default) or `--format json`; `--only links|bookmarks`; `--out FILE`
+- **`hk import`** — import from NDJSON/JSON; validates all records before writing; idempotent (skips duplicates); `--dry-run` flag
+- **`hk watch`** — watch parent directories of bookmarked files; automatically calls `update_bookmark_path` on rename; warns on delete (suggests `hk gc`)
+- **`x-callback-url` support** — `hk open` now fully handles `x-success`/`x-error` callbacks for actions `create-link`, `open`, `copy-uri`; percent-encode/decode utilities added to core
+
+#### Core (`hitchmark-core`)
+- `scan_stale_links()` / `scan_stale_bookmarks()` — return IDs of entries whose file paths no longer exist
+- `delete_links_involving()` / `delete_bookmarks_by_ids()` — bulk delete helpers
+- `list_all_links()` — full link scan ordered by `created_at` (used by export and dashboard)
+- `import_bookmark(id, path)` — fixed-UUID insert; returns `BookmarkAlreadyExists` on duplicate
+- `BookmarkAlreadyExists` error variant
+- `XCallbackUri { action, params }` struct replacing bare string in `UriType::XCallbackUrl`
+- `parse_query_string()`, `percent_decode()`, `percent_encode()` in `uri.rs`
+
+#### `hk serve` — Web Dashboard
+- `GET /` — serves embedded single-page web dashboard (no build step, no external deps)
+- `GET /links/all` — returns all links as JSON array
+- `GET /bookmarks` — returns all bookmarks as JSON array
+- Dashboard features: links + bookmarks tables, per-section search, sortable columns, copy-URI buttons, 30s auto-refresh, dark/light mode (`prefers-color-scheme`), `prefers-reduced-motion`, responsive layout
+
+#### Neovim Plugin (`plugins/neovim/`)
+- `bridge.lua` — HTTP-first transport (curl) with `hk` subprocess fallback; `find_hk()` checks PATH and common install locations
+- `commands.lua` — `:HkFile` (copy URI to `+`), `:HkLink` (prompt + link), `:HkList` (quickfix), `:HkPurple` (extmark virtual text), `:HkOpen` (URI under cursor or prompted)
+- `init.lua` — `setup(opts)` with keymap registration; configurable `serve_url`, `hk_path`, keymaps
+- `plugin/hitchmark.vim` — autoload guard shim
+- `tests/bridge_spec.lua` — busted specs for all bridge entry points
+- `README.md` — lazy.nvim/packer/vim-plug install, command reference, config options
+
+#### Platform
+- `apps/macos/launchd/app.hitchmark.watch.plist` — LaunchAgent for `hk watch` (auto-start on login)
+- `apps/linux-tray/hitchmark-watch.service` — systemd `--user` unit for `hk watch`
+
+### Changed
+- `UriType::XCallbackUrl` now carries `XCallbackUri` struct (breaking change in core — update any pattern matches)
+
+---
+
 ## [0.2.1] — 2026-06-08
 
 Project-wide rename from Hookmarks → Hitchmark, global hotkey, auto-start, and platform integrations.
@@ -180,3 +225,4 @@ First complete release covering all 7 blueprint steps plus a stability hardening
 [0.1.0]: https://github.com/elijah/hitchmark/releases/tag/v0.1.0
 [0.2.0]: https://github.com/elijah/hitchmark/releases/tag/v0.2.0
 [0.2.1]: https://github.com/elijah/hitchmark/releases/tag/v0.2.1
+[0.3.0]: https://github.com/elijah/hitchmark/releases/tag/v0.3.0
