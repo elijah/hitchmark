@@ -33,6 +33,13 @@ pub enum Error {
         uri_b: String,
     },
 
+    /// Bookmark with this UUID already exists in the store
+    #[error("Bookmark '{id}' already exists in the store")]
+    BookmarkAlreadyExists {
+        /// The conflicting bookmark UUID
+        id: String,
+    },
+
     /// Database schema version mismatch — database was created by a newer version
     #[error("Database schema version {found} is newer than supported version {supported}. Please upgrade hitchmark.")]
     SchemaTooNew {

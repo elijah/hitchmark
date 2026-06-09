@@ -211,6 +211,22 @@ impl LinkStore {
         Ok(result)
     }
 
+    /// List every link in the store (used for export).
+    pub fn list_all_links(&self) -> Result<Vec<Link>> {
+        let mut stmt = self
+            .conn
+            .prepare("SELECT source, target, note, created_at FROM links ORDER BY created_at")?;
+        let rows = stmt.query_map([], |row| {
+            Ok(Link {
+                source: row.get(0)?,
+                target: row.get(1)?,
+                note: row.get(2)?,
+                created_at: row.get(3)?,
+            })
+        })?;
+        rows.map(|r| r.map_err(Error::DatabaseError)).collect()
+    }
+
     /// Delete a link (removes regardless of which end is source/target).
     pub fn delete_link(&self, source: &str, target: &str) -> Result<()> {
         self.conn.execute(
@@ -316,6 +332,32 @@ impl LinkStore {
             rusqlite::params![id, file_path, now],
         )?;
         Ok(id)
+    }
+
+    /// Import a bookmark with a specific UUID (used by `hk import`).
+    ///
+    /// Returns `Error::BookmarkAlreadyExists` if the UUID is already present,
+    /// allowing callers to silently skip duplicates.
+    pub fn import_bookmark(&self, id: &str, file_path: &str) -> Result<()> {
+        let exists: bool = self
+            .conn
+            .query_row(
+                "SELECT 1 FROM bookmarks WHERE id = ?",
+                rusqlite::params![id],
+                |_| Ok(true),
+            )
+            .unwrap_or(false);
+
+        if exists {
+            return Err(Error::BookmarkAlreadyExists { id: id.to_string() });
+        }
+
+        let now = chrono::Utc::now().to_rfc3339();
+        self.conn.execute(
+            "INSERT INTO bookmarks (id, file_path, created_at) VALUES (?, ?, ?)",
+            rusqlite::params![id, file_path, now],
+        )?;
+        Ok(())
     }
 
     /// Look up the file path for a bookmark UUID.
@@ -722,5 +764,40 @@ mod tests {
         let remaining = store.list_bookmarks().unwrap();
         assert_eq!(remaining.len(), 1);
         assert_eq!(remaining[0].id, id2);
+    }
+
+    #[test]
+    fn test_list_all_links() {
+        let (_dir, store) = make_store();
+        store
+            .create_link("hook://file/a", "hook://file/b", Some("note"))
+            .unwrap();
+        store
+            .create_link("hook://file/c", "hook://file/d", None)
+            .unwrap();
+        let all = store.list_all_links().unwrap();
+        assert_eq!(all.len(), 2);
+    }
+
+    #[test]
+    fn test_import_bookmark_idempotent() {
+        let (_dir, store) = make_store();
+        store.import_bookmark("fixed-uuid-1234", "/path/to/file.md").unwrap();
+        // Second import with same UUID should return BookmarkAlreadyExists
+        let result = store.import_bookmark("fixed-uuid-1234", "/path/to/file.md");
+        assert!(
+            matches!(result, Err(Error::BookmarkAlreadyExists { .. })),
+            "duplicate bookmark UUID should return BookmarkAlreadyExists"
+        );
+        // Store should still have exactly 1
+        assert_eq!(store.list_bookmarks().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn test_import_bookmark_different_uuids() {
+        let (_dir, store) = make_store();
+        store.import_bookmark("uuid-aaa", "/file/a.md").unwrap();
+        store.import_bookmark("uuid-bbb", "/file/b.md").unwrap();
+        assert_eq!(store.list_bookmarks().unwrap().len(), 2);
     }
 }
