@@ -1,0 +1,15 @@
+[Unit]
+Description=Hitchmark bookmark file watcher
+Documentation=https://github.com/elijah/hitchmark
+After=default.target
+
+[Service]
+ExecStart=%h/.cargo/bin/hk watch
+Restart=on-failure
+RestartSec=10
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
