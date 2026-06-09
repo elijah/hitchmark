@@ -228,6 +228,67 @@ impl LinkStore {
         Ok(count as u64)
     }
 
+    /// Scan for links that reference file URIs pointing to non-existent files.
+    ///
+    /// Returns `(stale_links, total_checked)`. Only `hook://file/` URIs are
+    /// checked — bookmark and x-callback-url URIs are skipped.
+    pub fn scan_stale_links(&self) -> Result<(Vec<Link>, usize)> {
+        let all_links: Vec<Link> = {
+            let mut stmt = self
+                .conn
+                .prepare("SELECT source, target, note, created_at FROM links")?;
+            let rows = stmt.query_map([], |row| {
+                Ok(Link {
+                    source: row.get(0)?,
+                    target: row.get(1)?,
+                    note: row.get(2)?,
+                    created_at: row.get(3)?,
+                })
+            })?;
+            rows.filter_map(|r| r.ok()).collect()
+        };
+        let total = all_links.len();
+        let stale = all_links
+            .into_iter()
+            .filter(|link| uri_file_missing(&link.source) || uri_file_missing(&link.target))
+            .collect();
+        Ok((stale, total))
+    }
+
+    /// Scan for bookmarks whose `file_path` no longer exists on disk.
+    pub fn scan_stale_bookmarks(&self) -> Result<(Vec<Bookmark>, usize)> {
+        let all = self.list_bookmarks()?;
+        let total = all.len();
+        let stale = all
+            .into_iter()
+            .filter(|b| !std::path::Path::new(&b.file_path).exists())
+            .collect();
+        Ok((stale, total))
+    }
+
+    /// Delete links whose source **or** target URI exactly matches any entry in `uris`.
+    pub fn delete_links_involving(&self, uris: &[String]) -> Result<usize> {
+        let mut removed = 0;
+        for uri in uris {
+            removed += self.conn.execute(
+                "DELETE FROM links WHERE source = ? OR target = ?",
+                rusqlite::params![uri, uri],
+            )?;
+        }
+        Ok(removed)
+    }
+
+    /// Delete bookmarks by UUID.
+    pub fn delete_bookmarks_by_ids(&self, ids: &[String]) -> Result<usize> {
+        let mut removed = 0;
+        for id in ids {
+            removed += self
+                .conn
+                .execute("DELETE FROM bookmarks WHERE id = ?", rusqlite::params![id])?;
+        }
+        Ok(removed)
+    }
+
     /// Store a stable bookmark for a file path and return its UUID.
     ///
     /// If a bookmark for this path already exists, the existing UUID is returned.
@@ -304,6 +365,19 @@ impl LinkStore {
     }
 }
 
+/// Returns true if `uri` is a `hook://file/` URI pointing to a file that no longer exists.
+/// Non-file URIs (bookmark, x-callback-url) always return false.
+fn uri_file_missing(uri: &str) -> bool {
+    use crate::uri::{HookUri, UriType};
+    match HookUri::parse(uri) {
+        Ok(h) => match h.uri_type {
+            UriType::File(path) => !path.exists(),
+            _ => false,
+        },
+        Err(_) => false,
+    }
+}
+
 /// Generate a UUID v4 (random) without pulling in the `uuid` crate.
 ///
 /// Uses `std::collections::hash_map::DefaultHasher` seeded from system time
@@ -334,6 +408,7 @@ fn new_uuid_v4() -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use base64::Engine as _;
     use tempfile::TempDir;
 
     fn make_store() -> (TempDir, LinkStore) {
@@ -553,5 +628,99 @@ mod tests {
         // Can now create a bookmark
         let id = store.store_bookmark("/migrated/file.md").unwrap();
         assert!(!id.is_empty());
+    }
+
+    #[test]
+    fn test_scan_stale_links_all_live() {
+        // All URIs are non-file (bookmark/x-callback-url) — nothing stale
+        let (_dir, store) = make_store();
+        store
+            .create_link("hook://bookmark/abc-123", "hook://bookmark/def-456", None)
+            .unwrap();
+        let (stale, total) = store.scan_stale_links().unwrap();
+        assert_eq!(total, 1);
+        assert_eq!(stale.len(), 0, "non-file URIs should never be stale");
+    }
+
+    #[test]
+    fn test_scan_stale_links_with_missing_file() {
+        let tmpdir = TempDir::new().unwrap();
+        let store_path = tmpdir.path().join("test.db");
+        let store = LinkStore::open(&store_path).unwrap();
+
+        // Create a real file and encode its URI
+        let real_file = tmpdir.path().join("real.md");
+        std::fs::write(&real_file, "# Real").unwrap();
+        let real_uri = format!(
+            "hook://file/{}",
+            base64::engine::general_purpose::URL_SAFE_NO_PAD
+                .encode(real_file.to_string_lossy().as_bytes())
+        );
+
+        // Ghost URI pointing to a file that does not exist
+        let ghost_uri = "hook://file/L25vbmV4aXN0ZW50L2ZpbGUubWQ"; // /nonexistent/file.md
+
+        store.create_link(&real_uri, ghost_uri, None).unwrap();
+
+        let (stale, total) = store.scan_stale_links().unwrap();
+        assert_eq!(total, 1);
+        assert_eq!(stale.len(), 1, "link to missing file should be stale");
+    }
+
+    #[test]
+    fn test_scan_stale_bookmarks() {
+        let (_dir, store) = make_store();
+        // Path that definitely does not exist
+        store.store_bookmark("/absolutely/does/not/exist/file.md").unwrap();
+        let (stale, total) = store.scan_stale_bookmarks().unwrap();
+        assert_eq!(total, 1);
+        assert_eq!(stale.len(), 1);
+    }
+
+    #[test]
+    fn test_scan_stale_bookmarks_live_path() {
+        let tmpdir = TempDir::new().unwrap();
+        let store_path = tmpdir.path().join("test.db");
+        let store = LinkStore::open(&store_path).unwrap();
+
+        let real = tmpdir.path().join("exists.md");
+        std::fs::write(&real, "hi").unwrap();
+        store.store_bookmark(real.to_str().unwrap()).unwrap();
+
+        let (stale, total) = store.scan_stale_bookmarks().unwrap();
+        assert_eq!(total, 1);
+        assert_eq!(stale.len(), 0, "live path should not be stale");
+    }
+
+    #[test]
+    fn test_delete_links_involving() {
+        let (_dir, store) = make_store();
+        store
+            .create_link("hook://file/a", "hook://file/b", None)
+            .unwrap();
+        store
+            .create_link("hook://file/a", "hook://file/c", None)
+            .unwrap();
+        assert_eq!(store.link_count().unwrap(), 2);
+
+        let removed = store
+            .delete_links_involving(&["hook://file/a".to_string()])
+            .unwrap();
+        assert_eq!(removed, 2, "both links referencing 'a' should be deleted");
+        assert_eq!(store.link_count().unwrap(), 0);
+    }
+
+    #[test]
+    fn test_delete_bookmarks_by_ids() {
+        let (_dir, store) = make_store();
+        let id1 = store.store_bookmark("/file/one.md").unwrap();
+        let id2 = store.store_bookmark("/file/two.md").unwrap();
+        assert_eq!(store.list_bookmarks().unwrap().len(), 2);
+
+        let removed = store.delete_bookmarks_by_ids(&[id1]).unwrap();
+        assert_eq!(removed, 1);
+        let remaining = store.list_bookmarks().unwrap();
+        assert_eq!(remaining.len(), 1);
+        assert_eq!(remaining[0].id, id2);
     }
 }

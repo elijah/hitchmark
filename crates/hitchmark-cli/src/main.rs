@@ -7,8 +7,12 @@
 //!   hk open <hook-uri>                          Open a hook:// URI
 //!   hk file <path> [--bookmark]                 Print the hook:// URI for a file
 //!   hk bookmark <create|show|update|list>       Manage stored bookmark URIs
+//!   hk gc [--delete] [--json]                   Garbage-collect stale entries
+//!   hk export [--format ndjson|json]            Export links and bookmarks
+//!   hk import <file>                            Import links and bookmarks
 //!   hk purple <file> [--format markdown|json]   Annotate file with purple numbers
 //!   hk serve [--port 2701] [--host 127.0.0.1]  Start local HTTP API server
+//!   hk watch [--verbose]                        Watch bookmarks for file moves
 //!   hk completions <shell>                      Print shell completion script
 //!   hk manpage [--out <dir>]                    Generate hk(1) man page
 
@@ -99,6 +103,18 @@ enum Commands {
     /// the file is renamed or moved (requires updating via `hk bookmark update`).
     Bookmark(commands::bookmark::BookmarkArgs),
 
+    /// Garbage-collect stale links and bookmarks
+    ///
+    /// Reports (or removes with --delete) any links/bookmarks pointing to files
+    /// that no longer exist. Exits 1 when stale entries are found.
+    Gc(commands::gc::GcArgs),
+
+    /// Export links and bookmarks to NDJSON or JSON
+    Export(commands::export::ExportArgs),
+
+    /// Import links and bookmarks from NDJSON or JSON
+    Import(commands::import::ImportArgs),
+
     /// Annotate a file with purple numbers (stable paragraph IDs)
     Purple {
         /// Path to file
@@ -119,6 +135,9 @@ enum Commands {
         #[arg(long, default_value = "127.0.0.1")]
         host: String,
     },
+
+    /// Watch bookmarked file locations and auto-repair paths on rename/move
+    Watch(commands::watch::WatchArgs),
 
     /// Print shell completion script to stdout
     ///
@@ -186,6 +205,18 @@ fn main() -> anyhow::Result<()> {
             commands::bookmark::execute(args, &config.store_path)?;
         }
 
+        Commands::Gc(args) => {
+            commands::gc::execute(args, &config.store_path)?;
+        }
+
+        Commands::Export(args) => {
+            commands::export::execute(args, &config.store_path)?;
+        }
+
+        Commands::Import(args) => {
+            commands::import::execute(args, &config.store_path)?;
+        }
+
         Commands::Purple { path, format } => {
             let args = commands::purple::PurpleArgs { path, format };
             commands::purple::execute(args)?;
@@ -194,6 +225,10 @@ fn main() -> anyhow::Result<()> {
         Commands::Serve { port, host } => {
             let args = commands::serve::ServeArgs { port, host };
             commands::serve::execute(args, &config.store_path)?;
+        }
+
+        Commands::Watch(args) => {
+            commands::watch::execute(args, &config.store_path)?;
         }
 
         Commands::Completions { shell } => {
