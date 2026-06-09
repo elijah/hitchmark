@@ -4,6 +4,7 @@
 
 use crate::error::{Error, Result};
 use base64::{engine::general_purpose, Engine};
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 /// A parsed hook:// URI
@@ -22,8 +23,26 @@ pub enum UriType {
     File(PathBuf),
     /// Bookmark reference: hook://bookmark/<uuid>
     Bookmark(String),
-    /// x-callback-url: hook://x-callback-url/<action>
-    XCallbackUrl(String),
+    /// x-callback-url: hook://x-callback-url/<action>[?params]
+    XCallbackUrl(XCallbackUri),
+}
+
+/// A parsed x-callback-url payload.
+///
+/// Spec: <http://x-callback-url.com>
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct XCallbackUri {
+    /// The action name, e.g. `create-link`, `open`, `copy-uri`
+    pub action: String,
+    /// All query parameters (URL-decoded key=value pairs)
+    pub params: HashMap<String, String>,
+}
+
+impl XCallbackUri {
+    /// Convenience: get an optional callback URL by name (`x-success`, `x-error`, `x-cancel`)
+    pub fn callback(&self, name: &str) -> Option<&str> {
+        self.params.get(name).map(String::as_str)
+    }
 }
 
 impl HookUri {
@@ -48,14 +67,64 @@ impl HookUri {
             UriType::File(PathBuf::from(path_str))
         } else if let Some(id) = body.strip_prefix("bookmark/") {
             UriType::Bookmark(id.to_string())
-        } else if let Some(action) = body.strip_prefix("x-callback-url/") {
-            UriType::XCallbackUrl(action.to_string())
+        } else if let Some(action_and_query) = body.strip_prefix("x-callback-url/") {
+            let (action, query) = match action_and_query.split_once('?') {
+                Some((a, q)) => (a, q),
+                None => (action_and_query, ""),
+            };
+            let params = parse_query_string(query);
+            UriType::XCallbackUrl(XCallbackUri {
+                action: action.to_string(),
+                params,
+            })
         } else {
             return Err(Error::InvalidUri(format!("Unknown URI type: {body}")));
         };
 
         Ok(HookUri { uri_type, fragment })
     }
+}
+
+/// Decode a percent-encoded query string into key=value pairs.
+fn parse_query_string(query: &str) -> HashMap<String, String> {
+    if query.is_empty() {
+        return HashMap::new();
+    }
+    query
+        .split('&')
+        .filter_map(|pair| {
+            let (k, v) = pair.split_once('=')?;
+            Some((percent_decode(k), percent_decode(v)))
+        })
+        .collect()
+}
+
+/// Minimal percent-decode: handle %XX sequences and + as space.
+fn percent_decode(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let bytes = s.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'+' {
+            out.push(' ');
+            i += 1;
+        } else if bytes[i] == b'%' && i + 2 < bytes.len() {
+            if let Ok(hex) = u8::from_str_radix(
+                std::str::from_utf8(&bytes[i + 1..i + 3]).unwrap_or("??"),
+                16,
+            ) {
+                out.push(hex as char);
+                i += 3;
+                continue;
+            }
+            out.push(bytes[i] as char);
+            i += 1;
+        } else {
+            out.push(bytes[i] as char);
+            i += 1;
+        }
+    }
+    out
 }
 
 impl std::fmt::Display for HookUri {
@@ -67,14 +136,39 @@ impl std::fmt::Display for HookUri {
                 format!("hook://file/{encoded}")
             }
             UriType::Bookmark(id) => format!("hook://bookmark/{id}"),
-            UriType::XCallbackUrl(action) => format!("hook://x-callback-url/{action}"),
+            UriType::XCallbackUrl(xcb) => {
+                if xcb.params.is_empty() {
+                    format!("hook://x-callback-url/{}", xcb.action)
+                } else {
+                    let qs: String = xcb
+                        .params
+                        .iter()
+                        .map(|(k, v)| format!("{}={}", percent_encode(k), percent_encode(v)))
+                        .collect::<Vec<_>>()
+                        .join("&");
+                    format!("hook://x-callback-url/{}?{qs}", xcb.action)
+                }
+            }
         };
-
         match &self.fragment {
             Some(frag) => write!(f, "{body}#{frag}"),
             None => write!(f, "{body}"),
         }
     }
+}
+
+/// Minimal percent-encode for query string values (encode non-unreserved chars).
+fn percent_encode(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for b in s.bytes() {
+        match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                out.push(b as char);
+            }
+            _ => out.push_str(&format!("%{b:02X}")),
+        }
+    }
+    out
 }
 
 #[cfg(test)]
@@ -163,13 +257,49 @@ mod tests {
     }
 
     #[test]
-    fn test_x_callback_url() {
+    fn test_x_callback_url_no_params() {
         let uri = "hook://x-callback-url/create-link";
         let parsed = HookUri::parse(uri).unwrap();
         match parsed.uri_type {
-            UriType::XCallbackUrl(action) => assert_eq!(action, "create-link"),
+            UriType::XCallbackUrl(xcb) => {
+                assert_eq!(xcb.action, "create-link");
+                assert!(xcb.params.is_empty());
+            }
             _ => panic!("Expected XCallbackUrl"),
         }
+    }
+
+    #[test]
+    fn test_x_callback_url_with_params() {
+        let uri = "hook://x-callback-url/open?uri=hook%3A%2F%2Ffile%2Fabc&x-success=myapp%3A%2F%2Fsuccess";
+        let parsed = HookUri::parse(uri).unwrap();
+        match parsed.uri_type {
+            UriType::XCallbackUrl(xcb) => {
+                assert_eq!(xcb.action, "open");
+                assert_eq!(xcb.params.get("uri").unwrap(), "hook://file/abc");
+                assert_eq!(xcb.callback("x-success").unwrap(), "myapp://success");
+            }
+            _ => panic!("Expected XCallbackUrl"),
+        }
+    }
+
+    #[test]
+    fn test_x_callback_url_roundtrip() {
+        let uri = "hook://x-callback-url/copy-uri";
+        let parsed = HookUri::parse(uri).unwrap();
+        assert_eq!(parsed.to_string(), uri);
+    }
+
+    #[test]
+    fn test_query_string_percent_decode() {
+        let decoded = super::percent_decode("hello%20world%21");
+        assert_eq!(decoded, "hello world!");
+    }
+
+    #[test]
+    fn test_query_string_plus_as_space() {
+        let decoded = super::percent_decode("hello+world");
+        assert_eq!(decoded, "hello world");
     }
 
     #[test]

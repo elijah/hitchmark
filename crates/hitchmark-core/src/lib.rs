@@ -12,7 +12,7 @@ pub use error::{Error, Result};
 pub use purple::{PurpleId, PurpleNumberGenerator};
 pub use purple::split_paragraphs;
 pub use store::{Bookmark, LinkStore};
-pub use uri::{HookUri, UriType};
+pub use uri::{HookUri, UriType, XCallbackUri};
 
 /// Library version
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
