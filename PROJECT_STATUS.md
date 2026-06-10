@@ -1,9 +1,9 @@
 # Project Status — Hitchmark
 
-**Last Updated**: 2026-06-09 (v0.3.0)
-**Status**: v0.3.0 on master; all 6 sprint items complete
+**Last Updated**: 2026-06-10 (v0.4.0)
+**Status**: v0.4.0 on master; cleanup, Homebrew, Windows port + tray, code signing docs
 **Build**: Rust 47/47 · Swift 32/32 · JS 40/40 — **119 tests passing, zero warnings**
-**Next**: Tag v0.3.0, update Homebrew SHA-256 after GitHub release
+**Next**: Tag v0.4.0, complete Windows tray native dialogs (v0.5.0), cargo publish
 
 ---
 
@@ -60,6 +60,14 @@ mdBook site (`docs/src/`) — 12 pages across 5 sections. GitHub Actions deploy-
 - `hk delete` with `--yes` flag; `hk list --json`
 - MSRV pinned (`rust-version = "1.85"`), `deny.toml`, `cargo audit` in CI
 
+### v0.4.0 — Windows + Polish (merged to master)
+- **Cleanup** — removed all stale `hookmarks-*` legacy dirs and service files
+- **Homebrew formula** — updated to v0.3.0 tarball with live SHA-256; v0.3.0 GitHub release created
+- **Windows port** — `notify` feature flag fixed for cross-platform; `release.yml` CI matrix (macOS universal lipo, Linux x86_64, Windows x86_64); WiX v4 installer stub (`apps/windows/hitchmark.wxs`)
+- **Windows system tray** — `apps/windows-tray/` Rust applet (tray-icon + winit); HTTP-first bridge; full context menu; config in `%APPDATA%\hitchmark\tray.toml`
+- **Code signing docs** — `docs/src/project/codesigning-macos.md` (notarytool workflow) + `codesigning-windows.md` (signtool + winget manifest); CI stub workflows (`release-macos.yml`, `release-windows.yml`)
+- **`hk watch` Linux fix** — handle inotify `RenameMode::From`/`To` split events via thread-local pending rename
+
 ### v0.2.x — Integrations + Rename (merged to master)
 - **`hk serve`** — axum HTTP API on port 2701 with CORS, GET /health /links /uri /purple, POST/DELETE /links
 - **VS Code extension** (`plugins/vscode/`) — 6 commands, esbuild pipeline, 7 Jest tests
@@ -79,14 +87,15 @@ mdBook site (`docs/src/`) — 12 pages across 5 sections. GitHub Actions deploy-
 ```
 hitchmark/
 ├── crates/
-│   ├── hitchmark-core/      # Core library (URI, purple, store) — 22 tests
-│   ├── hitchmark-cli/       # `hk` binary (8 commands)
+│   ├── hitchmark-core/      # Core library (URI, purple, store) — 45 tests
+│   ├── hitchmark-cli/       # `hk` binary (12 commands)
 │   └── hitchmark-daemon/    # Linux DBus daemon
 ├── apps/
 │   ├── macos/               # SwiftUI menu bar app — 32 tests
 │   ├── Hitchmark/           # Xcode Safari extension wrapper
 │   ├── linux/               # XDG context-menu integrations
-│   └── linux-tray/          # systemd service, desktop file
+│   ├── linux-tray/          # systemd service, desktop file
+│   └── windows-tray/        # Windows system tray applet (tray-icon + winit)
 ├── plugins/
 │   ├── obsidian/            # TypeScript Obsidian plugin — 12 tests
 │   ├── vscode/              # VS Code extension — 7 tests
@@ -94,11 +103,11 @@ hitchmark/
 │   ├── safari/              # Safari/Chrome/Edge MV3 extension — 11 tests
 │   ├── chromium -> safari   # symlink
 │   └── neovim/              # Neovim Lua plugin (lazy.nvim/packer)
-├── Formula/                 # Homebrew formula (hitchmark.rb)
+├── Formula/                 # Homebrew formula (hitchmark.rb) — live SHA-256
 ├── specs/                   # Normative specifications (locked)
-├── docs/src/                # mdBook source (12 pages)
+├── docs/src/                # mdBook source (14 pages)
 ├── scripts/                 # install-linux.sh, package-chrome.mjs
-├── .github/workflows/ci.yml # CI: rust, MSRV, deny, audit, node tests
+├── .github/workflows/       # ci.yml, release.yml, release-macos.yml, release-windows.yml
 ├── deny.toml                # cargo-deny config
 ├── Cargo.toml               # Workspace root (rust-version = "1.85")
 └── rust-toolchain.toml      # Pinned Rust version
@@ -154,12 +163,12 @@ Built-in only: `SwiftUI`, `Cocoa`, `Foundation`, `ServiceManagement`, `SafariSer
 
 ## Known Limitations
 
-- No code signing (can't distribute via Mac App Store or notarize)
+- Windows tray native dialogs (foreground-app detection, open URI input, stop server) are `eprintln!` stubs — planned for v0.5.0
+- Windows tray icon is a placeholder PNG — replace `apps/windows-tray/assets/icon.png` before shipping
 - Linux daemon system tray (ksni) feature-flagged, not wired
 - Native macOS OneNote app has no add-in API (Microsoft limitation)
-- Homebrew formula SHA-256 placeholders need updating after first GitHub release
-- Windows path handling untested
-- `hk watch` rename tracking uses `RenameMode::Both` only (Linux inotify may split into two events)
+- `hk watch` Linux `RenameMode::From`/`To` pairing is best-effort (cross-directory renames may miss)
+- Code signing requires external certificates — see docs/src/project/codesigning-*.md
 
 ---
 
@@ -171,6 +180,7 @@ Built-in only: `SwiftUI`, `Cocoa`, `Foundation`, `ServiceManagement`, `SafariSer
 | **v0.2.0** ✅ | `hk serve`, macOS prefs, VS Code + OneNote extensions |
 | **v0.2.1** ✅ | Rename, browser extensions, System Services, Linux XDG, global hotkey, auto-start |
 | **v0.3.0** ✅ | `hk gc`, `hk export/import`, x-callback-url, `hk watch`, web dashboard, Neovim plugin |
-| v0.4.0 | Windows port + system tray, code signing, Homebrew live SHA-256 |
+| **v0.4.0** ✅ | Windows port + tray, Homebrew live SHA-256, release CI matrix, code signing docs |
+| v0.5.0 | Windows tray native dialogs, cargo publish, `hk watch` Linux refinement |
 | v1.0.0 | Stable API, production release |
 

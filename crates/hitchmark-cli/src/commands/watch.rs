@@ -9,10 +9,17 @@
 
 use hitchmark_core::LinkStore;
 use notify::{Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
+
+// Holds the "from" path of a Linux inotify Rename(From) event while we wait
+// for the matching Rename(To) event on the same thread.
+thread_local! {
+    static PENDING_RENAME: RefCell<Option<PathBuf>> = const { RefCell::new(None) };
+}
 
 #[derive(clap::Parser)]
 pub struct WatchArgs {
@@ -114,6 +121,8 @@ fn handle_event(
     verbose: bool,
 ) -> anyhow::Result<()> {
     match event.kind {
+        // macOS FSEvents and Windows ReadDirectoryChangesW deliver a single
+        // Rename(Both) event with [from, to] in event.paths.
         EventKind::Modify(notify::event::ModifyKind::Name(
             notify::event::RenameMode::Both,
         )) => {
@@ -121,6 +130,36 @@ fn handle_event(
                 let from = &event.paths[0];
                 let to = &event.paths[1];
                 repair_bookmark(from, to, path_to_ids, store_path, verbose)?;
+            }
+        }
+        // Linux inotify splits a rename into two events:
+        //   Rename(From) with the old path
+        //   Rename(To)   with the new path
+        // We track pending From events and match them to the next To event.
+        // This is a best-effort heuristic — if events are lost, the next gc
+        // will clean up stale bookmarks.
+        EventKind::Modify(notify::event::ModifyKind::Name(
+            notify::event::RenameMode::From,
+        )) => {
+            if let Some(from) = event.paths.first() {
+                let map = path_to_ids.lock().unwrap();
+                if map.contains_key(from) {
+                    // Store the pending rename in a thread-local; the To event
+                    // arrives almost immediately on the same thread.
+                    PENDING_RENAME.with(|cell| {
+                        *cell.borrow_mut() = Some(from.clone());
+                    });
+                }
+            }
+        }
+        EventKind::Modify(notify::event::ModifyKind::Name(
+            notify::event::RenameMode::To,
+        )) => {
+            if let Some(to) = event.paths.first() {
+                let maybe_from = PENDING_RENAME.with(|cell| cell.borrow_mut().take());
+                if let Some(from) = maybe_from {
+                    repair_bookmark(&from, to, path_to_ids, store_path, verbose)?;
+                }
             }
         }
         EventKind::Remove(_) => {

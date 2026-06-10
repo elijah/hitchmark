@@ -9,8 +9,10 @@
 - [Installation](./getting-started/installation.md)
   - [macOS](./getting-started/macos.md)
   - [Linux](./getting-started/linux.md)
+  - [Windows](./getting-started/windows.md)
   - [CLI Reference](./getting-started/cli.md)
   - [Obsidian Plugin](./getting-started/obsidian.md)
+  - [Neovim Plugin](./getting-started/neovim.md)
 
 ---
 
@@ -24,6 +26,7 @@
 # Extending
 
 - [Plugin API](./extending/plugin-api.md)
+- [Web Dashboard](./extending/dashboard.md)
 - [DBus Interface](./extending/dbus.md)
 
 ---

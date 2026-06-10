@@ -11,6 +11,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0] — 2026-06-10
+
+Cleanup sprint: legacy file removal, live Homebrew SHA-256, Windows cross-compile + installer, Windows system tray, code signing documentation.
+
+### Added
+
+#### Windows
+- `apps/windows-tray/` — Rust system tray applet (`hitchmark-tray`)
+  - `tray-icon` + `winit` event loop; `windows_subsystem = "windows"` (no console)
+  - HTTP-first bridge to `hk serve`; `find_hk()` checks PATH, Program Files, `~/.cargo/bin`
+  - Context menu: Copy URI, List Links, Open URI, Start/Stop Server, Open Dashboard, Preferences, About, Quit
+  - Config at `%APPDATA%\hitchmark\tray.toml`
+- `apps/windows/hitchmark.wxs` — WiX v4 installer stub: installs `hk.exe`, adds to system PATH, uninstaller in Add/Remove Programs
+- `.github/workflows/release.yml` — cross-platform release CI: macOS universal binary (arm64+x86_64 lipo), Linux x86_64 tar.gz, Windows x86_64 zip
+
+#### Documentation
+- `docs/src/project/codesigning-macos.md` — full macOS notarization guide (Developer ID cert, codesign hardened runtime, notarytool, DMG staple, entitlements)
+- `docs/src/project/codesigning-windows.md` — Windows Authenticode guide (signtool, PFX import, MSI signing, winget manifest)
+- `.github/workflows/release-macos.yml` — notarized macOS release stub (manual trigger; needs Apple secrets)
+- `.github/workflows/release-windows.yml` — Authenticode Windows release stub (manual trigger; needs cert secrets)
+
+### Fixed
+- `crates/hitchmark-cli/src/commands/watch.rs` — handle Linux inotify `RenameMode::From`/`To` split rename events via thread-local pending-rename tracking (previously only `RenameMode::Both` was handled, so Linux renames were silently missed)
+- `crates/hitchmark-cli/Cargo.toml` — removed `macos_fsevent` feature from `notify` (v6 selects the right backend per-platform automatically; the feature flag caused cross-compile failures on Windows/Linux)
+- `crates/hitchmark-cli/src/path.rs` — platform-aware `normalize_dots` test; simplified `expand_path`
+
+### Changed
+- `Formula/hitchmark.rb` — updated `url` and `sha256` to v0.3.0 tarball (live)
+- Workspace version bumped to `0.3.0`
+
+### Removed
+- `apps/linux-tray/hookmarks-daemon.service` — stale legacy file superseded by `hitchmark-serve.service`
+
+---
+
 ## [0.3.0] — 2026-06-09
 
 Enhancement sprint: garbage collection, backup/restore, x-callback-url, file watching, web dashboard, and Neovim plugin.
@@ -226,3 +261,4 @@ First complete release covering all 7 blueprint steps plus a stability hardening
 [0.2.0]: https://github.com/elijah/hitchmark/releases/tag/v0.2.0
 [0.2.1]: https://github.com/elijah/hitchmark/releases/tag/v0.2.1
 [0.3.0]: https://github.com/elijah/hitchmark/releases/tag/v0.3.0
+[0.4.0]: https://github.com/elijah/hitchmark/releases/tag/v0.4.0
