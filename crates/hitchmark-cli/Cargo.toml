@@ -26,4 +26,4 @@ env_logger = "0.11"
 axum = { version = "0.7", features = ["json"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal"] }
 tower-http = { version = "0.5", features = ["cors"] }
-notify = { version = "6", features = ["macos_fsevent"] }
+notify = { version = "6" }
