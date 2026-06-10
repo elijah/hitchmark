@@ -118,8 +118,9 @@ pub fn execute(args: GcArgs, store_path: &Path) -> anyhow::Result<()> {
         }
     }
 
-    // Exit 1 if anything stale was found (whether deleted or not)
-    if any_stale {
+    // Exit 1 if stale entries remain (dry-run, or --delete failed to remove all)
+    // If --delete was used and everything was cleaned, exit 0.
+    if any_stale && !args.delete {
         std::process::exit(1);
     }
 

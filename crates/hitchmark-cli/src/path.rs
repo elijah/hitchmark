@@ -33,6 +33,11 @@ pub fn path_to_uri(path: &str) -> anyhow::Result<HookUri> {
 
 /// Expand ~ and relative paths to absolute.
 fn expand_path(path: &str) -> anyhow::Result<PathBuf> {
+    expand_path_pub(path)
+}
+
+/// Expand ~ and relative paths to absolute. (public for use in other modules)
+pub fn expand_path_pub(path: &str) -> anyhow::Result<PathBuf> {
     // ~/ expansion (Unix convention; harmless on Windows since paths don't start with ~/)
     if let Some(rest) = path.strip_prefix("~/") {
         let home = dirs::home_dir()

@@ -1,6 +1,10 @@
 //! Configuration file handling.
 //!
-//! Reads ~/.config/hitchmark/config.toml and provides settings for the CLI.
+//! Reads `~/.config/hitchmark/config.toml` and provides settings for the CLI.
+//!
+//! Environment variable overrides (useful for testing and CI):
+//!   `HK_STORE_PATH` — override the SQLite store path
+//!   `HK_CONFIG_DIR` — override the config directory
 
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
@@ -18,6 +22,10 @@ pub struct Config {
 
 /// Resolve the hitchmark config directory, returning an error if HOME is not set.
 fn hitchmark_config_dir() -> anyhow::Result<PathBuf> {
+    // Allow override via env var (used in tests / CI)
+    if let Ok(dir) = std::env::var("HK_CONFIG_DIR") {
+        return Ok(PathBuf::from(dir));
+    }
     dirs::config_dir()
         .map(|d| d.join("hitchmark"))
         .ok_or_else(|| anyhow::anyhow!(
@@ -28,10 +36,14 @@ fn hitchmark_config_dir() -> anyhow::Result<PathBuf> {
 
 impl Default for Config {
     fn default() -> Self {
-        // Fall back to a sensible path even if dirs::config_dir fails
-        let store_path = dirs::config_dir()
-            .map(|d| d.join("hitchmark").join("store.db"))
-            .unwrap_or_else(|| PathBuf::from(".hitchmark/store.db"));
+        // HK_STORE_PATH env var takes highest priority
+        let store_path = if let Ok(p) = std::env::var("HK_STORE_PATH") {
+            PathBuf::from(p)
+        } else {
+            dirs::config_dir()
+                .map(|d| d.join("hitchmark").join("store.db"))
+                .unwrap_or_else(|| PathBuf::from(".hitchmark/store.db"))
+        };
 
         Config {
             store_path,
@@ -43,18 +55,27 @@ impl Default for Config {
 
 impl Config {
     /// Load config from file, or return defaults if file doesn't exist.
+    ///
+    /// `HK_STORE_PATH` always overrides whatever is in the config file.
     pub fn load() -> anyhow::Result<Self> {
         let config_path = hitchmark_config_dir()?.join("config.toml");
 
-        if config_path.exists() {
+        let mut cfg = if config_path.exists() {
             let content = std::fs::read_to_string(&config_path)?;
-            Ok(toml::from_str(&content)?)
+            toml::from_str(&content)?
         } else {
-            Ok(Config::default())
+            Config::default()
+        };
+
+        // Env var overrides file setting (makes testing / CI reliable)
+        if let Ok(p) = std::env::var("HK_STORE_PATH") {
+            cfg.store_path = PathBuf::from(p);
         }
+
+        Ok(cfg)
     }
 
-    /// Ensure config directory exists.
+    /// Ensure config directory and store parent directory exist.
     pub fn ensure_dir(&self) -> anyhow::Result<()> {
         let hitchmark_dir = hitchmark_config_dir()?;
 
