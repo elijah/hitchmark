@@ -1,0 +1,33 @@
+[package]
+name = "hitchmark-tray"
+version = "0.3.0"
+edition = "2021"
+license = "MIT"
+authors = ["Hitchmark Contributors"]
+repository = "https://github.com/elijah/hitchmark"
+description = "Windows system tray applet for Hitchmark"
+rust-version = "1.85"
+
+# Windows: hide the console window so only the tray icon is shown
+[[bin]]
+name = "hitchmark-tray"
+path = "src/main.rs"
+
+[dependencies]
+hitchmark-core = { path = "../../crates/hitchmark-core" }
+tray-icon = "0.19"
+winit = { version = "0.30", features = ["rwh_06"] }
+reqwest = { version = "0.12", features = ["blocking", "json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+dirs = "5"
+anyhow = "1"
+toml = "0.8"
+open = "5"
+
+[target.'cfg(windows)'.dependencies]
+# Windows-specific: suppress console window at startup
+windows-subsystem = { version = "0.1", optional = true }
+
+[build-dependencies]
+# embed a Windows manifest to set DPI awareness and require no elevation
