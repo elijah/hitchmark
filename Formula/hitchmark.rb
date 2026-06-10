@@ -1,8 +1,8 @@
 class Hitchmark < Formula
   desc "Stable, addressable links to documents and paragraphs via hook:// URIs"
   homepage "https://github.com/elijah/hitchmark"
-  url "https://github.com/elijah/hitchmark/archive/refs/tags/v0.2.1.tar.gz"
-  sha256 "51e2de6868273774fd67b3b376e70aeacb7bab6a3588b4ae310c1ba9d6af7c27"
+  url "https://github.com/elijah/hitchmark/archive/refs/tags/v0.3.0.tar.gz"
+  sha256 "367e7bd3551e8fe42a6500a3ebe1dea0fd00519117e1cbb5d5540e9738016341"
   license "MIT"
   head "https://github.com/elijah/hitchmark.git", branch: "master"
 
