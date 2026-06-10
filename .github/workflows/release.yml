@@ -1,0 +1,123 @@
+# release.yml — build and upload binary artifacts on every version tag (v*).
+#
+# Produces:
+#   - hk-macos-universal.tar.gz   (arm64 + x86_64 lipo'd)
+#   - hk-linux-x86_64.tar.gz
+#   - hk-windows-x86_64.zip
+#
+# Bottle SHA-256 values from this run should be pasted into Formula/hitchmark.rb.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  CARGO_TERM_COLOR: always
+  BINARY: hk
+
+jobs:
+  # ── macOS universal binary ────────────────────────────────────────────────
+  build-macos:
+    name: macOS universal
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build arm64
+        run: cargo build --release -p hitchmark-cli --target aarch64-apple-darwin --locked
+
+      - name: Build x86_64
+        run: cargo build --release -p hitchmark-cli --target x86_64-apple-darwin --locked
+
+      - name: Lipo universal binary
+        run: |
+          lipo -create \
+            target/aarch64-apple-darwin/release/${{ env.BINARY }} \
+            target/x86_64-apple-darwin/release/${{ env.BINARY }} \
+            -output ${{ env.BINARY }}
+
+      - name: Package
+        run: |
+          tar czf hk-macos-universal.tar.gz ${{ env.BINARY }}
+          shasum -a 256 hk-macos-universal.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hk-macos-universal
+          path: hk-macos-universal.tar.gz
+
+  # ── Linux x86_64 ─────────────────────────────────────────────────────────
+  build-linux:
+    name: Linux x86_64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        run: cargo build --release -p hitchmark-cli --locked
+
+      - name: Package
+        run: |
+          cp target/release/${{ env.BINARY }} .
+          tar czf hk-linux-x86_64.tar.gz ${{ env.BINARY }}
+          sha256sum hk-linux-x86_64.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hk-linux-x86_64
+          path: hk-linux-x86_64.tar.gz
+
+  # ── Windows x86_64 ───────────────────────────────────────────────────────
+  build-windows:
+    name: Windows x86_64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        run: cargo build --release -p hitchmark-cli --locked
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Copy-Item target\release\${{ env.BINARY }}.exe .
+          Compress-Archive -Path ${{ env.BINARY }}.exe -DestinationPath hk-windows-x86_64.zip
+          Get-FileHash hk-windows-x86_64.zip -Algorithm SHA256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hk-windows-x86_64
+          path: hk-windows-x86_64.zip
+
+  # ── GitHub Release ────────────────────────────────────────────────────────
+  release:
+    name: Attach artifacts to release
+    needs: [build-macos, build-linux, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            hk-macos-universal.tar.gz
+            hk-linux-x86_64.tar.gz
+            hk-windows-x86_64.zip

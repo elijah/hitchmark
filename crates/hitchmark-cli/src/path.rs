@@ -33,16 +33,14 @@ pub fn path_to_uri(path: &str) -> anyhow::Result<HookUri> {
 
 /// Expand ~ and relative paths to absolute.
 fn expand_path(path: &str) -> anyhow::Result<PathBuf> {
+    // ~/ expansion (Unix convention; harmless on Windows since paths don't start with ~/)
     if let Some(rest) = path.strip_prefix("~/") {
         let home = dirs::home_dir()
             .ok_or_else(|| anyhow::anyhow!("Could not determine home directory"))?;
-        Ok(home.join(rest))
-    } else if path.starts_with("~") && path.len() > 1 && !path[1..].starts_with('/') {
-        // Expand ~user paths if needed (not implemented for now)
-        Ok(PathBuf::from(path))
-    } else {
-        Ok(PathBuf::from(path))
+        return Ok(home.join(rest));
     }
+    // Windows: %USERPROFILE% style not expanded here (shell handles it)
+    Ok(PathBuf::from(path))
 }
 
 /// Normalize a path by resolving . and .. components.
@@ -76,9 +74,18 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os = "windows"))]
     fn test_normalize_dots() {
         let path = PathBuf::from("/a/b/../c/./d");
         let normalized = normalize_path(&path);
         assert_eq!(normalized.to_string_lossy(), "/a/c/d");
+    }
+
+    #[test]
+    #[cfg(target_os = "windows")]
+    fn test_normalize_dots_windows() {
+        let path = PathBuf::from(r"C:\a\b\..\c\.\d");
+        let normalized = normalize_path(&path);
+        assert_eq!(normalized.to_string_lossy(), r"C:\a\c\d");
     }
 }

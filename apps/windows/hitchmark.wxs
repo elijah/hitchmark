@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  hitchmark.wxs — WiX v4 installer for Hitchmark on Windows.
+
+  Build (requires WiX Toolset v4):
+    wix build apps/windows/hitchmark.wxs -arch x64 \
+        -d HkBinary=target\release\hk.exe \
+        -o hitchmark-setup.msi
+
+  Or via cargo-wix:
+    cargo wix -p hitchmark-cli --nocapture
+
+  What this installs:
+    - hk.exe  →  C:\Program Files\Hitchmark\hk.exe
+    - Adds C:\Program Files\Hitchmark\ to the system PATH
+    - Creates an uninstaller entry in Add/Remove Programs
+    - Creates %APPDATA%\hitchmark\ on first run (done by hk itself via dirs crate)
+
+  TODO (before v1.0 release):
+    - Code-sign the MSI with Authenticode (signtool.exe)
+    - Bundle hk-watch as a Windows Service via sc.exe (or NSSM)
+    - Add desktop shortcut for hitchmark-tray.exe (v0.4.0)
+-->
+
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="Hitchmark"
+    Manufacturer="Hitchmark Contributors"
+    Version="0.3.0"
+    UpgradeCode="E9F1A2B3-C4D5-E6F7-A8B9-C0D1E2F3A4B5"
+    Language="1033"
+    Codepage="1252"
+    InstallerVersion="500"
+    Compressed="yes">
+
+    <!-- Keep upgrades clean: remove old version before installing new -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Hitchmark is already installed." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="Hitchmark CLI" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="PathEnvComponent" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="Hitchmark" />
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="HkBinaryComponent" Guid="A1B2C3D4-E5F6-7890-ABCD-EF1234567890">
+        <File Id="HkExe"
+              Source="$(var.HkBinary)"
+              Name="hk.exe"
+              KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- Add install directory to system PATH -->
+    <ComponentGroup Id="PathEnvComponent" Directory="INSTALLFOLDER">
+      <Component Id="PathComponent" Guid="B2C3D4E5-F6A7-8901-BCDE-F12345678901">
+        <KeyPath Id="PathRegKey">
+          <RegistryValue Root="HKLM"
+                         Key="SOFTWARE\Hitchmark"
+                         Name="InstallDir"
+                         Value="[INSTALLFOLDER]"
+                         Type="string" />
+        </KeyPath>
+        <Environment Id="PathEntry"
+                     Action="set"
+                     Name="PATH"
+                     Part="last"
+                     System="yes"
+                     Value="[INSTALLFOLDER]" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
