@@ -5,6 +5,12 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
+description = "Core library for hook:// URI links, stable bookmark IDs, and purple-number paragraph addressing"
+keywords = ["links", "uri", "bookmarks", "purple-numbers", "hook"]
+categories = ["data-structures", "filesystem"]
+documentation = "https://docs.rs/hitchmark-core"
+readme = "README.md"
+exclude = ["tests/", "benches/"]
 
 [dependencies]
 rusqlite = { version = "0.32", features = ["bundled", "chrono"] }
