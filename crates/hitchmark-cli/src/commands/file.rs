@@ -27,6 +27,16 @@ pub fn execute(args: FileArgs, store_path: &Path) -> anyhow::Result<()> {
         let id = store.store_bookmark(path_str)?;
         println!("hook://bookmark/{id}");
     } else {
+        // Verify the file exists before printing its URI
+        let expanded = crate::path::expand_path_pub(&args.path)?;
+        let abs = if expanded.is_absolute() {
+            expanded
+        } else {
+            std::env::current_dir()?.join(expanded)
+        };
+        if !abs.exists() {
+            anyhow::bail!("File not found: {}", args.path);
+        }
         let uri = crate::path::path_to_uri(&args.path)?;
         println!("{uri}");
     }
