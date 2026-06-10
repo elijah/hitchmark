@@ -8,7 +8,6 @@ repository = "https://github.com/elijah/hitchmark"
 description = "Windows system tray applet for Hitchmark"
 rust-version = "1.85"
 
-# Windows: hide the console window so only the tray icon is shown
 [[bin]]
 name = "hitchmark-tray"
 path = "src/main.rs"
@@ -24,10 +23,13 @@ dirs = "5"
 anyhow = "1"
 toml = "0.8"
 open = "5"
+image = "0.25"
 
 [target.'cfg(windows)'.dependencies]
-# Windows-specific: suppress console window at startup
-windows-subsystem = { version = "0.1", optional = true }
-
-[build-dependencies]
-# embed a Windows manifest to set DPI awareness and require no elevation
+# Win32 API access for foreground window detection and clipboard
+windows = { version = "0.58", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_System_Threading",
+    "Win32_System_ProcessStatus",
+] }

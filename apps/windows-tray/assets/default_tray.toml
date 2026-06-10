@@ -1,0 +1,12 @@
+# Hitchmark tray preferences
+# This file is read on startup. Edit and save — changes take effect on next launch.
+
+# Port for hk serve (default: 2701)
+serve_port = 2701
+
+# Explicit path to hk binary. Leave empty to auto-detect from PATH,
+# %ProgramFiles%\Hitchmark\hk.exe, or %USERPROFILE%\.cargo\bin\hk.exe
+hk_path = ""
+
+# Start hk serve automatically when the tray applet launches
+auto_start_server = true

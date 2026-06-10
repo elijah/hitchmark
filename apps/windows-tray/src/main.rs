@@ -27,6 +27,7 @@
 
 mod bridge;
 mod config;
+mod dialogs;
 mod menu;
 
 use anyhow::Result;
