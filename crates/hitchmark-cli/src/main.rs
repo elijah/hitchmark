@@ -156,6 +156,15 @@ enum Commands {
         #[arg(long, default_value_t = default_man_dir())]
         out: String,
     },
+
+    /// Print version and build information
+    ///
+    /// Alias for `hk --version`. Also accepts `--verbose` for store path and server URL.
+    Version {
+        /// Show store path and server URL in addition to version
+        #[arg(long)]
+        verbose: bool,
+    },
 }
 
 fn default_man_dir() -> String {
@@ -246,6 +255,14 @@ fn main() -> anyhow::Result<()> {
             man.render(&mut f)
                 .map_err(|e| anyhow::anyhow!("Man page render failed: {e}"))?;
             println!("Wrote {}", dest.display());
+        }
+
+        Commands::Version { verbose } => {
+            println!("hk {}", env!("CARGO_PKG_VERSION"));
+            if verbose {
+                println!("store:  {}", config.store_path.display());
+                println!("server: http://127.0.0.1:2701");
+            }
         }
     }
 

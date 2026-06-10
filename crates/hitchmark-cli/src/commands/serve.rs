@@ -18,6 +18,7 @@
 //! | DELETE | `/links`         | Remove a bidirectional link |
 //! | GET  | `/bookmarks`       | List all bookmarks |
 //! | GET  | `/uri?path=<path>` | Convert file path → hook:// URI |
+//! | GET  | `/open?uri=<uri>` | Resolve and open a hook:// URI via OS |
 //! | GET  | `/purple?path=<path>` | Generate purple numbers for a file |
 
 use std::net::SocketAddr;
@@ -194,6 +195,69 @@ async fn file_to_uri(Query(q): Query<PathQuery>) -> impl IntoResponse {
     }
 }
 
+/// `GET /open?uri=<uri>` — resolve and open a hook:// URI via the OS.
+///
+/// Used by the Windows tray and browser extensions to open URIs without
+/// spawning a subprocess. Returns 200 on success, 400 on bad URI, 404 if
+/// the resolved file does not exist.
+async fn open_uri(
+    State(store): State<SharedStore>,
+    Query(q): Query<UriQuery>,
+) -> impl IntoResponse {
+    use hitchmark_core::{HookUri, UriType};
+
+    let parsed = match HookUri::parse(&q.uri) {
+        Ok(u) => u,
+        Err(e) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(serde_json::json!({ "error": format!("Invalid URI: {e}") })),
+            )
+                .into_response();
+        }
+    };
+
+    let path_to_open: String = match parsed.uri_type {
+        UriType::File(ref p) => p.to_string_lossy().into_owned(),
+        UriType::Bookmark(ref id) => {
+            let store = store.lock().unwrap();
+            match store.lookup_bookmark(id) {
+                Ok(Some(p)) => p,
+                Ok(None) => {
+                    return (
+                        StatusCode::NOT_FOUND,
+                        Json(serde_json::json!({ "error": "Bookmark not found" })),
+                    )
+                        .into_response();
+                }
+                Err(e) => {
+                    return (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        Json(serde_json::json!({ "error": e.to_string() })),
+                    )
+                        .into_response();
+                }
+            }
+        }
+        UriType::XCallbackUrl(_) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(serde_json::json!({ "error": "x-callback-url URIs cannot be opened via /open" })),
+            )
+                .into_response();
+        }
+    };
+
+    match opener::open(&path_to_open) {
+        Ok(()) => (StatusCode::OK, Json(serde_json::json!({ "ok": true, "opened": path_to_open }))).into_response(),
+        Err(e) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": format!("Failed to open: {e}") })),
+        )
+            .into_response(),
+    }
+}
+
 async fn purple_for_file(Query(q): Query<PathQuery>) -> impl IntoResponse {
     use hitchmark_core::{split_paragraphs, PurpleNumberGenerator};
     use std::fs;
@@ -261,6 +325,7 @@ pub fn execute(args: ServeArgs, store_path: &PathBuf) -> anyhow::Result<()> {
         .route("/links/all", get(list_all_links_handler))
         .route("/bookmarks", get(list_bookmarks_handler))
         .route("/uri", get(file_to_uri))
+        .route("/open", get(open_uri))
         .route("/purple", get(purple_for_file))
         .layer(cors_layer())
         .with_state(shared);

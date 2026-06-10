@@ -5,13 +5,19 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
+description = "CLI tool for stable, addressable document links via hook:// URIs"
+keywords = ["links", "uri", "cli", "bookmarks", "hook"]
+categories = ["command-line-utilities", "filesystem"]
+documentation = "https://docs.rs/hitchmark-cli"
+readme = "README.md"
+exclude = ["tests/"]
 
 [[bin]]
 name = "hk"
 path = "src/main.rs"
 
 [dependencies]
-hitchmark-core = { path = "../hitchmark-core" }
+hitchmark-core = { path = "../hitchmark-core", version = "0.3" }
 clap = { version = "4", features = ["derive", "cargo"] }
 clap_complete = "4"
 clap_mangen = "0.2"

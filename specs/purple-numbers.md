@@ -1,8 +1,8 @@
 # Purple Numbers Specification
 
-**Version:** 0.1  
+**Version:** 0.2  
 **Status:** Stable  
-**Last Updated:** 2025-06-06
+**Last Updated:** 2026-06-10
 
 ## Overview
 
@@ -184,8 +184,8 @@ To link to a paragraph:
 ### CLI Tools
 
 ```bash
-hk purple <file>          # Scan and annotate a file with purple numbers
-hk purple <file> --json   # Output purple numbers as JSON
+hk purple <file>                   # Annotate with purple numbers (markdown output)
+hk purple <file> --format json     # Output purple numbers as JSON array
 ```
 
 ### Browser Extensions / Web Viewers
@@ -276,6 +276,12 @@ Possible future versions might add:
 - **Content hashing:** Use Blake3 instead of SHA-256 for faster hashing
 
 ## Changelog
+
+### v0.2 (2026-06-10)
+
+- Renamed project to Hitchmark
+- Clarified CLI syntax: `hk purple <file> --format json` (not `--json`)
+- Added `[§id]` rendered output format used by `hk purple`
 
 ### v0.1 (2025-06-06)
 
