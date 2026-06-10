@@ -32,3 +32,5 @@
 
 - [Contributing](./project/contributing.md)
 - [Changelog](./project/changelog.md)
+- [Code Signing — macOS](./project/codesigning-macos.md)
+- [Code Signing — Windows](./project/codesigning-windows.md)

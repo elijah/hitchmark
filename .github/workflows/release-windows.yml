@@ -1,0 +1,66 @@
+# release-windows.yml — Windows Authenticode-signed release workflow (STUB).
+#
+# This workflow is a stub — it requires a real code signing certificate.
+# Set these GitHub secrets before enabling:
+#   WINDOWS_CERT_PFX_BASE64  — Base64-encoded .pfx certificate file
+#   WINDOWS_CERT_PASSWORD    — Password for the .pfx file
+#
+# See docs/src/project/codesigning-windows.md for full setup instructions.
+
+name: Release (Windows signed)
+
+on:
+  workflow_dispatch:        # manual trigger only until credentials are set
+  # push:
+  #   tags: ["v*"]          # uncomment after secrets are configured
+
+jobs:
+  build-sign:
+    name: Build and sign
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build hk.exe
+        run: cargo build --release -p hitchmark-cli --locked
+
+      # ── Authenticode signing ──────────────────────────────────────────────
+      - name: Import certificate
+        shell: pwsh
+        env:
+          WINDOWS_CERT_PFX_BASE64: ${{ secrets.WINDOWS_CERT_PFX_BASE64 }}
+          WINDOWS_CERT_PASSWORD:   ${{ secrets.WINDOWS_CERT_PASSWORD }}
+        run: |
+          $pfxBytes = [Convert]::FromBase64String($env:WINDOWS_CERT_PFX_BASE64)
+          $pfxPath  = "$env:RUNNER_TEMP\cert.pfx"
+          [IO.File]::WriteAllBytes($pfxPath, $pfxBytes)
+          $securePass = ConvertTo-SecureString $env:WINDOWS_CERT_PASSWORD -AsPlainText -Force
+          Import-PfxCertificate -FilePath $pfxPath -CertStoreLocation Cert:\CurrentUser\My -Password $securePass
+          Remove-Item $pfxPath
+
+      - name: Sign hk.exe
+        shell: pwsh
+        run: |
+          $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits" -Recurse -Filter signtool.exe |
+                       Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+          & $signtool sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /a /v target\release\hk.exe
+          & $signtool verify /pa /v target\release\hk.exe
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Copy-Item target\release\hk.exe .
+          Compress-Archive -Path hk.exe -DestinationPath hk-windows-x86_64-signed.zip
+          Get-FileHash hk-windows-x86_64-signed.zip -Algorithm SHA256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hk-windows-x86_64-signed
+          path: hk-windows-x86_64-signed.zip
+
+      - name: Attach to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: hk-windows-x86_64-signed.zip

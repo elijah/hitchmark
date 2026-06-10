@@ -1,0 +1,92 @@
+# release-macos.yml — macOS notarized release workflow (STUB).
+#
+# This workflow is a stub — it requires real Apple Developer credentials.
+# Set these GitHub secrets before enabling:
+#   APPLE_SIGN_IDENTITY   — "Developer ID Application: Your Name (TEAMID)"
+#   APPLE_API_KEY_JSON    — Contents of App Store Connect API key (.p8)
+#   APPLE_API_KEY_ID      — Key ID (e.g. ABCD1234EF)
+#   APPLE_API_ISSUER_ID   — Issuer UUID from App Store Connect
+#
+# See docs/src/project/codesigning-macos.md for full setup instructions.
+
+name: Release (macOS notarized)
+
+on:
+  workflow_dispatch:        # manual trigger only until credentials are set
+  # push:
+  #   tags: ["v*"]          # uncomment after secrets are configured
+
+jobs:
+  build-sign-notarize:
+    name: Build, sign, notarize
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build universal binary
+        run: |
+          cargo build --release -p hitchmark-cli --target aarch64-apple-darwin --locked
+          cargo build --release -p hitchmark-cli --target x86_64-apple-darwin --locked
+          lipo -create \
+            target/aarch64-apple-darwin/release/hk \
+            target/x86_64-apple-darwin/release/hk \
+            -output hk
+
+      # ── Code signing ──────────────────────────────────────────────────────
+      - name: Import signing certificate
+        env:
+          APPLE_SIGN_IDENTITY: ${{ secrets.APPLE_SIGN_IDENTITY }}
+        run: |
+          # Signing identity must already be in keychain on the runner
+          # For self-hosted runners, import the cert here:
+          # security import cert.p12 -k ~/Library/Keychains/login.keychain -P "$CERT_PASS" -T /usr/bin/codesign
+          echo "Using identity: $APPLE_SIGN_IDENTITY"
+
+      - name: Sign binary
+        env:
+          APPLE_SIGN_IDENTITY: ${{ secrets.APPLE_SIGN_IDENTITY }}
+        run: |
+          codesign \
+            --sign "$APPLE_SIGN_IDENTITY" \
+            --options runtime \
+            --timestamp \
+            --verbose \
+            hk
+          codesign --verify --deep --strict hk
+
+      # ── Notarization ──────────────────────────────────────────────────────
+      - name: Notarize
+        env:
+          APPLE_API_KEY_ID:     ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID:  ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_KEY_JSON:   ${{ secrets.APPLE_API_KEY_JSON }}
+        run: |
+          echo "$APPLE_API_KEY_JSON" > /tmp/api_key.p8
+          zip hk-macos-signed.zip hk
+          xcrun notarytool submit hk-macos-signed.zip \
+            --key /tmp/api_key.p8 \
+            --key-id "$APPLE_API_KEY_ID" \
+            --issuer "$APPLE_API_ISSUER_ID" \
+            --wait
+          rm /tmp/api_key.p8
+
+      - name: Package
+        run: |
+          tar czf hk-macos-universal-signed.tar.gz hk
+          shasum -a 256 hk-macos-universal-signed.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hk-macos-universal-signed
+          path: hk-macos-universal-signed.tar.gz
+
+      - name: Attach to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: hk-macos-universal-signed.tar.gz
