@@ -1,80 +1,95 @@
 # Changelog
 
-All notable changes to Hookmarks are documented here.
+All notable changes to Hitchmark are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/).
 
+The full changelog with commit links is in [CHANGELOG.md](https://github.com/elijah/hitchmark/blob/master/CHANGELOG.md).
+
 ---
 
-## [Unreleased]
+## [0.5.0] — 2026-06-11
+
+Quality sprint: CLI integration tests, crate publish metadata, spec refresh, HTTP API expansion.
 
 ### Added
-- Step 7: mdBook documentation site (this site)
+- **19 CLI integration tests** — full coverage of `hk file`, `hk link`, `hk list`, `hk delete`, `hk gc`, `hk export`, `hk import`, `hk purple`, `hk completions`
+- `HK_STORE_PATH` / `HK_CONFIG_DIR` env var overrides for test isolation
+- `hk version [--verbose]` subcommand alias
+- `GET /open?uri=` HTTP endpoint — open any `hook://` URI via the OS
+- `cargo publish` metadata in both crates (ready for crates.io)
+- Per-crate `README.md` files
+- Real 32×32 PNG tray icon (Windows)
+
+### Changed
+- `hk gc --delete` exits 0 on successful cleanup
+- `hk file` errors on nonexistent paths
+- Specs updated: renamed, dates corrected, CLI flags fixed
+
+---
+
+## [0.4.0] — 2026-06-10
+
+Cleanup sprint: legacy removal, live Homebrew SHA-256, Windows port + installer, Windows system tray, code-signing docs.
+
+### Added
+- **Windows system tray** (`apps/windows-tray/`) — full context menu, HTTP bridge, config, preferences
+- **Windows installer stub** (`apps/windows/hitchmark.wxs`) — WiX v4
+- **Cross-platform release CI** (`.github/workflows/release.yml`) — macOS universal, Linux, Windows
+- Code-signing guides for macOS (notarization) and Windows (Authenticode + winget)
+- Docs: Windows install guide, Neovim plugin guide, web dashboard reference
+
+### Changed
+- Homebrew formula: live SHA-256 for v0.3.0 tarball
+- Linux `hk watch`: fixed inotify split-rename bug via `PENDING_RENAME` thread-local
+- `PROJECT_STATUS.md` updated to v0.4.0
+
+---
+
+## [0.3.0] — 2026-06-09
+
+### Added
+- `hk gc` — garbage-collect stale links (dry-run + `--delete`)
+- `hk export` / `hk import` — NDJSON roundtrip
+- `hk watch` — file rename auto-repair (macOS FSEvents, Linux inotify, Windows RDCW)
+- `hk serve` — local HTTP API (port 2701) with web dashboard
+- `hk bookmark` — stable UUID-based file references
+- Obsidian plugin: purple number rendering, link panel, 5 commands
+
+---
+
+## [0.2.0] — 2026-06-08
+
+### Added
+- Homebrew formula (`Formula/hitchmark.rb`)
+- Shell completions: bash, zsh, fish, PowerShell
+- `hk manpage` — generate and install hk(1)
+- macOS app: improved menu bar UI, Finder integration
 
 ---
 
 ## [0.1.0] — 2026-06-06
 
 ### Added
-
-**Step 0: Monorepo scaffold**
-- Cargo workspace with three crates
-- CI/CD pipeline (GitHub Actions)
-- Governance docs: README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY
-
-**Step 1: Normative specifications**
-- `specs/uri-scheme.md` — `hook://` URI scheme v0.1
-- `specs/purple-numbers.md` — purple number algorithm v0.1
-
-**Step 2: hitchmark-core**
-- `HookUri` parser and serializer
-- `PurpleNumberGenerator` (SHA-256 → base58, collision detection)
-- `LinkStore` — SQLite-backed bidirectional link storage
-- 8 unit tests, zero unsafe code
-
-**Step 3: hitchmark-cli (hk)**
-- `hk link` — create bidirectional links
-- `hk list` — query links for a resource
-- `hk open` — resolve and open hook:// URIs
-- `hk file` — convert file path to hook:// URI
-- `hk purple` — generate purple numbers (markdown + JSON output)
-- XDG-compliant config (~/.config/hookmarks/)
-
-**Step 4: macOS SwiftUI app**
-- Menu bar icon (MenuBarExtra) with 3-tab interface
-- Link tab: create bidirectional links
-- List tab: query existing links
-- Finder tab: get hook:// URI for selected Finder file
-- AppDelegate: hook:// URL scheme handler
-- HKBridge: subprocess integration to hk CLI
-- FinderBridge: AppleScript integration
-- Preferences window (4 tabs)
-- Info.plist with hook:// URL scheme registration
-
-**Step 5: Linux daemon**
-- DBus session service: org.hitchmark.Daemon
-- Interface org.hitchmark.Daemon1: OpenUri, CreateLink, ListLinks, FileToUri
-- .desktop file with x-scheme-handler/hook
-- systemd user service with security hardening
-- install-linux.sh with --uninstall support
-
-**Step 6: Obsidian community plugin**
-- Purple numbers in live editor (CodeMirror 6 ViewPlugin)
-- §id click-to-copy-URI annotations
-- Link panel sidebar (ItemView)
-- 5 commands (copy note URI, copy paragraph URI, create link, open panel, refresh)
-- HKBridge subprocess integration
-- Settings tab with color picker, CLI path config, test button
-- 12 unit tests (purple algorithm verified byte-compatible with Rust)
-- Builds to 35KB main.js bundle
+- Cargo workspace: `hitchmark-core`, `hitchmark-cli`
+- `hook://` URI scheme v0.1 (file, bookmark, x-callback-url)
+- `PurpleNumberGenerator` — SHA-256 → base58, collision detection
+- `LinkStore` — SQLite bidirectional link store
+- `hk link`, `hk list`, `hk open`, `hk file`, `hk purple`
+- macOS SwiftUI menu bar app with `hook://` URL scheme handler
+- Linux DBus daemon + systemd user service
+- Obsidian plugin scaffold
 
 ---
 
-## Algorithm compatibility
+## Algorithm Compatibility
 
-The purple number algorithm is implemented identically in:
-- **Rust** (`hitchmark-core`) — `PurpleNumberGenerator::generate()`
-- **TypeScript** (`plugins/obsidian`) — `generatePurpleId()`
+The purple number algorithm produces identical output in all implementations:
 
-Test vector: `"Hello world"` → `7nxxnx` (both implementations)
+| Implementation | Location | Function |
+|---|---|---|
+| Rust | `hitchmark-core` | `PurpleNumberGenerator::generate()` |
+| TypeScript | `plugins/obsidian` | `generatePurpleId()` |
+
+Test vector: `"Hello world"` → `7nxxnx`

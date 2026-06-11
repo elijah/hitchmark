@@ -11,6 +11,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] — 2026-06-11
+
+Quality sprint: CLI integration tests, crate publish metadata, spec refresh, UX polish, HTTP API expansion.
+
+### Added
+
+#### Testing
+- 19 CLI integration tests (`crates/hitchmark-cli/tests/integration.rs`) covering `hk file`, `hk link`, `hk list`, `hk delete`, `hk gc`, `hk export`, `hk import`, `hk purple`, `hk completions`
+- `HK_STORE_PATH` and `HK_CONFIG_DIR` env var overrides in `Config::load()` for test isolation and CI
+
+#### CLI
+- `hk version [--verbose]` subcommand alias for `--version`; `--verbose` prints store path and server URL
+- `hk file` now exits non-zero with a clear error message when the path does not exist
+
+#### HTTP API (`hk serve`)
+- `GET /open?uri=<uri>` — resolve and open a `hook://` URI via the OS opener; supports file URIs and bookmark URIs; returns 200, 400, or 404
+
+#### Crate metadata
+- `hitchmark-core` and `hitchmark-cli`: `description`, `keywords`, `categories`, `documentation` URL, `README.md` — ready for `cargo publish`
+- Per-crate `README.md` files
+
+#### Assets
+- `apps/windows-tray/assets/icon.png` — replaced 70-byte broken placeholder with a real 32×32 RGBA PNG (dark slate background, white chain-link symbol)
+
+### Changed
+- `hk gc --delete` now exits 0 when it successfully removes all stale entries (previously exited 1 even after successful cleanup)
+- `specs/uri-scheme.md` — v0.1 → v0.3; renamed Hookmarks → Hitchmark; clarified bookmark semantics; added x-callback-url parameter table; percent-encoding note; `hk watch` auto-repair reference
+- `specs/purple-numbers.md` — v0.1 → v0.2; renamed Hookmarks → Hitchmark; corrected CLI flag (`--json` → `--format json`); added `[§id]` rendered output format
+
+---
+
 ## [0.4.0] — 2026-06-10
 
 Cleanup sprint: legacy file removal, live Homebrew SHA-256, Windows cross-compile + installer, Windows system tray, code signing documentation.
@@ -262,3 +293,4 @@ First complete release covering all 7 blueprint steps plus a stability hardening
 [0.2.1]: https://github.com/elijah/hitchmark/releases/tag/v0.2.1
 [0.3.0]: https://github.com/elijah/hitchmark/releases/tag/v0.3.0
 [0.4.0]: https://github.com/elijah/hitchmark/releases/tag/v0.4.0
+[0.5.0]: https://github.com/elijah/hitchmark/releases/tag/v0.5.0
