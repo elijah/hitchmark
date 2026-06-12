@@ -7,14 +7,14 @@ use dirs;
 
 /// IDs for menu items we need to match in event handling.
 pub struct MenuIds {
-    pub copy_uri: u32,
-    pub list_links: u32,
-    pub open_uri: u32,
-    pub toggle_server: u32,
-    pub open_dashboard: u32,
-    pub preferences: u32,
-    pub about: u32,
-    pub quit: u32,
+    pub copy_uri: String,
+    pub list_links: String,
+    pub open_uri: String,
+    pub toggle_server: String,
+    pub open_dashboard: String,
+    pub preferences: String,
+    pub about: String,
+    pub quit: String,
 }
 
 pub fn build_menu() -> Result<(Menu, MenuIds)> {
@@ -34,14 +34,14 @@ pub fn build_menu() -> Result<(Menu, MenuIds)> {
     let quit_item          = MenuItem::new("Quit", true, None);
 
     let ids = MenuIds {
-        copy_uri:       copy_uri_item.id().0,
-        list_links:     list_links_item.id().0,
-        open_uri:       open_uri_item.id().0,
-        toggle_server:  toggle_server_item.id().0,
-        open_dashboard: open_dashboard_item.id().0,
-        preferences:    preferences_item.id().0,
-        about:          about_item.id().0,
-        quit:           quit_item.id().0,
+        copy_uri:       copy_uri_item.id().0.clone(),
+        list_links:     list_links_item.id().0.clone(),
+        open_uri:       open_uri_item.id().0.clone(),
+        toggle_server:  toggle_server_item.id().0.clone(),
+        open_dashboard: open_dashboard_item.id().0.clone(),
+        preferences:    preferences_item.id().0.clone(),
+        about:          about_item.id().0.clone(),
+        quit:           quit_item.id().0.clone(),
     };
 
     let menu = Menu::new();
@@ -61,14 +61,14 @@ pub fn build_menu() -> Result<(Menu, MenuIds)> {
     Ok((menu, ids))
 }
 
-pub fn handle_event(event: &MenuEvent, ids: &MenuIds, _cfg: &TrayConfig) -> Result<()> {
-    let id = event.id().0;
+pub fn handle_event(event: &MenuEvent, ids: &MenuIds, cfg: &TrayConfig) -> Result<()> {
+    let id = event.id().0.as_str();
 
     if id == ids.copy_uri {
         // Get the foreground application's exe path, convert to hook:// URI via hk file
         if let Some(app_path) = dialogs::foreground_app_path() {
             let path_str = app_path.to_string_lossy();
-            match bridge::file_uri(&path_str) {
+            match bridge::file_uri(&path_str, cfg) {
                 Ok(uri) => {
                     dialogs::copy_to_clipboard(&uri)
                         .unwrap_or_else(|e| eprintln!("[tray] clipboard error: {e}"));
@@ -80,7 +80,7 @@ pub fn handle_event(event: &MenuEvent, ids: &MenuIds, _cfg: &TrayConfig) -> Resu
         } else {
             // Fallback: prompt for path
             if let Some(path) = dialogs::input_box("Copy URI", "Enter file path:") {
-                match bridge::file_uri(&path) {
+                match bridge::file_uri(&path, cfg) {
                     Ok(uri) => {
                         dialogs::copy_to_clipboard(&uri)
                             .unwrap_or_else(|e| eprintln!("[tray] clipboard error: {e}"));
@@ -95,7 +95,7 @@ pub fn handle_event(event: &MenuEvent, ids: &MenuIds, _cfg: &TrayConfig) -> Resu
 
     } else if id == ids.open_uri {
         if let Some(uri) = dialogs::input_box("Open URI", "Enter hook:// URI:") {
-            bridge::open_uri(&uri)
+            bridge::open_uri(&uri, cfg)
                 .unwrap_or_else(|e| eprintln!("[tray] open_uri: {e}"));
         }
 
@@ -107,7 +107,7 @@ pub fn handle_event(event: &MenuEvent, ids: &MenuIds, _cfg: &TrayConfig) -> Resu
                 Err(e)    => eprintln!("[tray] stop server: {e}"),
             }
         } else {
-            bridge::start_server()
+            bridge::start_server(cfg)
                 .unwrap_or_else(|e| eprintln!("[tray] start server: {e}"));
         }
 

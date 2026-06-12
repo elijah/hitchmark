@@ -1,6 +1,6 @@
 # Obsidian Plugin
 
-The Hookmarks Obsidian plugin adds purple number annotations, bidirectional
+The Hitchmark Obsidian plugin adds purple number annotations, bidirectional
 link management, and `hook://` URI support to your Obsidian vault.
 
 ## Requirements
@@ -16,9 +16,9 @@ link management, and `hook://` URI support to your Obsidian vault.
 1. Install [BRAT](https://github.com/TfTHacker/obsidian42-brat) from the
    Community Plugins browser
 2. Open BRAT settings → Add Beta Plugin
-3. Enter: `https://github.com/elw/hitchmark`
+3. Enter: `https://github.com/elijah/hitchmark`
 4. Click **Add Plugin**
-5. Enable **Hookmarks** in Community Plugins
+5. Enable **Hitchmark** in Community Plugins
 
 ### Manual installation
 
@@ -29,10 +29,10 @@ npm install
 npm run build
 
 # Copy to your vault
-cp -r . "/path/to/your/vault/.obsidian/plugins/hookmarks/"
+cp -r . "/path/to/your/vault/.obsidian/plugins/hitchmark/"
 ```
 
-Then enable **Hookmarks** in Obsidian Settings → Community Plugins.
+Then enable **Hitchmark** in Obsidian Settings → Community Plugins.
 
 ## Features
 
@@ -50,9 +50,9 @@ The `§id` is rendered in the editor margin — it doesn't appear in exported
 or published documents.
 
 **Settings:**
-- Toggle visibility (Settings → Hookmarks → Show purple numbers)
-- Change color (Settings → Hookmarks → Annotation color)
-- Copy on click (Settings → Hookmarks → Copy URI on click)
+- Toggle visibility (Settings → Hitchmark → Show purple numbers)
+- Change color (Settings → Hitchmark → Annotation color)
+- Copy on click (Settings → Hitchmark → Copy URI on click)
 
 ### Commands
 
@@ -78,7 +78,7 @@ Open it: Ribbon icon (🔗) or Command Palette → "Open linked documents panel"
 
 ## Configuration
 
-Open Settings → Hookmarks:
+Open Settings → Hitchmark:
 
 ### Purple Numbers
 - **Show purple numbers** — toggle §id annotations in the editor
@@ -106,12 +106,12 @@ All operations are asynchronous and run off the main thread.
 ## Troubleshooting
 
 **Purple numbers don't appear**
-- Ensure "Show purple numbers" is enabled in Settings → Hookmarks
+- Ensure "Show purple numbers" is enabled in Settings → Hitchmark
 - Restart Obsidian (required after toggling the setting)
 
 **"hk binary not found"**
 - Run `which hk` in Terminal to find the path
-- Set it in Settings → Hookmarks → CLI Integration → Path to hk binary
+- Set it in Settings → Hitchmark → CLI Integration → Path to hk binary
 
 **Link panel shows no links**
 - Make sure you've created at least one link with `hk link` or the Link tab

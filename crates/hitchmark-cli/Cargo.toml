@@ -38,3 +38,23 @@ notify = { version = "6" }
 assert_cmd = "2"
 predicates = "3"
 tempfile = "3"
+
+[package.metadata.deb]
+maintainer = "Hitchmark Contributors"
+copyright = "2026, Hitchmark Contributors"
+depends = "$auto"
+section = "utils"
+priority = "optional"
+assets = [
+  ["target/release/hk", "usr/bin/hk", "755"],
+  ["README.md", "usr/share/doc/hitchmark-cli/README.md", "644"],
+  ["../../LICENSE", "usr/share/doc/hitchmark-cli/LICENSE", "644"],
+]
+
+[package.metadata.generate-rpm]
+summary = "CLI tool for stable, addressable document links via hook:// URIs"
+assets = [
+  { source = "target/release/hk", dest = "/usr/bin/hk", mode = "755" },
+  { source = "README.md", dest = "/usr/share/doc/hitchmark-cli/README.md", mode = "644", doc = true },
+  { source = "../../LICENSE", dest = "/usr/share/doc/hitchmark-cli/LICENSE", mode = "644", doc = true },
+]

@@ -134,6 +134,10 @@ enum Commands {
         /// Host/IP to bind
         #[arg(long, default_value = "127.0.0.1")]
         host: String,
+
+        /// Optional PID file path; written on startup and removed on shutdown
+        #[arg(long)]
+        pid_file: Option<String>,
     },
 
     /// Watch bookmarked file locations and auto-repair paths on rename/move
@@ -231,8 +235,16 @@ fn main() -> anyhow::Result<()> {
             commands::purple::execute(args)?;
         }
 
-        Commands::Serve { port, host } => {
-            let args = commands::serve::ServeArgs { port, host };
+        Commands::Serve {
+            port,
+            host,
+            pid_file,
+        } => {
+            let args = commands::serve::ServeArgs {
+                port,
+                host,
+                pid_file,
+            };
             commands::serve::execute(args, &config.store_path)?;
         }
 

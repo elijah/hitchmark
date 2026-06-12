@@ -4,6 +4,7 @@ members = [
     "crates/hitchmark-cli",
     "crates/hitchmark-daemon",
 ]
+exclude = ["apps/windows-tray"]
 resolver = "2"
 
 [workspace.package]

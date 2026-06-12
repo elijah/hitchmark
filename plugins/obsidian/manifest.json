@@ -1,10 +1,10 @@
 {
   "id": "hitchmark",
   "name": "Hitchmark",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "minAppVersion": "1.4.0",
   "description": "Stable paragraph addresses (purple numbers) and hook:// link management for your vault.",
   "author": "hitchmark contributors",
-  "authorUrl": "https://github.com/elw/hitchmark",
+  "authorUrl": "https://github.com/elijah/hitchmark",
   "isDesktopOnly": true
 }

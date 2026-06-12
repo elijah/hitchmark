@@ -10,3 +10,6 @@ hk_path = ""
 
 # Start hk serve automatically when the tray applet launches
 auto_start_server = true
+
+# Start hk watch automatically when the tray applet launches
+auto_start_watch = false
