@@ -24,6 +24,7 @@ anyhow = "1"
 toml = "0.8"
 open = "5"
 image = "0.25"
+which = "6"
 
 [target.'cfg(windows)'.dependencies]
 # Win32 API access for foreground window detection and clipboard

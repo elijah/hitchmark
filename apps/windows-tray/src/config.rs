@@ -13,6 +13,8 @@ pub struct TrayConfig {
     pub hk_path: String,
     /// Auto-start hk serve on tray launch
     pub auto_start_server: bool,
+    /// Auto-start hk watch on tray launch
+    pub auto_start_watch: bool,
 }
 
 impl Default for TrayConfig {
@@ -21,6 +23,7 @@ impl Default for TrayConfig {
             serve_port: 2701,
             hk_path: String::new(),
             auto_start_server: true,
+            auto_start_watch: false,
         }
     }
 }

@@ -41,6 +41,17 @@ fn main() -> Result<()> {
     // Load or create config
     let cfg = config::TrayConfig::load()?;
 
+    if cfg.auto_start_server && !bridge::server_alive() {
+        if let Err(e) = bridge::start_server(&cfg) {
+            eprintln!("hitchmark-tray: failed to auto-start hk serve: {e}");
+        }
+    }
+    if cfg.auto_start_watch {
+        if let Err(e) = bridge::start_watch(&cfg) {
+            eprintln!("hitchmark-tray: failed to auto-start hk watch: {e}");
+        }
+    }
+
     // Build tray menu
     let (tray_menu, ids) = menu::build_menu()?;
 

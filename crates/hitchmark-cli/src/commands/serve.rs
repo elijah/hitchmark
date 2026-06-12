@@ -46,6 +46,8 @@ pub struct ServeArgs {
     pub port: u16,
     /// Host/IP to bind (default 127.0.0.1)
     pub host: String,
+    /// Optional PID file path
+    pub pid_file: Option<String>,
 }
 
 // ── request / response types ─────────────────────────────────────────────────
@@ -333,6 +335,8 @@ pub fn execute(args: ServeArgs, store_path: &PathBuf) -> anyhow::Result<()> {
     println!("🔗 Hitchmark server listening on http://{addr}");
     println!("   Press Ctrl-C to stop.");
 
+    let _pid_guard = PidFileGuard::create(args.pid_file.as_deref())?;
+
     tokio::runtime::Runtime::new()?.block_on(async {
         let listener = tokio::net::TcpListener::bind(addr).await?;
         axum::serve(listener, app)
@@ -346,7 +350,49 @@ pub fn execute(args: ServeArgs, store_path: &PathBuf) -> anyhow::Result<()> {
 }
 
 async fn shutdown_signal() {
-    tokio::signal::ctrl_c()
-        .await
-        .expect("Failed to install Ctrl-C handler");
+    #[cfg(unix)]
+    {
+        let mut sigterm = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+            .expect("Failed to install SIGTERM handler");
+        tokio::select! {
+            _ = tokio::signal::ctrl_c() => {}
+            _ = sigterm.recv() => {}
+        }
+    }
+    #[cfg(not(unix))]
+    {
+        tokio::signal::ctrl_c()
+            .await
+            .expect("Failed to install Ctrl-C handler");
+    }
+}
+
+struct PidFileGuard {
+    path: Option<PathBuf>,
+}
+
+impl PidFileGuard {
+    fn create(path: Option<&str>) -> anyhow::Result<Self> {
+        let Some(raw) = path else {
+            return Ok(Self { path: None });
+        };
+        let pid_path = PathBuf::from(raw);
+        if let Some(parent) = pid_path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        std::fs::write(&pid_path, format!("{}\n", std::process::id()))?;
+        Ok(Self {
+            path: Some(pid_path),
+        })
+    }
+}
+
+impl Drop for PidFileGuard {
+    fn drop(&mut self) {
+        if let Some(path) = &self.path {
+            if let Err(e) = std::fs::remove_file(path) {
+                eprintln!("warning: failed to remove pid file {}: {e}", path.display());
+            }
+        }
+    }
 }
