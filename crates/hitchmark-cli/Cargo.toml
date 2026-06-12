@@ -17,7 +17,7 @@ name = "hk"
 path = "src/main.rs"
 
 [dependencies]
-hitchmark-core = { path = "../hitchmark-core", version = "0.5" }
+hitchmark-core = "0.5"
 clap = { version = "4", features = ["derive", "cargo"] }
 clap_complete = "4"
 clap_mangen = "0.2"
