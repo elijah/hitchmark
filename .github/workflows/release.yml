@@ -3,9 +3,12 @@
 # Produces:
 #   - hk-macos-universal.tar.gz   (arm64 + x86_64 lipo'd)
 #   - hk-linux-x86_64.tar.gz
+#   - hk-linux-x86_64.deb
+#   - hk-linux-x86_64.rpm
 #   - hk-windows-x86_64.zip
+#   - hitchmark-obsidian-*.zip (plugin bundle)
 #
-# Bottle SHA-256 values from this run should be pasted into Formula/hitchmark.rb.
+# Bottle SHA-256 values from macOS build should be pasted into Formula/hitchmark.rb.
 
 name: Release
 
@@ -78,6 +81,56 @@ jobs:
           name: hk-linux-x86_64
           path: hk-linux-x86_64.tar.gz
 
+  # ── Linux .deb package ───────────────────────────────────────────────────
+  build-linux-deb:
+    name: Linux .deb package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install cargo-deb
+        run: cargo install cargo-deb
+
+      - name: Build .deb package
+        run: cargo deb -p hitchmark-cli --no-build --output hk-linux-x86_64.deb
+
+      - name: Verify package
+        run: dpkg-deb -W hk-linux-x86_64.deb && sha256sum hk-linux-x86_64.deb
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hk-linux-deb
+          path: hk-linux-x86_64.deb
+
+  # ── Linux .rpm package ───────────────────────────────────────────────────
+  build-linux-rpm:
+    name: Linux .rpm package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install cargo-generate-rpm
+        run: cargo install cargo-generate-rpm
+
+      - name: Build .rpm package
+        run: cargo generate-rpm -p hitchmark-cli
+
+      - name: Move artifact
+        run: |
+          mkdir -p rpm-out
+          find target/generate-rpm -name "*.rpm" -exec cp {} rpm-out/ \;
+          ls -la rpm-out/
+          sha256sum rpm-out/*.rpm
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hk-linux-rpm
+          path: rpm-out/*.rpm
+
   # ── Windows x86_64 ───────────────────────────────────────────────────────
   build-windows:
     name: Windows x86_64
@@ -102,10 +155,48 @@ jobs:
           name: hk-windows-x86_64
           path: hk-windows-x86_64.zip
 
+  # ── Obsidian plugin ───────────────────────────────────────────────────────
+  build-obsidian:
+    name: Obsidian plugin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: |
+          cd plugins/obsidian
+          npm ci
+
+      - name: Build plugin
+        run: |
+          cd plugins/obsidian
+          npm run build
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep '"version"' plugins/obsidian/manifest.json | head -1 | sed 's/.*": "//;s/".*//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Package plugin
+        run: |
+          cd plugins/obsidian
+          zip -r ../hitchmark-obsidian-${{ steps.version.outputs.version }}.zip main.js manifest.json styles.css versions.json
+          sha256sum ../hitchmark-obsidian-${{ steps.version.outputs.version }}.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hitchmark-obsidian-plugin
+          path: hitchmark-obsidian-*.zip
+
   # ── GitHub Release ────────────────────────────────────────────────────────
   release:
     name: Attach artifacts to release
-    needs: [build-macos, build-linux, build-windows]
+    needs: [build-macos, build-linux, build-linux-deb, build-linux-rpm, build-windows, build-obsidian]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -114,10 +205,16 @@ jobs:
         with:
           merge-multiple: true
 
+      - name: List artifacts
+        run: ls -la
+
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             hk-macos-universal.tar.gz
             hk-linux-x86_64.tar.gz
+            hk-linux-x86_64.deb
+            rpm-out/*.rpm
             hk-windows-x86_64.zip
+            hitchmark-obsidian-*.zip
