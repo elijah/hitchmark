@@ -5,6 +5,10 @@ use anyhow::Result;
 use std::process::Command;
 
 const SERVER_URL: &str = "http://127.0.0.1:2701";
+#[cfg(target_os = "windows")]
+const RUN_KEY_PATH: &str = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+#[cfg(target_os = "windows")]
+const TRAY_STARTUP_VALUE: &str = "HitchmarkTray";
 
 /// Call GET /health — returns true if hk serve is running.
 pub fn server_alive() -> bool {
@@ -63,6 +67,32 @@ pub fn start_watch(cfg: &TrayConfig) -> Result<()> {
     Ok(())
 }
 
+/// Ensure tray login startup registration matches the current config.
+#[cfg(target_os = "windows")]
+pub fn sync_tray_startup(cfg: &TrayConfig) -> Result<()> {
+    use std::io::ErrorKind;
+    use winreg::{enums::HKEY_CURRENT_USER, RegKey};
+
+    let hkcu = RegKey::predef(HKEY_CURRENT_USER);
+    let (run_key, _) = hkcu.create_subkey(RUN_KEY_PATH)?;
+
+    if cfg.auto_start_tray_on_login {
+        let exe = std::env::current_exe()?;
+        run_key.set_value(TRAY_STARTUP_VALUE, &registry_command_for_path(&exe))?;
+    } else if let Err(err) = run_key.delete_value(TRAY_STARTUP_VALUE) {
+        if err.kind() != ErrorKind::NotFound {
+            return Err(err.into());
+        }
+    }
+
+    Ok(())
+}
+
+#[cfg(not(target_os = "windows"))]
+pub fn sync_tray_startup(_cfg: &TrayConfig) -> Result<()> {
+    Ok(())
+}
+
 /// Find the `hk` binary — checks PATH, then common install locations.
 pub fn find_hk() -> Result<std::path::PathBuf> {
     find_hk_with_hint(&TrayConfig::default())
@@ -83,8 +113,11 @@ pub fn find_hk_with_hint(cfg: &TrayConfig) -> Result<std::path::PathBuf> {
         return Ok(p);
     }
     // Common Windows install location (from WiX installer)
-    let program_files = std::env::var("ProgramFiles").unwrap_or_else(|_| "C:\\Program Files".into());
-    let candidate = std::path::PathBuf::from(program_files).join("Hitchmark").join("hk.exe");
+    let program_files =
+        std::env::var("ProgramFiles").unwrap_or_else(|_| "C:\\Program Files".into());
+    let candidate = std::path::PathBuf::from(program_files)
+        .join("Hitchmark")
+        .join("hk.exe");
     if candidate.exists() {
         return Ok(candidate);
     }
@@ -108,17 +141,46 @@ fn run_hk(args: &[&str], cfg: &TrayConfig) -> Result<String> {
     Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
 }
 
+#[cfg(target_os = "windows")]
+fn registry_command_for_path(path: &std::path::Path) -> String {
+    format!("\"{}\"", path.display())
+}
+
 // Minimal URL encoding without pulling in a heavy dep
 mod urlencoding {
     pub fn encode(s: &str) -> String {
         let mut out = String::with_capacity(s.len() * 3);
         for b in s.bytes() {
             match b {
-                b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9'
-                | b'-' | b'_' | b'.' | b'~' => out.push(b as char),
+                b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                    out.push(b as char)
+                }
                 _ => out.push_str(&format!("%{b:02X}")),
             }
         }
         out
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::urlencoding;
+
+    #[test]
+    fn percent_encodes_reserved_bytes() {
+        assert_eq!(
+            urlencoding::encode("C:\\Program Files\\hitch mark.txt"),
+            "C%3A%5CProgram%20Files%5Chitch%20mark.txt"
+        );
+    }
+
+    #[cfg(target_os = "windows")]
+    #[test]
+    fn startup_registry_command_is_quoted() {
+        let input = std::path::Path::new("C:\\Program Files\\Hitchmark\\hitchmark-tray.exe");
+        assert_eq!(
+            super::registry_command_for_path(input),
+            "\"C:\\Program Files\\Hitchmark\\hitchmark-tray.exe\""
+        );
     }
 }

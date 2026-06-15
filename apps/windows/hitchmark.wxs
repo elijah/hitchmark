@@ -5,6 +5,7 @@
   Build (requires WiX Toolset v4):
     wix build apps/windows/hitchmark.wxs -arch x64 \
         -d HkBinary=target\release\hk.exe \
+        -d TrayBinary=target\release\hitchmark-tray.exe \
         -o hitchmark-setup.msi
 
   Or via cargo-wix:
@@ -12,7 +13,9 @@
 
   What this installs:
     - hk.exe  →  C:\Program Files\Hitchmark\hk.exe
+    - hitchmark-tray.exe  →  C:\Program Files\Hitchmark\hitchmark-tray.exe
     - Adds C:\Program Files\Hitchmark\ to the system PATH
+    - Registers hitchmark-tray.exe to auto-start for current user at login
     - Creates an uninstaller entry in Add/Remove Programs
     - Creates %APPDATA%\hitchmark\ on first run (done by hk itself via dirs crate)
 
@@ -41,6 +44,7 @@
     <Feature Id="ProductFeature" Title="Hitchmark CLI" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentGroupRef Id="PathEnvComponent" />
+      <ComponentGroupRef Id="TrayStartupComponent" />
     </Feature>
   </Package>
 
@@ -58,6 +62,12 @@
         <File Id="HkExe"
               Source="$(var.HkBinary)"
               Name="hk.exe"
+              KeyPath="yes" />
+      </Component>
+      <Component Id="TrayBinaryComponent" Guid="C3D4E5F6-A7B8-9012-CDEF-0123456789AB">
+        <File Id="TrayExe"
+              Source="$(var.TrayBinary)"
+              Name="hitchmark-tray.exe"
               KeyPath="yes" />
       </Component>
     </ComponentGroup>
@@ -78,6 +88,17 @@
                      Part="last"
                      System="yes"
                      Value="[INSTALLFOLDER]" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="TrayStartupComponent" Directory="INSTALLFOLDER">
+      <Component Id="TrayStartupRegistryComponent" Guid="D4E5F6A7-B8C9-0123-DEF0-123456789ABC">
+        <RegistryValue Root="HKCU"
+                       Key="Software\Microsoft\Windows\CurrentVersion\Run"
+                       Name="HitchmarkTray"
+                       Value="&quot;[INSTALLFOLDER]hitchmark-tray.exe&quot;"
+                       Type="string"
+                       KeyPath="yes" />
       </Component>
     </ComponentGroup>
   </Fragment>

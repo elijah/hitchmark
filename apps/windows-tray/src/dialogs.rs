@@ -57,12 +57,7 @@ pub fn foreground_app_path() -> Option<std::path::PathBuf> {
             return None;
         }
 
-        let handle = OpenProcess(
-            PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-            false,
-            pid,
-        )
-        .ok()?;
+        let handle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, pid).ok()?;
 
         let mut buf = vec![0u16; 1024];
         let len = GetModuleFileNameExW(handle, None, &mut buf) as usize;
@@ -100,5 +95,32 @@ pub fn copy_to_clipboard(text: &str) -> Result<()> {
         Ok(())
     } else {
         anyhow::bail!("Set-Clipboard failed (exit code: {:?})", status.code())
+    }
+}
+
+/// Show a brief Windows tray balloon notification.
+pub fn show_balloon(title: &str, message: &str) -> Result<()> {
+    let title = title.replace('\'', "''");
+    let message = message.replace('\'', "''");
+    let script = format!(
+        "Add-Type -AssemblyName System.Windows.Forms; \
+         Add-Type -AssemblyName System.Drawing; \
+         $n = New-Object System.Windows.Forms.NotifyIcon; \
+         $n.Icon = [System.Drawing.SystemIcons]::Information; \
+         $n.BalloonTipTitle = '{title}'; \
+         $n.BalloonTipText = '{message}'; \
+         $n.Visible = $true; \
+         $n.ShowBalloonTip(2000); \
+         Start-Sleep -Milliseconds 2200; \
+         $n.Dispose();"
+    );
+
+    let status = Command::new("powershell")
+        .args(["-NoProfile", "-NonInteractive", "-Command", &script])
+        .status()?;
+    if status.success() {
+        Ok(())
+    } else {
+        anyhow::bail!("Failed to display balloon notification")
     }
 }

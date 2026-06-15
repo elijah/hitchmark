@@ -13,3 +13,6 @@ auto_start_server = true
 
 # Start hk watch automatically when the tray applet launches
 auto_start_watch = false
+
+# Launch hitchmark-tray automatically when you sign into Windows
+auto_start_tray_on_login = true

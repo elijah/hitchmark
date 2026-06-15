@@ -42,13 +42,6 @@ Copy-Item hitchmark-tray.exe $startup
 serve_port = 2701
 hk_path = ""           # empty = auto-detect
 auto_start_server = true
+auto_start_watch = false
+auto_start_tray_on_login = true
 ```
-
-## Known limitations (v0.4.0)
-
-- Copy URI for foreground app requires `GetForegroundWindow` / `GetWindowText` integration (not yet implemented)
-- Preferences window is a stub (opens browser to GitHub for now)
-- Input dialog for "Open URI" not yet implemented
-- Stop server needs process-by-name kill
-
-These will be addressed in v0.5.0.

@@ -28,18 +28,19 @@
 mod bridge;
 mod config;
 mod dialogs;
+mod hotkey;
 mod menu;
 
 use anyhow::Result;
-use tray_icon::{
-    TrayIconBuilder,
-    menu::{Menu, MenuEvent, MenuItem, PredefinedMenuItem},
-};
+use tray_icon::{menu::MenuEvent, TrayIconBuilder};
 use winit::event_loop::{ControlFlow, EventLoop};
 
 fn main() -> Result<()> {
     // Load or create config
     let cfg = config::TrayConfig::load()?;
+    if let Err(e) = bridge::sync_tray_startup(&cfg) {
+        eprintln!("hitchmark-tray: failed to sync startup registration: {e}");
+    }
 
     if cfg.auto_start_server && !bridge::server_alive() {
         if let Err(e) = bridge::start_server(&cfg) {
@@ -70,8 +71,23 @@ fn main() -> Result<()> {
     event_loop.set_control_flow(ControlFlow::Wait);
 
     let menu_channel = MenuEvent::receiver();
+    let hotkey = match hotkey::GlobalHotkey::register() {
+        Ok(h) => Some(h),
+        Err(e) => {
+            eprintln!("hitchmark-tray: global hotkey unavailable: {e}");
+            None
+        }
+    };
 
     event_loop.run(move |_event, elwt| {
+        if let Some(global_hotkey) = hotkey.as_ref() {
+            while global_hotkey.poll_triggered() {
+                if let Err(e) = menu::copy_uri_action(&cfg) {
+                    eprintln!("hitchmark-tray: hotkey action failed: {e}");
+                }
+            }
+        }
+
         // Drain menu events on each pump cycle
         while let Ok(event) = menu_channel.try_recv() {
             if let Err(e) = menu::handle_event(&event, &ids, &cfg) {

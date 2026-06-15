@@ -15,6 +15,8 @@ pub struct TrayConfig {
     pub auto_start_server: bool,
     /// Auto-start hk watch on tray launch
     pub auto_start_watch: bool,
+    /// Register this tray app to launch on Windows login
+    pub auto_start_tray_on_login: bool,
 }
 
 impl Default for TrayConfig {
@@ -24,6 +26,7 @@ impl Default for TrayConfig {
             hk_path: String::new(),
             auto_start_server: true,
             auto_start_watch: false,
+            auto_start_tray_on_login: true,
         }
     }
 }
@@ -53,4 +56,25 @@ fn config_path() -> Result<PathBuf> {
     dirs::config_dir()
         .map(|d| d.join("hitchmark").join("tray.toml"))
         .ok_or_else(|| anyhow::anyhow!("Cannot determine %APPDATA% — is USERPROFILE set?"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::TrayConfig;
+
+    #[test]
+    fn default_enables_tray_login_start() {
+        let cfg = TrayConfig::default();
+        assert!(cfg.auto_start_tray_on_login);
+        assert_eq!(cfg.serve_port, 2701);
+    }
+
+    #[test]
+    fn serde_defaults_fill_missing_fields() {
+        let cfg: TrayConfig = toml::from_str("serve_port = 2702").expect("valid toml");
+        assert_eq!(cfg.serve_port, 2702);
+        assert!(cfg.auto_start_server);
+        assert!(!cfg.auto_start_watch);
+        assert!(cfg.auto_start_tray_on_login);
+    }
 }
